@@ -25,14 +25,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+require('dotenv').config();
+
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/posspole', {
+const dbUri = process.env.MONGO_URI;
+
+mongoose.connect(dbUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
-  console.log('Connected to MongoDB');
+  console.log('Connected to MongoDB Atlas');
 }).catch((err) => {
-  console.error('Error connecting to MongoDB', err);
+  console.error('Error connecting to MongoDB Atlas', err);
   process.exit(1);
 });
 
