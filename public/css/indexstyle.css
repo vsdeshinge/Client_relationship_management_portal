@@ -1,0 +1,149 @@
+
+
+.container0 {
+  
+  margin: 0px;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  background-image: url('../assets/img2.jpg');
+  
+  background-size: cover; 
+  background-position: center;
+  background-repeat: no-repeat; 
+  display:flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  place-items: center;
+  overflow: hidden;
+  font-family: Poppins, sans-serif; 
+}
+
+.container {
+  
+  margin: 50px;
+
+  width: 350px;
+  height: 500px;
+  border-radius: 20px;
+  padding: 100px;
+  /* box-sizing: border-box; 
+  background: #491717; */
+  /*box-shadow: 0px 5px 0px rgb(144, 129, 129), 0px 5px 0px rgb(144, 129, 129); */
+   font-family: Poppins, sans-serif;
+}
+
+
+.brand-logo {
+  margin-top: 500px;
+  height: 100px;
+  width: 100px;
+  background-color: black;
+
+  background-image: url("../assets/logo3.jpg");
+  margin: auto;
+  border-radius: 50%;
+  box-sizing: border-box;
+  
+}
+
+.brand-title {
+  margin-top: 20px;
+  font-family: Poppins, sans-serif;
+  font-weight: 450;
+  font-size: 35px;
+  color:white;
+  letter-spacing: 3px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  
+}
+
+.brand-title:hover{
+  color: #7190e1;
+  transform: scale(1.1);
+  transition: 0.5s;
+}
+
+
+
+label {
+  margin-bottom: 4px;
+}
+
+label:nth-of-type(2) {
+  margin-top: 20px;
+}
+
+
+
+button {
+  color:black;
+  font-size:25px;
+  margin-top: 68px;
+  height: 0px;
+  border-radius: 0px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all .2s linear;
+  font-family: Poppins, sans-serif;
+  padding-bottom: 0px;
+}
+
+button:hover {
+  box-shadow: none;
+  color: #7190e1;
+  transform: scale(1.1);
+}
+
+
+.container1{
+  button:hover {
+      background-color:rgb(77, 184, 194);
+      color: black;
+    }
+  button {
+      
+      width: 180px;
+      height: 60px;
+      border: 2px solid rgb(77, 184, 194);
+      border-radius: 12px;
+      padding: 2px 30px;
+      margin: 10px;
+      text-align: center;
+      display: inline-block;
+      position: relative;
+      transition-duration:0.4s;
+  }
+  
+  .btn-container1{
+      padding:10px;
+      
+      border: 2px; 
+      border-radius: 1px;
+      padding: 20px; 
+      box-shadow: 2px 2px 10px rgba(122, 72, 202, 0.1);
+  }
+  .fixed-size {
+      width: 300px; 
+  }
+  
+  @media only screen and (max-width: 600px) {
+      button {
+          width: 100px; 
+          height: 50px; 
+          font-size: 14px; 
+          font-family: poppins, sans-serif;
+      }
+  }
+  
+  @media only screen and (max-width: 400px) {
+      button {
+          width: 80px; 
+          height: 40px; 
+          font-size: 12px;
+          font-family: poppins, sans-serif;
+      }
+  }
+}
