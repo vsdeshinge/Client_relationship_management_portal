@@ -1,0 +1,192 @@
+body {
+    background: #3b3b3c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    position: relative; /* Ensure body is positioned */
+}
+
+.logo-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 80px;
+    width: 300px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    z-index: 2; /* Ensure logo container is on top */
+}
+
+.logo {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    width: 80%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+    margin: 20px;
+    position: relative; /* Ensure container is positioned */
+    z-index: 1; /* Lower z-index to be below overlay */
+}
+
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #3b3b3c;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: transform 1.2s ease-in-out;
+    z-index: 2; /* Ensure overlay is above container */
+}
+
+.overlay-container.transition-left {
+    transform: translateX(-100%);
+}
+
+.overlay-panel {
+    text-align: center;
+    color: white;
+}
+
+.overlay-image {
+    max-width: 200px;
+    margin-bottom: 20px;
+}
+
+.form-container {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1; /* Ensure form container is below overlay */
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1 {
+    font-weight: bold;
+    margin: 0 0 20px;
+    text-align: center;
+}
+
+input {
+    background-color: #eee;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    width: calc(100% - 20px);
+    box-sizing: border-box;
+}
+
+button {
+    border-radius: 20px;
+    border: 1px solid #1c1e22;
+    background-color: #1c1e22;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    display: block;
+    margin: 10px auto;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+button:focus {
+    outline: none;
+}
+
+.thank-you-container {
+    display: none;
+    text-align: center;
+    background-color: #3b3b3c;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    animation: fadeIn 0.5s ease-in-out;
+    z-index: 2; /* Ensure thank you container is above form */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        width: 90%;
+    }
+
+    .logo-container {
+        top: 10px;
+        right: 10px;
+    }
+
+    .form-container, .overlay-container {
+        padding: 10px;
+    }
+
+    .overlay-image {
+        max-width: 150px;
+    }
+
+    input {
+        padding: 8px;
+        margin: 8px;
+    }
+
+    button {
+        padding: 10px 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .overlay-image {
+        max-width: 100px;
+    }
+
+    input {
+        padding: 6px;
+        margin: 6px;
+    }
+
+    button {
+        padding: 8px 20px;
+    }
+}

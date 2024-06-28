@@ -1,8 +1,18 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
+
+* {
+    box-sizing: border-box;
+}
 
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f0f2f5;
+    background-image: url('assets/Designer.png');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
     margin: 0;
     padding: 20px;
 }
@@ -12,28 +22,26 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
     max-width: 1200px;
+    width: 100%;
     margin: 0 auto;
 }
 
 .details {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
     padding: 24px;
     transition: all 0.3s ease;
-    border: 1px solid rgba(0,0,0,0.08);
 }
 
 .details:hover {
-    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
     transform: translateY(-5px);
-    border-color: #1976d2;
 }
 
 .title {
     font-size: 20px;
-    font-weight: 600;
-    color: #1976d2;
+    font-weight: bold;
+    color: #0248aa;
     margin-bottom: 20px;
     display: block;
 }
@@ -56,18 +64,12 @@ label {
 }
 
 input[type="text"], select {
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
     font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-input[type="text"]:focus, select:focus {
-    border-color: #1976d2;
-    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
-    outline: none;
 }
 
 input[type="checkbox"] {
@@ -75,12 +77,6 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
-/* Hover effect for checkbox labels */
-.input-field:hover label {
-    color: #1976d2;
-}
-
-/* Container for centering  the button */
 .submit-container {
     display: flex;
     justify-content: center;
@@ -88,38 +84,68 @@ input[type="checkbox"] {
     margin-bottom: 30px;
 }
 
-/* Style for the submit button */
 #submitBtn {
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
+    border-radius: 20px;
+    border: 1px solid #0248aa;
+    background-color: #0248aa;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-#submitBtn:hover {
-    background-color: #1565c0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transform: translateY(-2px);
+    transition: transform 80ms ease-in;
+    cursor: pointer;
 }
 
 #submitBtn:active {
-    background-color: #0d47a1;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    transform: translateY(0);
+    transform: scale(0.95);
 }
 
-/* Responsive adjustments */
+#submitBtn:focus {
+    outline: none;
+}
+
+footer {
+    background-color: #222;
+    color: #fff;
+    font-size: 14px;
+    bottom: 0;
+    position: fixed;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 999;
+}
+
+footer p {
+    margin: 10px 0;
+}
+
+footer a {
+    color: #0248aa;
+    text-decoration: none;
+}
+
 @media (max-width: 768px) {
+    #formContainer {
+        grid-template-columns: 1fr;
+    }
+
+    .details {
+        padding: 20px;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+
+    input[type="text"], select {
+        padding: 10px;
+    }
+
     #submitBtn {
-        padding: 10px 20px;
-        font-size: 14px;
+        padding: 10px 30px;
+        font-size: 11px;
     }
 }

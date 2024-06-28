@@ -27,19 +27,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 require('dotenv').config();
 
-// MongoDB connection
-const dbUri = process.env.MONGO_URI;
-
-mongoose.connect(dbUri, {
+mongoose.connect('mongodb://localhost:27017/posspole', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
-  console.log('Connected to MongoDB Atlas');
+  console.log('Connected to MongoDB');
 }).catch((err) => {
-  console.error('Error connecting to MongoDB Atlas', err);
+  console.error('Error connecting to MongoDB', err);
   process.exit(1);
 });
-
 // WebSocket connection
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -51,28 +47,30 @@ io.on('connection', (socket) => {
 const router = express.Router();
 // Register route
 app.post('/register', async (req, res) => {
-  const { name, syndicate_name,address, username, phone, email, password, personToMeet, personReferred } = req.body;
+  const { name, phone, email, companyName, personToMeet, personReferred } = req.body;
+
+  if (!name || !phone || !email || !companyName || !personToMeet || !personReferred) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
     const newClient = new Client({
       name,
-      syndicate_name: syndicate_name.trim(),
-      address,
-      username,
       phone,
       email,
-      password: hashedPassword,
+      companyName,
       personToMeet,
       personReferred
     });
 
     await newClient.save();
-    res.status(201).json({ message: 'Register successful!' });
+    res.status(201).json({ message: 'Registration successful!' });
   } catch (error) {
     console.error('Error saving client:', error);
     res.status(500).json({ error: 'Error during registration. Please try again later.' });
-  } 
+  }
 });
+
 
 // Login route
 app.post('/login', async (req, res) => {

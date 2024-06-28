@@ -3,24 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client Portal</title>
-    <link rel="stylesheet" href="./css/clientstyle.css">
+    <link rel="stylesheet" href="./css/signup.css">
+    <title>Connect Form</title>
 </head>
 <body>
-    <div class="container0">
-        <div class="container">
-            <div class="brand-title">Client Portal</div>
-            <div class="container1">
-              <div class="inputs">
-        <button onclick="location.href='client-register.html'">Register</button>
-        <button onclick="location.href='client-login.html'">Login</button>
-      
-      </div>
-      </div>    
+    <!-- <div class="logo-container">
+        <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="logo">
+    </div> -->
+    <div class="container">
+        <div class="overlay-container" id="overlayContainer">
+            <div class="overlay-panel overlay-left">
+                <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
+                <h1>Namaste!</h1>
+                <p>Welcome to POSSPOLE!</p>
+            </div>
+        </div>
+        <div class="form-container">
+            <form id="connectForm">
+                <h1 >My Details</h1>
+                <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
+                <input type="text" id="personReferred" placeholder="I'm Referred by" />
+                <input type="text" id="name" placeholder="Name" required />
+                <input type="tel" id="phone" placeholder="Phone Number" required />
+                <input type="email" id="email" placeholder="Email" />
+                <input type="text" id="companyName" placeholder="Company Name" />
+                
+                <button type="submit">Let's Connect</button>
+            </form>
+            <div class="thank-you-container" id="thankYouContainer" style="display:none;">
+                <img src="assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
+                <h1>Thank you for filling out the form!</h1>
+                <p>The request has been sent to the person who you wanted to meet.</p>
+            </div>
+        </div>
     </div>
-    <!-- <h1>Client Portal</h1>
-    <button onclick="location.href='client-register.html'">Register</button>
-    <button onclick="location.href='client-login.html'">Login</button>
-     -->
+    <div id="message"></div>
+
+    <script src="js/client.js"></script>
 </body>
 </html>

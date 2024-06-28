@@ -47,12 +47,9 @@ const fundingSchema = new mongoose.Schema({
 // Main schema that uses the sub-schemas
 const clientSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  syndicate_name: { type: String, required: true },
-  address: { type: String, required: true },
-  username: { type: String, required: true, unique: true },
-  phone: { type: String, required: true },
+  phone: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  companyName: { type: String, required: true },
   personToMeet: { type: String, required: true },
   personReferred: { type: String, required: true },
   market_access: marketAccessSchema,  // Now marketAccessSchema is defined before use
