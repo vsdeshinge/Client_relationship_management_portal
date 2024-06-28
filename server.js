@@ -28,6 +28,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+console.log('MONGODB_URI:', process.env.MONGODB_URI);
+console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
