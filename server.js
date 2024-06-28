@@ -1,3 +1,6 @@
+
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -17,7 +20,7 @@ const Client = require('./models/client.js');
 const Syndicate = require('./models/syndicate.js');
 const Admin = require('./models/admin.js');
 
-const JWT_SECRET = 'shakthi';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Middleware
 app.use(cors());
@@ -25,9 +28,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-require('dotenv').config();
 
-mongoose.connect('mongodb://localhost:27017/posspole', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
