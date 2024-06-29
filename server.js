@@ -1,4 +1,12 @@
-require('dotenv').config();
+const dotenv = require('dotenv');
+const result = dotenv.config();
+
+if (result.error) {
+  console.error("Error loading .env file", result.error);
+} else {
+  console.log("Loaded .env file", result.parsed);
+}
+
 console.log('MONGODB_URI from .env:', process.env.MONGODB_URI);
 console.log('JWT_SECRET from .env:', process.env.JWT_SECRET);
 
@@ -29,6 +37,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Temporary workaround to ensure MONGODB_URI is defined
+process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority&appName=shakthi';
 
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
