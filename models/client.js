@@ -30,7 +30,7 @@ const manufacturingSchema = new mongoose.Schema({
   licensing_inward: { type: Boolean, default: false },
   licensing_outward: { type: Boolean, default: false },
   other_licensing: { type: String },
-  office_space: { type: String}
+  office_space: { type: String }
 });
 
 const fundingSchema = new mongoose.Schema({
@@ -44,6 +44,20 @@ const fundingSchema = new mongoose.Schema({
   other_funding: { type: String }
 });
 
+// New schema for client field data
+const clientFieldDataSchema = new mongoose.Schema({
+  project: [{ title: String, description: String }],
+  product: [{ title: String, description: String }],
+  solution: [{ title: String, description: String }],
+  service: [{ title: String, description: String }],
+  opportunity: [{ title: String, description: String }],
+  reference: [{ title: String, description: String }],
+  domain: [{ title: String, description: String }],
+  leadTime: [{ title: String, description: String }],
+  fund: [{ title: String, description: String }],
+  nextAction: [{ title: String, description: String }]
+});
+
 // Main schema that uses the sub-schemas
 const clientSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -51,12 +65,14 @@ const clientSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   companyName: { type: String, required: true },
   personToMeet: { type: String, required: true },
+  syndicate_name: { type: String, required: true },
   personReferred: { type: String, required: true },
-  market_access: marketAccessSchema,  // Now marketAccessSchema is defined before use
+  market_access: marketAccessSchema,
   expert_talent: expertTalentSchema,
   product_creation: productCreationSchema,
   manufacturing: manufacturingSchema,
   funding: fundingSchema,
+  clientFieldData: clientFieldDataSchema, // Add the new schema here
   approved: { type: Boolean, default: false },
   adminComment: { type: String }
 });

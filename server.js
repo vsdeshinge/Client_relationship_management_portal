@@ -58,11 +58,56 @@ io.on('connection', (socket) => {
 });
 
 const router = express.Router();
+
+// Middleware to verify JWT
+function authenticateToken(req, res, next) {
+  const tokenHeader = req.headers['authorization'];
+  console.log('Authorization header:', tokenHeader);
+  if (!tokenHeader) {
+      console.error('No token provided');
+      return res.sendStatus(401);
+  }
+
+  const token = tokenHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+  console.log('Extracted token:', token);
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+      if (err) {
+          console.error('Failed to verify token:', err);
+          return res.sendStatus(403);
+      }
+      console.log('Token verified, user:', user);
+      req.user = user;
+      next();
+  });
+}
+
+function generateEmailAuthToken(email) {
+  const payload = { email };
+  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
+  return token;
+}
+
+router.post('/generate-email-auth-token', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+  }
+
+  try {
+      const token = generateEmailAuthToken(email);
+      res.status(200).json({ token });
+  } catch (error) {
+      console.error('Error generating email auth token:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
 // Register route
 app.post('/register', async (req, res) => {
-  const { name, phone, email, companyName, personToMeet, personReferred } = req.body;
+  const { name, phone, email, companyName, personToMeet, personReferred,syndicate_name } = req.body;
 
-  if (!name || !phone || !email || !companyName || !personToMeet || !personReferred) {
+  if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
     return res.status(400).json({ error: 'All fields are required.' });
   }
 
@@ -73,7 +118,8 @@ app.post('/register', async (req, res) => {
       email,
       companyName,
       personToMeet,
-      personReferred
+      personReferred,
+      syndicate_name: syndicate_name.trim()
     });
 
     await newClient.save();
@@ -107,29 +153,6 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-// Middleware to verify JWT
-function authenticateToken(req, res, next) {
-  const tokenHeader = req.headers['authorization'];
-  console.log('Authorization header:', tokenHeader);
-  if (!tokenHeader) {
-      console.error('No token provided');
-      return res.sendStatus(401);
-  }
-
-  const token = tokenHeader.split(' ')[1]; // Extract token from "Bearer <token>"
-  console.log('Extracted token:', token);
-
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) {
-          console.error('Failed to verify token:', err);
-          return res.sendStatus(403);
-      }
-      console.log('Token verified, user:', user);
-      req.user = user;
-      next();
-  });
-}
-
 app.post('/api/submit-form', authenticateToken, async (req, res) => {
   const formData = req.body;
   console.log('Authenticated user:', req.user);
@@ -341,6 +364,56 @@ router.post('/admin/confirm-approval/:clientId', authenticateToken, async (req, 
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+  
+
+  router.post('/api/clientFieldData', authenticateToken, async (req, res) => {
+      try {
+          const data = req.body;
+  
+          // Find the client in MongoDB by email
+          const client = await Client.findOne({ email: req.user.email });
+          if (!client) {
+              return res.status(404).json({ error: 'Client not found' });
+          }
+  
+          // Ensure clientFieldData exists and initialize if it doesn't
+          if (!client.clientFieldData) {
+              client.clientFieldData = {};
+          }
+  
+          // Update each field in clientFieldData separately
+          for (let field in data) {
+              // Ensure each field in data is not undefined
+              if (data.hasOwnProperty(field) && data[field] !== undefined && data[field] !== null) {
+                  client.clientFieldData[field] = data[field];
+              }
+          }
+  
+          // Save the client document
+          await client.save();
+  
+          res.status(200).json({ message: 'Data submitted successfully' });
+      } catch (error) {
+          console.error('Error submitting client field data:', error);
+          res.status(500).json({ error: 'Internal server error' });
+      }
+  });
+  
+// GET route to fetch client field data
+router.get('/api/clientdata', authenticateToken, async (req, res) => {
+  try {
+      const client = await Client.findOne({ email: req.user.email }); // Assuming email is stored in req.user
+      if (!client) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+      // Extract and send the client field data as needed
+      const clientFieldData = client.clientFieldData;
+      res.status(200).json(clientFieldData);
+  } catch (error) {
+      console.error('Error fetching client field data:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 app.use('/', router); // Mount the router
 

@@ -1,16 +1,17 @@
 // create_syndicate.js
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const Syndicate = require('./models/syndicate.js');
 
 async function main() {
   try {
-    // Connect to MongoDB
-    await mongoose.connect('mongodb://localhost:27017/posspole', {
+    // Connect to MongoDB Atlas
+    const uri = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority&appName=shakthi';
+    await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB Atlas');
 
     // Function to create a syndicate user
     async function createSyndicateUser(user_id, syndicateName, password) {

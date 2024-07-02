@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('syndicateToken');
     if (!token) {
-        window.location.href = 'syndicate_login.html';
+        window.location.href = 'syndicate.html';
         return;
     }
 
@@ -32,13 +32,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="phone editable">Phone: ${client.phone}</div>
                         <div class="email editable">Email: ${client.email}</div>
                         <div class="address editable">Address: ${client.address}</div>
-         
-                        <div class="approval-status">${client.approved ? 'Approved' : 'Pending Approval'}</div> 
-        
+                        <div class="approval-status">${client.approved ? 'Approved' : 'Pending Approval'}</div>
                         <div class="admin-comments">${client.adminComment || 'No comments'}</div>
                         <button class="editBtn">Edit</button>
+                        <button class="more_info" data-email="${client.email}">Add More info</button>
                         <button class="saveBtn" style="display: none;">Save</button>
-                        <button class="sendApprovalBtn" style="display: none;">Send Approval</button>
+                        <button class="sendApprovalBtn">Send Approval</button>
                         <button class="backBtn" style="display: none;">Back</button>
                     </div>
                     <div class="client-details" style="display: none;">
@@ -79,6 +78,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                     disableEditing(clientDiv);
                 });
 
+                clientDiv.querySelector('.more_info').addEventListener('click', async () => {
+                    const email = client.email;
+                    try {
+                        const response = await fetch('/generate-email-auth-token', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ email })
+                        });
+
+                        const result = await response.json();
+                        if (response.ok) {
+                            localStorage.setItem('emailAuthToken', result.token);
+                            window.location.href = `client_field_data.html?email=${email}`;
+                        } else {
+                            alert('Failed to create email auth token');
+                        }
+                    } catch (error) {
+                        console.error('Error creating email auth token:', error);
+                        alert('Error creating email auth token');
+                    }
+                });
+
                 clientsContainer.appendChild(clientDiv);
             });
         } else {
@@ -113,7 +137,6 @@ function enableEditing(clientDiv) {
 
     clientSummary.querySelector('.editBtn').style.display = 'none';
     clientSummary.querySelector('.saveBtn').style.display = 'inline';
-    clientSummary.querySelector('.sendApprovalBtn').style.display = 'inline';
     clientSummary.querySelector('.backBtn').style.display = 'inline';
 }
 
@@ -138,7 +161,6 @@ function disableEditing(clientDiv) {
 
     clientSummary.querySelector('.editBtn').style.display = 'inline';
     clientSummary.querySelector('.saveBtn').style.display = 'none';
-    clientSummary.querySelector('.sendApprovalBtn').style.display = 'none';
     clientSummary.querySelector('.backBtn').style.display = 'none';
 }
 
@@ -151,7 +173,7 @@ function gatherEditedData(clientDiv) {
         const syndicateName = clientSummary.querySelector('.syndicate-name')?.textContent.trim().replace('Syndicate Name: ', '') || '';
         const phone = clientSummary.querySelector('.phone')?.textContent.trim().replace('Phone: ', '') || '';
         const email = clientSummary.querySelector('.email')?.textContent.trim().replace('Email: ', '') || '';
-        const address = clientSummary.querySelector('.address')?.textContent.trim().replace('Address: ', '') || '';
+        const companyName = clientSummary.querySelector('.companyName')?.textContent.trim().replace('Company Name: ', '') || '';
 
         const marketAccess = JSON.parse(clientDetails.querySelector('.market-access')?.textContent.trim() || '{}');
         const expertTalent = JSON.parse(clientDetails.querySelector('.expert-talent')?.textContent.trim() || '{}');

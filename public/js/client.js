@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: document.getElementById('email').value.trim(),
                 companyName: document.getElementById('companyName').value.trim(),
                 personToMeet: document.getElementById('personToMeet').value.trim(),
-                personReferred: document.getElementById('personReferred').value.trim()
+                personReferred: document.getElementById('personReferred').value.trim(),
+                syndicate_name: document.getElementById('syndicate_name').value.trim()
             };
 
             // Validate phone number length

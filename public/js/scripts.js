@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = Object.fromEntries(formData.entries());
             console.log("Data being sent:", data); // Log the data to check if it contains syndicate_name and password
             try {
-                const response = await fetch('http://localhost:3000/syndicate-login', {
+                const response = await fetch('/syndicate-login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch('http://localhost:3000/syndicate-data', {
+                const response = await fetch('/syndicate-data', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`
