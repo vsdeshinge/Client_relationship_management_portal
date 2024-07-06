@@ -116,61 +116,72 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
-
-    // Function to fetch client field data from server
-    function fetchClientFieldData() {
-        fetch('http://localhost:3000/api/clientdata', {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('emailAuthToken')}`
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
+// Function to fetch client field data from server
+function fetchClientFieldData() {
+    fetch('http://localhost:3000/api/clientdata', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('emailAuthToken')}`
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status); // Log response status
+        console.log('Response headers:', response.headers); // Log response headers
+        return response.text(); // Use text() to log raw response
+    })
+    .then(rawData => {
+        console.log('Raw response data:', rawData); // Log raw response data
+        try {
+            const data = JSON.parse(rawData); // Parse JSON
             displayClientFieldData(data);
-        })
-        .catch(error => {
-            console.error('Error fetching client field data:', error);
+        } catch (error) {
+            console.error('Error parsing JSON:', error);
             alert('Failed to fetch client field data');
-        });
-    }
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching client field data:', error);
+        alert('Failed to fetch client field data');
+    });
+}
 
-    // Function to display fetched client field data
-    function displayClientFieldData(clientFieldData) {
-        savedDataContainer.innerHTML = ''; // Clear existing data
+// Function to display fetched client field data
+function displayClientFieldData(clientFieldData) {
+    savedDataContainer.innerHTML = ''; // Clear existing data
 
-        // Iterate through each option and display its data
-        Object.keys(clientFieldData).forEach(option => {
-            const optionData = clientFieldData[option];
-            if (optionData.length > 0) {
-                const optionContainer = document.createElement('div');
-                optionContainer.classList.add('option-container');
+    // Iterate through each option and display its data
+    Object.keys(clientFieldData).forEach(option => {
+        const optionData = clientFieldData[option];
+        if (Array.isArray(optionData) && optionData.length > 0) { // Check if optionData is an array and has elements
+            const optionContainer = document.createElement('div');
+            optionContainer.classList.add('option-container');
 
-                const optionHeader = document.createElement('h3');
-                optionHeader.textContent = option.toUpperCase();
-                optionContainer.appendChild(optionHeader);
+            const optionHeader = document.createElement('h3');
+            optionHeader.textContent = option.toUpperCase();
+            optionContainer.appendChild(optionHeader);
 
-                optionData.forEach(item => {
-                    const itemContainer = document.createElement('div');
-                    itemContainer.classList.add('item-container');
+            optionData.forEach(item => {
+                const itemContainer = document.createElement('div');
+                itemContainer.classList.add('item-container');
 
-                    const titleElement = document.createElement('p');
-                    titleElement.textContent = `Title: ${item.title}`;
+                const titleElement = document.createElement('p');
+                titleElement.textContent = `Title: ${item.title}`;
 
-                    const descriptionElement = document.createElement('p');
-                    descriptionElement.textContent = `Description: ${item.description}`;
+                const descriptionElement = document.createElement('p');
+                descriptionElement.textContent = `Description: ${item.description}`;
 
-                    itemContainer.appendChild(titleElement);
-                    itemContainer.appendChild(descriptionElement);
+                itemContainer.appendChild(titleElement);
+                itemContainer.appendChild(descriptionElement);
 
-                    optionContainer.appendChild(itemContainer);
-                });
+                optionContainer.appendChild(itemContainer);
+            });
 
-                savedDataContainer.appendChild(optionContainer);
-            }
-        });
-    }
+            savedDataContainer.appendChild(optionContainer);
+        }
+    });
+}
 
-    // Initial fetch of client field data when the page loads
-    fetchClientFieldData();
+// Initial fetch of client field data when the page loads
+fetchClientFieldData();
+
 });

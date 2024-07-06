@@ -1,32 +1,70 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERP System</title>
-    <link rel="stylesheet" href="css/indexstyle.css">
+    <link rel="stylesheet" href="./css/indexstyle.css">
+    <title>Login System</title>
 </head>
 <body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-target="welcome">Visitor</button>
+            <button class="tab-btn" data-target="client">Client</button>
+            <button class="tab-btn" data-target="syndicate">Syndicate</button>
+            <button class="tab-btn" data-target="admin">Admin</button>
+        </div>
 
-    <body>
+        <div class="form-container active" id="welcome">
+            <div class="overlay-container" id="overlayContainer">
+                <div class="overlay-panel overlay-left">
+                    <img src="./assets/logo (1).png" alt="Posspole Logo" class="overlay-image">
+                    <h1>Namaste!</h1>
+                    <p>Welcome to POSSPOLE!</p>
+                    <button class="ghost" id="visitorRedirect">Click here</button>
+                </div>
+            </div>
+        </div>
 
-        <div class="container0">
-       <div class="container">
-           <div class="brand-logo"></div>
-           <div class="container1">
-           <div onclick="location.href='https://posspole.com/'" class="brand-title">POSSPOLE</div>
-           <div class="inputs">
-           <button onclick="location.href='client.html'">Client</button>
-           <button onclick="location.href='syndicate.html'">Syndicate</button>
-           <button onclick="location.href='admin_login.html'">Admin</button>
-       
-           </div>
-         </div>  
-       </div>  
-   </div>  
-       
-   </body>
-   
+        <div class="form-container" id="client">
+            <h2>Client Login</h2>
+            <form id="clientForm">
+                <input type="tel" placeholder="Phone No" required>
+                <input type="text" placeholder="OTP" required>
+                <br>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="form-container" id="syndicate">
+            <h2>Syndicate Login</h2>
+            <form id="syndicateLoginForm">
+                <input id="syndicate_name" name="syndicate_name" class="input" type="text" placeholder=" " required/>
+                <label for="syndicate_name" class="placeholder">Syndicate Name</label>
+                <input id="password" name="password" class="input" type="password" placeholder=" " required/>
+                    <label for="password" class="placeholder">Password</label>
+                <br>
+                <button class="submit" type="submit">Login</button>
+            </form>
+            <div id="clients"></div>
+        </div>
+
+        <div class="form-container" id="admin">
+            <h2>Admin Login</h2>
+            <form id="adminForm">
+                <label for="admin_username">Username:</label>
+                <input type="text" id="admin_username" name="username" required>
+                <br>
+                <label for="admin_password">Password:</label>
+                <input type="password" id="admin_password" name="password" required>
+                <br>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="./js/index.js"></script>
+    <script src="./js/admin_login.js"></script>
+    <script src="./js/scripts.js"></script>
+</body>
 </html>
-

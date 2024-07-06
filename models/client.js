@@ -67,6 +67,7 @@ const clientSchema = new mongoose.Schema({
   personToMeet: { type: String, required: true },
   syndicate_name: { type: String, required: true },
   personReferred: { type: String, required: true },
+  faceImage: { type: String },  // Change type to String
   market_access: marketAccessSchema,
   expert_talent: expertTalentSchema,
   product_creation: productCreationSchema,

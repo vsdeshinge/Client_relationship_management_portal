@@ -7,9 +7,6 @@
     <title>Connect Form</title>
 </head>
 <body>
-    <!-- <div class="logo-container">
-        <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="logo">
-    </div> -->
     <div class="container">
         <div class="overlay-container" id="overlayContainer">
             <div class="overlay-panel overlay-left">
@@ -20,15 +17,25 @@
         </div>
         <div class="form-container">
             <form id="connectForm">
-                <h1 >My Details</h1>
+                <h1>My Details</h1>
+                <!-- Your input fields -->
                 <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
                 <input type="text" id="personReferred" placeholder="I'm Referred by" />
                 <input type="text" id="name" placeholder="Name" required />
                 <input type="tel" id="phone" placeholder="Phone Number" required />
                 <input type="email" id="email" placeholder="Email" />
-                <input type="text"  id="syndicate_name" placeholder="Presentor Name" required/>
+                <input type="text" id="syndicate_name" placeholder="Presentor Name" required/>
                 <input type="text" id="companyName" placeholder="Company Name" />
                 
+                <!-- Button for capturing face image -->
+                <button id="captureFace">Capture Face Image</button>
+
+                <!-- Placeholder for displaying captured image -->
+                <div id="capturedImages">
+                    <h2>Captured Image:</h2>
+                    <div id="faceImageDisplay"></div>
+                </div>
+
                 <button type="submit">Let's Connect</button>
             </form>
             <div class="thank-you-container" id="thankYouContainer" style="display:none;">
@@ -40,6 +47,6 @@
     </div>
     <div id="message"></div>
 
-    <script src="js/client.js"></script>
+    <script src="./js/visitor.js"></script>
 </body>
 </html>

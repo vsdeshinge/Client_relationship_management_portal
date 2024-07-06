@@ -25,13 +25,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 clientDiv.className = 'client';
                 clientDiv.setAttribute('data-id', client._id);
 
+                const clientFieldDataTitles = extractClientFieldDataTitles(client.clientFieldData);
+
                 clientDiv.innerHTML = `
                     <div class="client-summary">
                         <div class="client-name editable">${client.name}</div>
                         <div class="syndicate-name editable">Syndicate Name: ${client.syndicate_name}</div>
                         <div class="phone editable">Phone: ${client.phone}</div>
                         <div class="email editable">Email: ${client.email}</div>
-                        <div class="address editable">Address: ${client.address}</div>
+                        <div class="company-name editable">Company Name: ${client.companyName}</div>
+                        <div class="client-field-titles">${clientFieldDataTitles}</div>
                         <div class="approval-status">${client.approved ? 'Approved' : 'Pending Approval'}</div>
                         <div class="admin-comments">${client.adminComment || 'No comments'}</div>
                         <button class="editBtn">Edit</button>
@@ -114,6 +117,21 @@ document.addEventListener('DOMContentLoaded', async () => {
         alert('Error fetching syndicate data');
     }
 });
+
+// Function to extract and format titles from client field data
+function extractClientFieldDataTitles(clientFieldData) {
+    let titles = '';
+    Object.keys(clientFieldData).forEach(option => {
+        if (Array.isArray(clientFieldData[option])) {
+            clientFieldData[option].forEach(item => {
+                if (item.title) {
+                    titles += `<div class="client-field-title">${option.toUpperCase()}: ${item.title}</div>`;
+                }
+            });
+        }
+    });
+    return titles || 'No titles available';
+}
 
 function enableEditing(clientDiv) {
     const clientSummary = clientDiv.querySelector('.client-summary');

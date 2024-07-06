@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visitor Profile Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/visitor.css">
+</head>
+<body>
+    <div class="dashboard">
+        <div class="tile profile">
+            <div class="profile-pic">PROFILE PIC</div>
+            <div class="profile-info">
+                <div id="name">Name</div>
+                <div id="contact">Contact</div>
+                <div id="company">Company</div>
+                <div id="domain">Domain</div>
+            </div>
+        </div>
+        <div class="tile">
+            <a href="#" class="button" id="viewVisitingCard">View Visiting Card</a>
+            <a href="#" class="button" id="viewNeedForm">View Need Form</a>
+        </div>
+        <div class="tile">
+            <div class="status" id="status">Status: Pending</div>
+            <a href="#" class="button" id="meetings">Meetings</a>
+        </div>
+        <div class="tile" id="popupContent">
+            <div class="container">
+                <div class="overlay-container">
+                    <button class="btn-option" data-option="Project">Project</button>
+                    <button class="btn-option" data-option="Product">Product</button>
+                    <button class="btn-option" data-option="Solution">Solution</button>
+                    <button class="btn-option" data-option="Service">Service</button>
+                    <button class="btn-option" data-option="Opportunity">Opportunity</button>
+                    <button class="btn-option" data-option="Reference">Reference</button>
+                    <button class="btn-option" data-option="Domain">Domain</button>
+                    <button class="btn-option" data-option="Lead Time">Lead Time</button>
+                    <button class="btn-option" data-option="Fund">Fund</button>
+                    <button class="btn-option" data-option="Next Action">Next Action</button>
+                    <button class="btn-option" data-option="Add Project">Add Project</button>
+                </div>
+            </div>
+            <div class="popup" id="popup">
+                <h2>Add Info</h2>
+                <input type="text" id="popupTitle" placeholder="Title">
+                <textarea id="popupDescription" placeholder="Description"></textarea>
+                <div id="popupFields"></div>
+                <button id="addMoreButton">Add More</button>
+                <button id="saveButton">Save</button>
+                <button id="backButton">Back</button>
+            </div>
+            <button id="submitButton" class="submit-button">Submit</button>
+            <br><br>
+            <button id="logoutButton" class="logout-button">Logout</button>
+        </div>
+        <div class="tile">
+            <a href="#" class="button" id="sendForApproval">Send for Approval</a>
+        </div>
+    </div>
+
+    <div class="popup" id="visitingCardPopup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h2>Visiting Card</h2>
+            <img src="https://via.placeholder.com/400x200.png?text=Visiting+Card" alt="Visiting Card">
+        </div>
+    </div>
+
+    <div class="popup" id="needFormPopup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h2>Need Form</h2>
+            <p>Need form details go here...</p>
+        </div>
+    </div>
+
+    <div class="popup" id="meetingsPopup">
+        <div class="popup-content">
+            <span class="close">&times;</span>
+            <h2>Meetings</h2>
+            <ul>
+                <li>Meeting 1: Date, Time</li>
+                <li>Meeting 2: Date, Time</li>
+                <li>Meeting 3: Date, Time</li>
+            </ul>
+        </div>
+    </div>
+    <script src="./js/visitor_page.js"></script>
+</body>
+</html>

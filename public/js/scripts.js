@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(result.message);
                 if (result.message === 'Syndicate login successful') {
                     localStorage.setItem('syndicateToken', result.token);
-                    window.location.href = '/syndicate-dashboard.html';
+                    localStorage.setItem('userType', 'syndicate'); 
+                    window.location.href = '/welcome.html';
                 }
             } catch (error) {
                 console.error('Error logging in:', error);

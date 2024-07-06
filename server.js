@@ -14,11 +14,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
-const bcrypt = require('bcryptjs');
 const http = require('http');
+const bcrypt = require('bcryptjs');
 const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const multer = require('multer');
+const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
+
+
+
+
 
 const app = express();
 const server = http.createServer(app);
@@ -31,15 +38,7 @@ const Admin = require('./models/admin.js');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Temporary workaround to ensure MONGODB_URI is defined
-process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority&appName=shakthi';
-
+// Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -49,11 +48,42 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
   process.exit(1);
 });
+
+// Init GridFS
+let gfs;
+
+mongoose.connection.once('open', () => {
+  gfs = Grid(mongoose.connection.db, mongoose.mongo);
+  gfs.collection('uploads');
+  console.log('GridFS initialized');
+});
+
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Temporary workaround to ensure MONGODB_URI is defined
+process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
+
+// Multer setup for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads');
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({ storage });
+
 // WebSocket connection
 io.on('connection', (socket) => {
   console.log('a user connected');
   socket.on('disconnect', () => {
-      console.log('user disconnected');
+    console.log('user disconnected');
   });
 });
 
@@ -64,21 +94,21 @@ function authenticateToken(req, res, next) {
   const tokenHeader = req.headers['authorization'];
   console.log('Authorization header:', tokenHeader);
   if (!tokenHeader) {
-      console.error('No token provided');
-      return res.sendStatus(401);
+    console.error('No token provided');
+    return res.sendStatus(401);
   }
 
   const token = tokenHeader.split(' ')[1]; // Extract token from "Bearer <token>"
   console.log('Extracted token:', token);
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-      if (err) {
-          console.error('Failed to verify token:', err);
-          return res.sendStatus(403);
-      }
-      console.log('Token verified, user:', user);
-      req.user = user;
-      next();
+    if (err) {
+      console.error('Failed to verify token:', err);
+      return res.sendStatus(403);
+    }
+    console.log('Token verified, user:', user);
+    req.user = user;
+    next();
   });
 }
 
@@ -92,44 +122,45 @@ router.post('/generate-email-auth-token', async (req, res) => {
   const { email } = req.body;
 
   if (!email) {
-      return res.status(400).json({ error: 'Email is required' });
+    return res.status(400).json({ error: 'Email is required' });
   }
 
   try {
-      const token = generateEmailAuthToken(email);
-      res.status(200).json({ token });
+    const token = generateEmailAuthToken(email);
+    res.status(200).json({ token });
   } catch (error) {
-      console.error('Error generating email auth token:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error generating email auth token:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-// Register route
-app.post('/register', async (req, res) => {
-  const { name, phone, email, companyName, personToMeet, personReferred,syndicate_name } = req.body;
+
+//visitor register
+app.post('/register', upload.single('faceImage'), async (req, res) => {
+  const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
 
   if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
-    return res.status(400).json({ error: 'All fields are required.' });
+      return res.status(400).json({ error: 'All fields are required.' });
   }
 
   try {
-    const newClient = new Client({
-      name,
-      phone,
-      email,
-      companyName,
-      personToMeet,
-      personReferred,
-      syndicate_name: syndicate_name.trim()
-    });
+      const newClient = new Client({
+          name,
+          phone,
+          email,
+          companyName,
+          personToMeet,
+          personReferred,
+          syndicate_name: syndicate_name.trim(),
+          faceImage: req.file ? req.file.filename : null
+      });
 
-    await newClient.save();
-    res.status(201).json({ message: 'Registration successful!' });
+      await newClient.save();
+      res.status(201).json({ message: 'Registration successful!' });
   } catch (error) {
-    console.error('Error saving client:', error);
-    res.status(500).json({ error: 'Error during registration. Please try again later.' });
+      console.error('Error saving client:', error);
+      res.status(500).json({ error: 'Error during registration. Please try again later.' });
   }
 });
-
 
 // Login route
 app.post('/login', async (req, res) => {
@@ -307,64 +338,36 @@ app.post('/send-approval-request/:clientId', authenticateToken, async (req, res)
     res.status(500).json({ error: 'Failed to send approval request' });
   }
 });
-// Admin routes
-router.get('/admin/pending-approvals', authenticateToken, async (req, res) => {
-  try {
-    const pendingClients = await Client.find({ approved: false });
-    res.json(pendingClients);
-  } catch (error) {
-    console.error('Error fetching pending approvals:', error);
-    res.status(500).json({ error: 'Failed to fetch pending approvals' });
-  }
-});
 
-router.post('/admin/confirm-approval/:clientId', authenticateToken, async (req, res) => {
-  const clientId = req.params.clientId;
-  const { adminComment } = req.body;
 
-  console.log('Received approval request for client:', clientId);
-  console.log('Admin comments:', adminComment);
+
+// Admin login route
+// Admin login route
+app.post('/admin/login', async (req, res) => {
+  const { username, password } = req.body;
+  console.log(`Attempting login with username: ${username} and password: ${password}`);
 
   try {
-    const updatedClient = await Client.findByIdAndUpdate(clientId, {
-      approved: true,
-      adminComment: adminComment || ''
-    }, { new: true });
-
-    if (!updatedClient) {
-      console.error('Client not found');
-      return res.status(404).json({ error: 'Client not found' });
-    }
-
-    console.log('Client updated successfully:', updatedClient);
-    res.status(200).json({ message: 'Approval confirmed', client: updatedClient });
-  } catch (error) {
-    console.error('Error confirming approval:', error);
-    res.status(500).json({ error: 'Failed to confirm approval' });
-  }
-});
-
-  app.post('/admin/login', async (req, res) => {
-    const { username, password } = req.body;
-    try {
       const admin = await Admin.findOne({ username });
       if (!admin) {
-        return res.status(401).json({ message: 'Invalid username or password' });
+          console.log('No admin found with that username');
+          return res.status(401).json({ error: 'Invalid username or password' });
       }
 
-      const isMatch = await bcrypt.compare(password, admin.password);
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid username or password' });
+      const passwordMatch = await bcrypt.compare(password, admin.password);
+      if (!passwordMatch) {
+          console.log('Password does not match');
+          return res.status(401).json({ error: 'Invalid username or password' });
       }
 
-      const token = jwt.sign({ username: admin.username }, JWT_SECRET, { expiresIn: '1h' });
-      res.json({ token });
-    } catch (error) {
-      console.error('Login error:', error);
-      res.status(500).json({ message: 'Internal server error' });
-    }
-  });
-  
+      const token = jwt.sign({ id: admin._id }, JWT_SECRET, { expiresIn: '1h' });
+      console.log('Login successful, admin ID:', admin._id);
+      res.status(200).json({ token, adminId: admin._id }); // Ensure adminId is sent back in the response
+  } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
   router.post('/api/clientFieldData', authenticateToken, async (req, res) => {
       try {
@@ -398,20 +401,118 @@ router.post('/admin/confirm-approval/:clientId', authenticateToken, async (req, 
           res.status(500).json({ error: 'Internal server error' });
       }
   });
-  
 // GET route to fetch client field data
 router.get('/api/clientdata', authenticateToken, async (req, res) => {
+  console.log('Fetching client data for email:', req.user.email); // Log email
+  
   try {
       const client = await Client.findOne({ email: req.user.email }); // Assuming email is stored in req.user
       if (!client) {
+          console.log('Client not found for email:', req.user.email); // Log if client not found
           return res.status(404).json({ error: 'Client not found' });
       }
       // Extract and send the client field data as needed
       const clientFieldData = client.clientFieldData;
+      console.log('Client field data:', clientFieldData); // Log client field data
       res.status(200).json(clientFieldData);
   } catch (error) {
       console.error('Error fetching client field data:', error);
       res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// admin dashboard 
+
+router.get('/admin/:id', authenticateToken, async (req, res) => {
+  try {
+      const admin = await Admin.findById(req.params.id).select('username');
+      if (!admin) {
+          return res.status(404).json({ error: 'Admin not found' });
+      }
+      res.status(200).json(admin);
+  } catch (error) {
+      console.error('Error fetching admin details:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+router.get('/visitors-count', authenticateToken, async (req, res) => {
+  try {
+    const walkInClientsCount = await Client.countDocuments({ status: 'walk_in' });
+    const customersCount = await Client.countDocuments({ status: 'customer' });
+    const qualifiedLeadCount = await Client.countDocuments({ status: 'qualified_lead' });
+    const onHoldClientsCount = await Client.countDocuments({ status: 'on_hold' });
+    const businessProposalCount = await Client.countDocuments({ status: 'business_proposal' });
+
+    res.status(200).json({
+      walkInClients: walkInClientsCount,
+      customers: customersCount,
+      qualifiedLead: qualifiedLeadCount,
+      onHoldClients: onHoldClientsCount,
+      businessProposal: businessProposalCount,
+    });
+  } catch (error) {
+    console.error('Error fetching visitor counts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/visitors', authenticateToken, async (req, res) => {
+  try {
+    const clients = await Client.find().select('name companyName domain approved');
+    res.status(200).json(clients);
+  } catch (error) {
+    console.error('Error fetching visitors:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.put('/visitor/:id/status', authenticateToken, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const visitor = await Client.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    if (!visitor) {
+      return res.status(404).json({ error: 'Visitor not found' });
+    }
+    res.status(200).json(visitor);
+  } catch (error) {
+    console.error('Error updating visitor status:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.get('/clients-count', authenticateToken, async (req, res) => {
+  try {
+    const clientsCount = await Client.countDocuments();
+    res.status(200).json({ clientsCount });
+  } catch (error) {
+    console.error('Error fetching clients count:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+router.get('/clients', authenticateToken, async (req, res) => {
+  try {
+    const clients = await Client.find().select('name companyName status');
+    res.status(200).json(clients);
+  } catch (error) {
+    console.error('Error fetching clients:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
+  console.log('Received request for visitor ID:', req.params.id);
+  try {
+    const visitor = await Client.findById(req.params.id);
+    if (!visitor) {
+      console.log('Visitor not found for ID:', req.params.id);
+      return res.status(404).json({ error: 'Visitor not found' });
+    }
+    res.status(200).json(visitor);
+  } catch (error) {
+    console.error('Error fetching visitor details:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

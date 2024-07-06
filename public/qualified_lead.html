@@ -5,94 +5,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POSSPOLE Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./css/admindash.css">
+    <link rel="stylesheet" href="./css/qualified_lead.css">
+   
 </head>
 <body>
+    
     <div class="dashboard">
-        <header>
-            <div class="logo">POSSPOLE</div>
-            <div class="search-container">
-                <input type="text" placeholder="Search" id="searchInput" class="search-input">
-            </div>
-        </header>
         <aside class="sidebar">
-            <div class="welcome-card">
-                <h2>Welcome ABC,</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur sed.</p>
-                <button id="logoutButton" onclick="logout()" style="display: none;">Logout</button>
+            <div class="logo">
+                <img src="globe.jpg" alt="POSSPOLE">
+                POSSPOLE
             </div>
+            
             <nav>
-                <div class="nav-item">Visitors</div>
-                <div class="nav-item">Qualified Lead</div>
+                <div class="nav-item active">Visitors</div>
+                <div class="nav-item">Potential Lead</div>
                 <div class="nav-item">Business Proposal</div>
                 <div class="nav-item">Customer</div>
             </nav>
         </aside>
         <main>
-            <div class="metrics-container">
-                <div class="metric-card large">
-                    <h3>Walk In Clients</h3>
-                    <div class="metric-value" id="walkInClients">95</div>
+            <header>
+                <div class="user-info">
+                    <div class="avatar"></div>
+                    <div class="details">
+                        <p>Name: Vidya</p>
+                        <p>Company: Ltv-Lf</p>
+                        <p>Domain: ABC</p>
+                        <p>Email: vidya@gmail.com</p>
+                        <p>Phone no.: 1234567890</p>
+                    </div>
                 </div>
-                <div class="metric-card">
-                    <h3>Customers</h3>
-                    <div class="metric-value" id="customers">55</div>
+                <div class="actions">
+                    <button class="btn">Visiting Card</button>
+                    <button class="btn">View Need Form</button>
                 </div>
-                <div class="metric-card">
-                    <h3>Qualified Lead</h3>
-                    <div class="metric-value" id="qualifiedLead">50</div>
-                </div>
-                <div class="metric-card">
-                    <h3>On Hold Clients</h3>
-                    <div class="metric-value" id="onHoldClients">25</div>
-                </div>
-                <div class="metric-card">
-                    <h3>Business Proposal</h3>
-                    <div class="metric-value" id="businessProposal">45</div>
-                </div>
+            </header>
+
+                <nav class="main-nav">
+                    <div class="nav-item">Projects</div>
+                    <div class="nav-item">Products</div>
+                    <div class="nav-item active">Services</div>
+                    <div class="nav-item">Solutions</div>
+                </nav>
+               
+        <main>
+            <div id="visitors" class="content">
+                <!-- Content for Visitors tab -->
+                <h2>Visitors</h2>
             </div>
-            <div class="table-container">
-                <h3>Lorem Ipsum</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Company Name</th>
-                            <th>Domain</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clientTable">
-                        <!-- Client data will be inserted here by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-            <!-- Qualified Leads section -->
-            <div id="qualified-leads" class="content active" style="display:none;">
+            <div id="qualified-leads" class="content active">
                 <div id="projects" class="subcontent active">
-                    <header>
-                        <div class="user-info">
-                            <div class="avatar"></div>
-                            <div class="details">
-                                <p>Name: Vidya</p>
-                                <p>Company: Ltv-Lf</p>
-                                <p>Domain: ABC</p>
-                                <p>Email: vidya@gmail.com</p>
-                                <p>Phone no.: 1234567890</p>
-                            </div>
-                        </div>
-                        <div class="actions">
-                            <button class="btn">Visiting Card</button>
-                            <button class="btn">View Need Form</button>
-                        </div>
-                    </header>
-                    <nav class="main-nav">
-                        <div class="nav-item">Projects</div>
-                        <div class="nav-item">Products</div>
-                        <div class="nav-item active">Services</div>
-                        <div class="nav-item">Solutions</div>
-                    </nav>
                     <!-- Content for Projects subtab -->
                     <h3>Projects</h3>
                     <section class="content">
@@ -214,6 +177,7 @@
                                 <label><input type="checkbox" checked> Sourcing</label>
                                 <label><input type="checkbox" checked> Logistics</label>
                                 <label><input type="checkbox" checked> Facility</label>
+                                
                                 <h3>Prototyping</h3>
                                 <label><input type="checkbox" checked> Ergonomics</label>
                                 <label><input type="checkbox" checked> Testing</label>
@@ -221,6 +185,7 @@
                                 <label><input type="checkbox" checked> Mass Production</label>
                             </div>
                         </div>
+                        
                         <div class="text-inputs">
                             <div class="input-group">
                                 <label>Market Survey</label>
@@ -243,6 +208,7 @@
                                 <textarea placeholder="Type here"></textarea>
                             </div>
                         </div>
+                        
                         <div class="funding">
                             <h3>Funding</h3>
                             <label><input type="checkbox" checked> Equity</label>
@@ -252,6 +218,7 @@
                             <label><input type="checkbox" checked> Subsidy (DLI/PLI etc.)</label>
                             <label><input type="checkbox" checked> BG/LC</label>
                         </div>
+                        
                         <div class="button-group">
                             <button class="btn back-btn" id="backBtnServices">BACK</button>
                             <button class="btn next-btn" id="nextBtnServices">NEXT ></button>
@@ -279,6 +246,6 @@
             </div>
         </main>
     </div>
-    <script src="./js/admin_dashboard.js"></script>
+    <script src="./js/qualified_lead.js"></script>
 </body>
 </html>

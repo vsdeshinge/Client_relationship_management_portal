@@ -1,149 +1,117 @@
-
-
-.container0 {
-  
-  margin: 0px;
-  width: auto;
-  height: auto;
-  max-width: 100%;
-  background-image: url('../assets/img2.jpg');
-  
-  background-size: cover; 
-  background-position: center;
-  background-repeat: no-repeat; 
-  display:flex;
-  align-items: center;
-  text-align: center;
+body {
+  background: #3b3b3c;
+  display: flex;
   justify-content: center;
-  place-items: center;
-  overflow: hidden;
-  font-family: Poppins, sans-serif; 
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .container {
-  
-  margin: 50px;
-
-  width: 350px;
-  height: 500px;
-  border-radius: 20px;
-  padding: 100px;
-  /* box-sizing: border-box; 
-  background: #491717; */
-  /*box-shadow: 0px 5px 0px rgb(144, 129, 129), 0px 5px 0px rgb(144, 129, 129); */
-   font-family: Poppins, sans-serif;
+  background-color: #414141;
+  border-radius: 10px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+  width: 80%;
+  max-width: 800px;
+  min-height: 480px;
+  position: relative;
+  overflow: hidden;
 }
 
-
-.brand-logo {
-  margin-top: 500px;
-  height: 100px;
-  width: 100px;
-  background-color: black;
-
-  background-image: url("../assets/logo3.jpg");
-  margin: auto;
-  border-radius: 50%;
-  box-sizing: border-box;
-  
+.tabs {
+  display: flex;
+  background-color: #4f4f4f;
 }
 
-.brand-title {
-  margin-top: 20px;
-  font-family: Poppins, sans-serif;
-  font-weight: 450;
-  font-size: 35px;
-  color:white;
-  letter-spacing: 3px;
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background-color: transparent;
   cursor: pointer;
-  margin-bottom: 20px;
-  
+  font-weight: bold;
+  transition: background-color 1s;
 }
 
-.brand-title:hover{
-  color: #7190e1;
+.tab-btn:hover{
   transform: scale(1.1);
-  transition: 0.5s;
+  animation-delay: inherit;
+
 }
 
-
-
-label {
-  margin-bottom: 4px;
+.tab-btn.active {
+  background-color: #7b7b7b;
 }
 
-label:nth-of-type(2) {
-  margin-top: 20px;
+.form-container {
+  font-family: 'Montserrat', sans-serif;
+  display: none;
+  padding: 40px;
+  color: #FFFFFF;
 }
 
+.form-container.active {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+.overlay-container {
+  text-align: center;
+  color: white;
+}
+
+.overlay-image {
+  max-width: 200px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-weight: bold;
+  margin: 0 0 20px;
+}
 
 button {
-  color:black;
-  font-size:25px;
-  margin-top: 68px;
-  height: 0px;
-  border-radius: 0px;
+  border-radius: 20px;
+  border: 1px solid #1c1e22;
+  background-color: #1c1e22;
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 12px 45px;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
   cursor: pointer;
-  font-weight: 700;
-  transition: all .2s linear;
-  font-family: Poppins, sans-serif;
-  padding-bottom: 0px;
 }
 
-button:hover {
-  box-shadow: none;
-  color: #7190e1;
-  transform: scale(1.1);
+button:active {
+  transform: scale(0.95);
 }
 
+button:focus {
+  outline: none;
+}
 
-.container1{
-  button:hover {
-      background-color:rgb(77, 184, 194);
-      color: black;
-    }
-  button {
-      
-      width: 180px;
-      height: 60px;
-      border: 2px solid rgb(77, 184, 194);
-      border-radius: 12px;
-      padding: 2px 30px;
-      margin: 10px;
-      text-align: center;
-      display: inline-block;
-      position: relative;
-      transition-duration:0.4s;
-  }
-  
-  .btn-container1{
-      padding:10px;
-      
-      border: 2px; 
-      border-radius: 1px;
-      padding: 20px; 
-      box-shadow: 2px 2px 10px rgba(122, 72, 202, 0.1);
-  }
-  .fixed-size {
-      width: 300px; 
-  }
-  
-  @media only screen and (max-width: 600px) {
-      button {
-          width: 100px; 
-          height: 50px; 
-          font-size: 14px; 
-          font-family: poppins, sans-serif;
-      }
-  }
-  
-  @media only screen and (max-width: 400px) {
-      button {
-          width: 80px; 
-          height: 40px; 
-          font-size: 12px;
-          font-family: poppins, sans-serif;
-      }
-  }
+button.ghost {
+  background-color: transparent;
+  border-color: #FFFFFF;
+  margin-top: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 75%;
+}
+
+input {
+  background-color: #eee;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin: 8px 0;
+  width: 100%;
+  box-sizing: border-box;
 }
