@@ -22,7 +22,7 @@
                 <button id="logoutButton" onclick="logout()" style="display: none;">Logout</button>
             </div>
             <nav>
-                <div class="nav-item">Visitors</div>
+                <div class="nav-item active">Visitors</div>
                 <div class="nav-item">Qualified Lead</div>
                 <div class="nav-item">Business Proposal</div>
                 <div class="nav-item">Customer</div>
@@ -60,7 +60,7 @@
                             <th>Company Name</th>
                             <th>Domain</th>
                             <th>Status</th>
-                            <th>Date</th>
+                            
                         </tr>
                     </thead>
                     <tbody id="clientTable">
@@ -73,7 +73,7 @@
                 <div id="projects" class="subcontent active">
                     <header>
                         <div class="user-info">
-                            <div class="avatar"></div>
+                            <img id="visitor-avatar" src="" alt="Visitor Avatar" />
                             <div class="details">
                                 <p>Name: Vidya</p>
                                 <p>Company: Ltv-Lf</p>
@@ -93,190 +93,313 @@
                         <div class="nav-item active">Services</div>
                         <div class="nav-item">Solutions</div>
                     </nav>
-                    <!-- Content for Projects subtab -->
-                    <h3>Projects</h3>
-                    <section class="content">
-                        <div class="input-group">
-                            <label for="title">Title:</label>
-                            <input type="text" id="title" name="title">
-                        </div>
-                        <div class="input-group">
-                            <label for="description">Description:</label>
-                            <textarea id="description" name="description" rows="5"></textarea>
-                        </div>
-                        <div class="button-group">
-                            <button class="btn back-btn" id="backBtnProjects">BACK</button>
-                            <button class="btn next-btn" id="nextBtnProjects">NEXT ></button>
-                        </div> 
-                    </section>
-                </div>
-                <div id="products" class="subcontent">
-                    <!-- Content for Products subtab -->
-                    <h3>Products</h3>
-                    <form class="content">
-                        <div class="input-group">
-                            <label for="title">Title:</label>
-                            <input type="text" id="title" name="title">
-                        </div>
-                        <div class="input-group">
-                            <label for="description">Description:</label>
-                            <textarea id="description" name="description" rows="3"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label>Type of Product:</label>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="product-type" value="consumer"> Consumer Product</label>
-                                <label><input type="checkbox" name="product-type" value="industrial"> Industrial Product</label>
-                                <label><input type="checkbox" name="product-type" value="software"> Software Product</label>
-                                <label><input type="checkbox" name="product-type" value="hardware"> Hardware Product</label>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <label for="product-description">Product Description:</label>
-                            <textarea id="product-description" name="product-description" placeholder="Type here"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label for="key-features">Key Features and Specifications:</label>
-                            <textarea id="key-features" name="key-features" placeholder="Type here"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label for="target-audience">Target Audience:</label>
-                            <textarea id="target-audience" name="target-audience" placeholder="Type here"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label for="competitive-analysis">Competitive Analysis:</label>
-                            <textarea id="competitive-analysis" name="competitive-analysis" placeholder="Type here"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label for="usp">Unique Selling Proposition:</label>
-                            <textarea id="usp" name="usp" placeholder="Type here"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label>Development Stage:</label>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="dev-stage" value="concept"> Concept Stage</label>
-                                <label><input type="checkbox" name="dev-stage" value="design"> Design Phase</label>
-                                <label><input type="checkbox" name="dev-stage" value="prototype"> Prototype Phase</label>
-                                <label><input type="checkbox" name="dev-stage" value="testing"> Testing Phase</label>
-                                <label><input type="checkbox" name="dev-stage" value="manufacture"> Ready to Manufacture</label>
-                                <label><input type="checkbox" name="dev-stage" value="others"> Others:</label>
-                            </div>
-                            <textarea id="dev-stage-others" name="dev-stage-others" placeholder="Type here/optional"></textarea>
-                        </div>
-                        <div class="input-group">
-                            <label>Required Services:</label>
-                            <div class="checkbox-group">
-                                <label><input type="checkbox" name="services" value="market-research"> Market Research</label>
-                                <label><input type="checkbox" name="services" value="product-design"> Product Design</label>
-                                <label><input type="checkbox" name="services" value="prototype-dev"> Prototype Development</label>
-                                <label><input type="checkbox" name="services" value="testing"> Testing and Validation</label>
-                                <label><input type="checkbox" name="services" value="manufacturing"> Manufacturing Support</label>
-                                <label><input type="checkbox" name="services" value="branding"> Branding and Packaging</label>
-                                <label><input type="checkbox" name="services" value="space"> Space</label>
-                            </div>
-                        </div>
-                        <div class="button-group">
-                            <button class="btn back-btn" id="backBtnProducts">BACK</button>
-                            <button class="btn next-btn" id="nextBtnProducts">NEXT ></button>
-                        </div> 
-                    </form>
-                </div>
-                <div id="services" class="subcontent">
-                    <!-- Content for Services subtab -->
-                    <h3>Services</h3>
-                    <section class="content">
-                        <h2>Required Services</h2>
-                        <div class="services-grid">
-                            <div class="service-column">
-                                <h3>Description :</h3>
-                                <label><input type="checkbox" checked> 2D</label>
-                                <label><input type="checkbox" checked> 3D</label>
-                                <label><input type="checkbox" checked> Mechanical</label>
-                                <label><input type="checkbox" checked> Electronic</label>
-                                <label><input type="checkbox" checked> Civil</label>
-                                <label><input type="checkbox" checked> Animation</label>
-                                <label><input type="checkbox" checked> Website</label>
-                                <label><input type="checkbox" checked> Marketing Collaterals</label>
-                                <label><input type="checkbox" checked> Interior</label>
-                            </div>
-                            <div class="service-column">
-                                <h3>Manufacturing</h3>
-                                <label><input type="checkbox" checked> Casting</label>
-                                <label><input type="checkbox" checked> Fabrication</label>
-                                <label><input type="checkbox" checked> Moulding</label>
-                                <label><input type="checkbox" checked> Additive</label>
-                                <label><input type="checkbox" checked> Hydraulics</label>
-                                <label><input type="checkbox" checked> Pneumatics</label>
-                                <label><input type="checkbox" checked> Process Control</label>
-                            </div>
-                            <div class="service-column">
-                                <h3>Supply Chain</h3>
-                                <label><input type="checkbox" checked> Sourcing</label>
-                                <label><input type="checkbox" checked> Logistics</label>
-                                <label><input type="checkbox" checked> Facility</label>
-                                <h3>Prototyping</h3>
-                                <label><input type="checkbox" checked> Ergonomics</label>
-                                <label><input type="checkbox" checked> Testing</label>
-                                <label><input type="checkbox" checked> Golden Sample</label>
-                                <label><input type="checkbox" checked> Mass Production</label>
-                            </div>
-                        </div>
-                        <div class="text-inputs">
+                        <!-- Content for Projects subtab -->
+                        <h3>Projects</h3>
+                        <section class="content">
                             <div class="input-group">
-                                <label>Market Survey</label>
-                                <textarea placeholder="Type here"></textarea>
+                                <label for="project-title">Title:</label>
+                                <input type="text" id="project-title" name="project-title">
                             </div>
                             <div class="input-group">
-                                <label>Brand Building and Packaging</label>
-                                <textarea placeholder="Type here"></textarea>
+                                <label for="project-description">Description:</label>
+                                <textarea id="project-description" name="project-description" rows="5"></textarea>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn back-btn" id="backBtnProjects">BACK</button>
+                                <button class="btn next-btn" id="nextBtnProjects">NEXT ></button>
+                            </div> 
+                        </section>
+                    </div>
+                    <div id="products" class="subcontent">
+                        <!-- Content for Products subtab -->
+                        <h3>Products</h3>
+                        <form class="content">
+                            <div class="input-group">
+                                <label for="product-title">Title:</label>
+                                <input type="text" id="product-title" name="product-title">
                             </div>
                             <div class="input-group">
-                                <label>Certification</label>
-                                <textarea placeholder="Type here"></textarea>
+                                <label for="product-description">Description:</label>
+                                <textarea id="product-description" name="product-description" rows="3"></textarea>
                             </div>
                             <div class="input-group">
-                                <label>Strategy</label>
-                                <textarea placeholder="Type here"></textarea>
+                                <label>Type of Product:</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" name="product-type" value="consumer"> Consumer Product</label>
+                                    <label><input type="checkbox" name="product-type" value="industrial"> Industrial Product</label>
+                                    <label><input type="checkbox" name="product-type" value="software"> Software Product</label>
+                                    <label><input type="checkbox" name="product-type" value="hardware"> Hardware Product</label>
+                                </div>
                             </div>
                             <div class="input-group">
-                                <label>Sales and Marketing</label>
-                                <textarea placeholder="Type here"></textarea>
+                                <label for="key-features">Key Features and Specifications:</label>
+                                <textarea id="key-features" name="key-features" rows="3"></textarea>
                             </div>
+                            <div class="input-group">
+                                <label for="target-audience">Target Audience:</label>
+                                <textarea id="target-audience" name="target-audience" rows="3"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label for="competitive-analysis">Competitive Analysis:</label>
+                                <textarea id="competitive-analysis" name="competitive-analysis" rows="3"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label for="usp">Unique Selling Proposition:</label>
+                                <textarea id="usp" name="usp" rows="3"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>Development Stage:</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" name="dev-stage" value="concept"> Concept Stage</label>
+                                    <label><input type="checkbox" name="dev-stage" value="design"> Design Phase</label>
+                                    <label><input type="checkbox" name="dev-stage" value="prototype"> Prototype Phase</label>
+                                    <label><input type="checkbox" name="dev-stage" value="testing"> Testing Phase</label>
+                                    <label><input type="checkbox" name="dev-stage" value="manufacture"> Ready to Manufacture</label>
+                                    <label><input type="checkbox" name="dev-stage" value="others"> Others:</label>
+                                </div>
+                                <textarea id="dev-stage-others" name="dev-stage-others" placeholder="Type here/optional"></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label>Required Services:</label>
+                                <div class="checkbox-group">
+                                    <label><input type="checkbox" name="services" value="market-research"> Market Research</label>
+                                    <label><input type="checkbox" name="services" value="product-design"> Product Design</label>
+                                    <label><input type="checkbox" name="services" value="prototype-dev"> Prototype Development</label>
+                                    <label><input type="checkbox" name="services" value="testing"> Testing and Validation</label>
+                                    <label><input type="checkbox" name="services" value="manufacturing"> Manufacturing Support</label>
+                                    <label><input type="checkbox" name="services" value="branding"> Branding and Packaging</label>
+                                    <label><input type="checkbox" name="services" value="space"> Space</label>
+                                </div>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn back-btn" id="backBtnProducts">BACK</button>
+                                <button class="btn next-btn" id="nextBtnProducts">NEXT ></button>
+                            </div> 
+                        </form>
+                    </div>
+                    <div id="services" class="subcontent">
+                        <!-- Content for Services subtab -->
+                        <h3>Services</h3>
+                        <form class="content">
+                            <h2>Required Services</h2>
+                            <div class="services-grid">
+                                <div class="service-column">
+                                    <h3>Description :</h3>
+                                    <label><input type="checkbox" checked> 2D</label>
+                                    <label><input type="checkbox" checked> 3D</label>
+                                    <label><input type="checkbox" checked> Mechanical</label>
+                                    <label><input type="checkbox" checked> Electronic</label>
+                                    <label><input type="checkbox" checked> Civil</label>
+                                    <label><input type="checkbox" checked> Animation</label>
+                                    <label><input type="checkbox" checked> Website</label>
+                                    <label><input type="checkbox" checked> Marketing Collaterals</label>
+                                    <label><input type="checkbox" checked> Interior</label>
+                                </div>
+                                <div class="service-column">
+                                    <h3>Manufacturing</h3>
+                                    <label><input type="checkbox" checked> Casting</label>
+                                    <label><input type="checkbox" checked> Fabrication</label>
+                                    <label><input type="checkbox" checked> Moulding</label>
+                                    <label><input type="checkbox" checked> Additive</label>
+                                    <label><input type="checkbox" checked> Hydraulics</label>
+                                    <label><input type="checkbox" checked> Pneumatics</label>
+                                    <label><input type="checkbox" checked> Process Control</label>
+                                </div>
+                                <div class="service-column">
+                                    <h3>Supply Chain</h3>
+                                    <label><input type="checkbox" checked> Sourcing</label>
+                                    <label><input type="checkbox" checked> Logistics</label>
+                                    <label><input type="checkbox" checked> Facility</label>
+                                    <h3>Prototyping</h3>
+                                    <label><input type="checkbox" checked> Ergonomics</label>
+                                    <label><input type="checkbox" checked> Testing</label>
+                                    <label><input type="checkbox" checked> Golden Sample</label>
+                                    <label><input type="checkbox" checked> Mass Production</label>
+                                </div>
+                            </div>
+                            <div class="text-inputs">
+                                <div class="input-group">
+                                    <label>Market Survey</label>
+                                    <textarea id="market-survey" placeholder="Type here"></textarea>
+                                </div>
+                                <div class="input-group">
+                                    <label>Brand Building and Packaging</label>
+                                    <textarea id="branding" placeholder="Type here"></textarea>
+                                </div>
+                                <div class="input-group">
+                                    <label>Certification</label>
+                                    <textarea id="certification" placeholder="Type here"></textarea>
+                                </div>
+                                <div class="input-group">
+                                    <label>Strategy</label>
+                                    <textarea id="strategy" placeholder="Type here"></textarea>
+                                </div>
+                                <div class="input-group">
+                                    <label>Sales and Marketing</label>
+                                    <textarea id="sales-marketing" placeholder="Type here"></textarea>
+                                </div>
+                            </div>
+                            <div class="funding">
+                                <h3>Funding</h3>
+                                <label><input type="checkbox" checked> Equity</label>
+                                <label><input type="checkbox" checked> Debt</label>
+                                <label><input type="checkbox" checked> Project Finance</label>
+                                <label><input type="checkbox" checked> Royalty & License Fee</label>
+                                <label><input type="checkbox" checked> Subsidy (DLI/PLI etc.)</label>
+                                <label><input type="checkbox" checked> BG/LC</label>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn back-btn" id="backBtnServices">BACK</button>
+                                <button class="btn next-btn" id="nextBtnServices">NEXT ></button>
+                            </div> 
+                        </form>
+                    </div>
+                    <div id="solutions" class="subcontent">
+                        <!-- Content for Solutions subtab -->
+                        <h3>Solutions</h3>
+                        <form class="content">
+                            <div class="input-group">
+                                <label for="solution-title">Title:</label>
+                                <input type="text" id="solution-title" name="solution-title">
+                            </div>
+                            <div class="input-group">
+                                <label for="solution-description">Description:</label>
+                                <textarea id="solution-description" name="solution-description" rows="5"></textarea>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn back-btn" id="backBtnSolutions">BACK</button>
+                               
+                                <button class="btn hold-btn" id="holdBtnSolutions">ON HOLD</button>
+
+                    <!-- Popup Modal -->
+                        <div id="holdPopup" class="popup">
+                        <div class="popup-content">
+                         <span class="close">&times;</span>
+                         <p>This profile is under hold.</p>
                         </div>
-                        <div class="funding">
-                            <h3>Funding</h3>
-                            <label><input type="checkbox" checked> Equity</label>
-                            <label><input type="checkbox" checked> Debt</label>
-                            <label><input type="checkbox" checked> Project Finance</label>
-                            <label><input type="checkbox" checked> Royalty & License Fee</label>
-                            <label><input type="checkbox" checked> Subsidy (DLI/PLI etc.)</label>
-                            <label><input type="checkbox" checked> BG/LC</label>
                         </div>
-                        <div class="button-group">
-                            <button class="btn back-btn" id="backBtnServices">BACK</button>
-                            <button class="btn next-btn" id="nextBtnServices">NEXT ></button>
-                        </div> 
-                    </section>
-                </div>
-                <div id="solutions" class="subcontent">
-                    <!-- Content for Solutions subtab -->
-                    <h3>Solutions</h3>
-                    <form class="content">
-                        <div class="input-group">
-                            <label for="title">Title:</label>
-                            <input type="text" id="title" name="title">
-                        </div>
-                        <div class="input-group">
-                            <label for="description">Description:</label>
-                            <textarea id="description" name="description" rows="5"></textarea>
-                        </div>
-                        <div class="button-group">
-                            <button class="btn back-btn" id="backBtnSolutions">BACK</button>
-                            <button class="btn submit-btn" id="submitBtnSolutions">SUBMIT ></button>
-                        </div> 
-                    </form>
+
+
+                                <button class="btn submit-btn" id="submitBtnSolutions">SUBMIT</button>
+                                <button class="btn send-btn" id="sendBtnSolutions">SEND APPROVAL</button>
+                            </div> 
+                        </form>
                 </div>
             </div>
+
+            <!-- This section for Business Proposal -->
+            <div id="business-proposal" class="content" style="display: none;">
+                <h3>Business Proposal</h3>
+                <div class="input-groups">
+                    <div class="input-group">
+                        <label for="financial-capacity">Financial Capacity</label>
+                        <input type="text" id="financial-capacity" placeholder="Enter the text">
+                    </div>
+                    <div class="input-group">
+                        <label for="annual-turnover">Annual Turnover</label>
+                        <input type="text" id="annual-turnover" placeholder="Enter the text">
+                    </div>
+                    <div class="input-group">
+                        <label for="net-worth">Net worth</label>
+                        <input type="text" id="net-worth" placeholder="Enter the text">
+                    </div>
+                    <div class="input-group">
+                        <label>Decision Makers</label>
+                        <div class="decision-maker">
+                            <div class="avatar small"></div>
+                            <input type="text" id="decision-maker-1" placeholder="Lorem Ipsum">
+                        </div>
+                        <div class="decision-maker">
+                            <div class="avatar small"></div>
+                            <input type="text" id="decision-maker-2" placeholder="Lorem Ipsum">
+                        </div>
+                        <div class="decision-maker">
+                            <div class="avatar small"></div>
+                            <input type="text" id="decision-maker-3" placeholder="Lorem Ipsum">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="lead-time">Lead Time</label>
+                        <div class="lead-time-inputs">
+                            <input type="text" id="lead-time">
+                            <select id="lead-time-unit">
+                                <option>Days</option>
+                                <option>Months</option>
+                                <option>Years</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn send-email-btn">Send an Email</button>
+                    <button  id ="signDealButton"class="btn sign-deal-btn">Sign Deal ></button>
+                </div>
+            </div>
+            
+
+
+            //<!-- This section for Customer Section  -->
+
+                <div id="customer" class="content" style="display: none;">
+                    <div class="client-info">
+                        <div class="avatar"></div>
+                        <div class="details">
+                            <p>Name: <span id="client-name"></span></p>
+                            <p>Company: <span id="client-company"></span></p>
+                            <p>Domain: <span id="client-domain"></span></p>
+                            <p>Email: <span id="client-email"></span></p>
+                            <p>Phone no.: <span id="client-phone"></span></p>
+                        </div>
+                        <div class="buttons">
+                            <button id="visitingCardBtn">Visiting Card</button>
+                            <button id="viewNeedFormBtn">View Need Form</button>
+                        </div>
+                    </div>
+                    <section class="projects">
+                        <h2>Projects</h2>
+                        <div class="input-group">
+                            <label for="project-description">Description:</label>
+                            <span id="project-description"></span>
+                        </div>
+                    </section>
+                    <section class="products">
+                        <h2>Products</h2>
+                        <ul>
+                            <li><strong>Type Of Product:</strong> <span id="product-type"></span></li>
+                            <li><strong>Product Description:</strong> <span id="product-description"></span></li>
+                            <li><strong>Key Features & Specifications:</strong> <span id="product-features"></span></li>
+                            <li><strong>Target Audience:</strong> <span id="product-audience"></span></li>
+                            <li><strong>Competitive Analysis:</strong> <span id="product-analysis"></span></li>
+                            <li><strong>Unique Selling Preposition:</strong> <span id="product-usp"></span></li>
+                            <li><strong>Development Stage:</strong> <span id="product-stage"></span></li>
+                            <li><strong>Required Services:</strong> <span id="product-services"></span></li>
+                        </ul>
+                    </section>
+                    <section class="services">
+                        <h2>Services</h2>
+                        <ul>
+                            <li><strong>Brand Building & Packaging:</strong> <span id="service-branding"></span></li>
+                            <li><strong>Certification:</strong> <span id="service-certification"></span></li>
+                            <li><strong>Design:</strong> <span id="service-design"></span></li>
+                            <li><strong>Funding (project finance):</strong> <span id="service-funding"></span></li>
+                            <li><strong>Manufacturing:</strong> <span id="service-manufacturing"></span></li>
+                            <li><strong>Market Survey:</strong> <span id="service-survey"></span></li>
+                            <li><strong>Prototyping:</strong> <span id="service-prototyping"></span></li>
+                            <li><strong>Sales & Marketing:</strong> <span id="service-sales"></span></li>
+                            <li><strong>Supply Chain:</strong> <span id="service-supply"></span></li>
+                        </ul>
+                    </section>
+                    <section class="solutions">
+                        <h2>Solutions</h2>
+                        <div class="input-group">
+                            <label for="solution-description">Description:</label>
+                            <span id="solution-description"></span>
+                        </div>
+                    </section>
+                    <button class="print-btn" id="printBtn">Print ></button>
+                </div>
+                
+            <div>
         </main>
     </div>
     <script src="./js/admin_dashboard.js"></script>

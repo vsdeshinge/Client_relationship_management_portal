@@ -62,6 +62,7 @@ mongoose.connection.once('open', () => {
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Temporary workaround to ensure MONGODB_URI is defined
@@ -70,14 +71,15 @@ process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb
 // Multer setup for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, './uploads');
+      cb(null, path.join(__dirname, 'uploads', 'blob'));
   },
   filename: (req, file, cb) => {
-    cb(null, file.originalname);
+      cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 
 const upload = multer({ storage });
+
 
 // WebSocket connection
 io.on('connection', (socket) => {
@@ -137,7 +139,7 @@ router.post('/generate-email-auth-token', async (req, res) => {
 //visitor register
 app.post('/register', upload.single('faceImage'), async (req, res) => {
   const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
-
+  const faceImage = req.file ? req.file.filename : '';
   if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
       return res.status(400).json({ error: 'All fields are required.' });
   }
@@ -151,7 +153,7 @@ app.post('/register', upload.single('faceImage'), async (req, res) => {
           personToMeet,
           personReferred,
           syndicate_name: syndicate_name.trim(),
-          faceImage: req.file ? req.file.filename : null
+          faceImage
       });
 
       await newClient.save();
@@ -342,7 +344,6 @@ app.post('/send-approval-request/:clientId', authenticateToken, async (req, res)
 
 
 // Admin login route
-// Admin login route
 app.post('/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log(`Attempting login with username: ${username} and password: ${password}`);
@@ -504,15 +505,73 @@ router.get('/clients', authenticateToken, async (req, res) => {
 router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
   console.log('Received request for visitor ID:', req.params.id);
   try {
-    const visitor = await Client.findById(req.params.id);
-    if (!visitor) {
-      console.log('Visitor not found for ID:', req.params.id);
-      return res.status(404).json({ error: 'Visitor not found' });
-    }
-    res.status(200).json(visitor);
+      const visitor = await Client.findById(req.params.id);
+      if (!visitor) {
+          console.log('Visitor not found for ID:', req.params.id);
+          return res.status(404).json({ error: 'Visitor not found' });
+      }
+      res.status(200).json(visitor);
   } catch (error) {
-    console.error('Error fetching visitor details:', error);
-    res.status(500).json({ error: 'Internal server error' });
+      console.error('Error fetching visitor details:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+app.post('/api/visitors/:id/details', authenticateToken, async (req, res) => {
+  try {
+      console.log('Request body:', req.body);
+
+      const visitorId = req.params.id;
+      const { projects, products, services, solutions } = req.body;
+
+      const updatedVisitor = await Client.findByIdAndUpdate(
+          visitorId,
+          { projects, products, services, solutions },
+          { new: true, runValidators: true }
+      );
+
+      if (!updatedVisitor) {
+          return res.status(404).json({ error: 'Visitor not found' });
+      }
+
+      res.status(200).json({ message: 'Data saved successfully', visitor: updatedVisitor });
+  } catch (error) {
+      console.error('Error saving visitor details:', error);
+      res.status(500).json({ error: error.message || 'Internal server error' });
+  }
+});
+// Route to update additional client field data
+router.post('/api/visitors/:id/details/more', authenticateToken, async (req, res) => {
+  try {
+      const visitorId = req.params.id;
+      const { financialCapacity, annualTurnover, netWorth, decisionMakers, leadTime, leadTimeUnit } = req.body;
+
+      // Find the visitor in MongoDB by visitor ID
+      const client = await Client.findById(visitorId);
+
+      if (!client) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+
+      // Update client's financial information
+      client.financialCapacity = financialCapacity;
+      client.annualTurnover = annualTurnover;
+      client.netWorth = netWorth;
+      client.decisionMakers = decisionMakers;
+      client.leadTime = {
+          value: leadTime,
+          unit: leadTimeUnit
+      };
+
+      // Save the updated client document
+      await client.save();
+
+      res.status(200).json({ message: 'Data saved successfully' });
+  } catch (error) {
+      console.error('Error saving client field data:', error);
+      res.status(500).json({ error: 'Internal server error' });
   }
 });
 
