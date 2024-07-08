@@ -62,7 +62,7 @@ mongoose.connection.once('open', () => {
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Temporary workaround to ensure MONGODB_URI is defined
@@ -78,7 +78,7 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage }).single('faceImage');
 
 
 // WebSocket connection
@@ -137,9 +137,8 @@ router.post('/generate-email-auth-token', async (req, res) => {
 });
 
 //visitor register
-app.post('/register', upload.single('faceImage'), async (req, res) => {
+app.post('/register', upload, async (req, res) => {
   const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
-  const faceImage = req.file ? req.file.filename : '';
   if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
       return res.status(400).json({ error: 'All fields are required.' });
   }
@@ -153,7 +152,7 @@ app.post('/register', upload.single('faceImage'), async (req, res) => {
           personToMeet,
           personReferred,
           syndicate_name: syndicate_name.trim(),
-          faceImage
+          faceImage: req.file ? req.file.filename : ''
       });
 
       await newClient.save();

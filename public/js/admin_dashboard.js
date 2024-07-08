@@ -382,7 +382,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateNavbar('Qualified Leads');
         });
     });
-  
     const fetchAndDisplayVisitorData = async (visitorId) => {
         try {
             const response = await fetch(`/api/visitorDetails/${visitorId}`, {

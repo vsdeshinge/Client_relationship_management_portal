@@ -1770,4 +1770,10 @@ footer {
       border: 1px solid #ddd; /* Optional: To add a border */
       padding: 5px; /* Optional: To add some padding around the image */
   }
+#clientTable{
+    color: white;
+}
 
+.visitor-link{
+    color: white;
+}
