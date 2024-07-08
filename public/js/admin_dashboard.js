@@ -382,50 +382,70 @@ document.addEventListener('DOMContentLoaded', async () => {
             updateNavbar('Qualified Leads');
         });
     });
-
+  
     const fetchAndDisplayVisitorData = async (visitorId) => {
         try {
-            const response = await fetch(`/api/visitors/${visitorId}`, {
+            const response = await fetch(`/api/visitorDetails/${visitorId}`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
                 }
             });
-
+    
             if (response.status === 401) {
                 handleUnauthorized();
                 return;
             }
-
+    
             if (!response.ok) {
                 const error = await response.json();
                 console.error('Error fetching visitor details:', error.message);
                 return;
             }
-
+    
             const visitor = await response.json();
-            console.log(visitor);
-
-            document.getElementById('client-name').textContent = visitor.name;
-            document.getElementById('client-company').textContent = visitor.companyName;
-            document.getElementById('client-domain').textContent = visitor.domain;
-            document.getElementById('client-email').textContent = visitor.email;
-            document.getElementById('client-phone').textContent = visitor.phone;
-            document.querySelector('.avatar').style.backgroundImage = `url(${visitor.faceImage})`;
-
+            console.log('Visitor data:', visitor);
+    
+            // Set general info
+            const faceImageURL = visitor.faceImage ? `/uploads/${visitor.faceImage}` : 'default-avatar.png';
+            document.getElementById('visitor-avatar').src = faceImageURL;
+            document.getElementById('client-name').textContent = visitor.name || '';
+            document.getElementById('client-company').textContent = visitor.companyName || '';
+            document.getElementById('client-domain').textContent = visitor.domain || '';
+            document.getElementById('client-email').textContent = visitor.email || '';
+            document.getElementById('client-phone').textContent = visitor.phone || '';
+    
+            // Set projects info
             if (visitor.projects) {
+                document.getElementById('project-title').textContent = visitor.projects.title || '';
                 document.getElementById('project-description').textContent = visitor.projects.description || '';
+            } else {
+                document.getElementById('project-title').textContent = '';
+                document.getElementById('project-description').textContent = '';
             }
+    
+            // Set products info
             if (visitor.products) {
-                document.getElementById('product-type').textContent = visitor.products.types?.join(', ') || '';
+                document.getElementById('product-type').textContent = (visitor.products.types && visitor.products.types.join(', ')) || '';
                 document.getElementById('product-description').textContent = visitor.products.description || '';
                 document.getElementById('product-features').textContent = visitor.products.keyFeatures || '';
                 document.getElementById('product-audience').textContent = visitor.products.targetAudience || '';
                 document.getElementById('product-analysis').textContent = visitor.products.competitiveAnalysis || '';
                 document.getElementById('product-usp').textContent = visitor.products.usp || '';
-                document.getElementById('product-stage').textContent = visitor.products.developmentStages?.join(', ') || '';
-                document.getElementById('product-services').textContent = visitor.products.requiredServices?.join(', ') || '';
+                document.getElementById('product-stage').textContent = (visitor.products.developmentStages && visitor.products.developmentStages.join(', ')) || '';
+                document.getElementById('product-services').textContent = (visitor.products.requiredServices && visitor.products.requiredServices.join(', ')) || '';
+            } else {
+                document.getElementById('product-type').textContent = '';
+                document.getElementById('product-description').textContent = '';
+                document.getElementById('product-features').textContent = '';
+                document.getElementById('product-audience').textContent = '';
+                document.getElementById('product-analysis').textContent = '';
+                document.getElementById('product-usp').textContent = '';
+                document.getElementById('product-stage').textContent = '';
+                document.getElementById('product-services').textContent = '';
             }
+    
+            // Set services info
             if (visitor.services) {
                 document.getElementById('service-branding').textContent = visitor.services.branding || '';
                 document.getElementById('service-certification').textContent = visitor.services.certification || '';
@@ -436,16 +456,32 @@ document.addEventListener('DOMContentLoaded', async () => {
                 document.getElementById('service-prototyping').textContent = visitor.services.prototyping || '';
                 document.getElementById('service-sales').textContent = visitor.services.sales || '';
                 document.getElementById('service-supply').textContent = visitor.services.supply || '';
+            } else {
+                document.getElementById('service-branding').textContent = '';
+                document.getElementById('service-certification').textContent = '';
+                document.getElementById('service-design').textContent = '';
+                document.getElementById('service-funding').textContent = '';
+                document.getElementById('service-manufacturing').textContent = '';
+                document.getElementById('service-survey').textContent = '';
+                document.getElementById('service-prototyping').textContent = '';
+                document.getElementById('service-sales').textContent = '';
+                document.getElementById('service-supply').textContent = '';
             }
+    
+            // Set solutions info
             if (visitor.solutions) {
+                document.getElementById('solution-title').textContent = visitor.solutions.title || '';
                 document.getElementById('solution-description').textContent = visitor.solutions.description || '';
+            } else {
+                document.getElementById('solution-title').textContent = '';
+                document.getElementById('solution-description').textContent = '';
             }
-
+    
         } catch (error) {
             console.error('Error fetching visitor details:', error);
         }
     };
-
+    
     const toggleSection = (sectionId) => {
         const sections = document.querySelectorAll('.content');
         sections.forEach(section => {
@@ -625,7 +661,6 @@ document.getElementById('signDealButton').addEventListener('click', async (e) =>
             });
         });
     };
-
 
     const fetchAdminDetails = async () => {
         try {
@@ -859,7 +894,7 @@ function sendApproval(profileId) {
   .then(data => {
     if (data.success) {
       // Decrease the on-hold count
-      updateOnHoldCount(-1);
+      updateonHoldClientsCount(-1);
     } else {
       console.error('Error sending approval');
     }

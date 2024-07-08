@@ -1699,13 +1699,13 @@ h1, h2 {
     margin-bottom: 20px;
 }
 
-.avatar {
+/* .avatar {
     width: 60px;
     height: 60px;
     background-color: #3D3D3D;
     border-radius: 50%;
     margin-right: 15px;
-}
+} */
 
 .buttons {
     margin-left: auto;

@@ -502,6 +502,7 @@ router.get('/clients', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
   console.log('Received request for visitor ID:', req.params.id);
   try {
@@ -513,6 +514,24 @@ router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
       res.status(200).json(visitor);
   } catch (error) {
       console.error('Error fetching visitor details:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+// Define a new route for fetching detailed visitor data
+router.get('/api/visitorDetails/:id', authenticateToken, async (req, res) => {
+  console.log('Received request for detailed visitor data for ID:', req.params.id);
+  try {
+      const visitor = await Client.findById(req.params.id).populate('projects products services solutions');
+      if (!visitor) {
+          console.log('Visitor not found for ID:', req.params.id);
+          return res.status(404).json({ error: 'Visitor not found' });
+      }
+      console.log('Detailed visitor data found:', visitor);
+      res.status(200).json(visitor);
+  } catch (error) {
+      console.error('Error fetching detailed visitor data:', error);
       res.status(500).json({ error: 'Internal server error' });
   }
 });
