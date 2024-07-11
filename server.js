@@ -59,7 +59,12 @@ mongoose.connection.once('open', () => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'https://client-relationship-management-portal.onrender.com/', // Replace with your frontend domain
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
