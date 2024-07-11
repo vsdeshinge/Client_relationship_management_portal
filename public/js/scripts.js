@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './apiconfig';
 document.addEventListener('DOMContentLoaded', () => {
     // Form handling
     const form = document.querySelector("form");
@@ -36,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = Object.fromEntries(formData.entries());
             console.log("Data being sent:", data); // Log the data to check if it contains syndicate_name and password
             try {
-                const response = await fetch('/syndicate-login', {
+                const response = await fetch(`${API_BASE_URL}/syndicate-login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -69,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const fetchData = async () => {
             try {
-                const response = await fetch('/syndicate-data', {
+                const response = await fetch(`${API_BASE_URL}/syndicate-data`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`

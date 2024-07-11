@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './apiconfig';
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('connectForm');
     const thankYouContainer = document.getElementById('thankYouContainer');
@@ -146,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch('/register', {
+            const response = await fetch(`${API_BASE_URL}/register`, {
                 method: 'POST',
                 body: formData
             });

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './apiconfig';
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('syndicateToken');
     if (!token) {
@@ -11,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     try {
-        const response = await fetch('/syndicate-data', {
+        const response = await fetch(`${API_BASE_URL}/syndicate-data`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -84,7 +85,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 clientDiv.querySelector('.more_info').addEventListener('click', async () => {
                     const email = client.email;
                     try {
-                        const response = await fetch('/generate-email-auth-token', {
+                        const response = await fetch(`${API_BASE_URL}/generate-email-auth-token`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -232,7 +233,7 @@ async function saveEditedData(clientId, data) {
     const token = localStorage.getItem('syndicateToken');
     console.log(`Saving data for client ID: ${clientId}`, data); // Log client ID and data
     try {
-        const response = await fetch(`/update-client-data/${clientId}`, {
+        const response = await fetch(`${API_BASE_URL}/update-client-data/${clientId}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -260,7 +261,7 @@ async function sendApprovalRequest(clientId, adminComments) {
     console.log('Token:', token);
 
     try {
-        const response = await fetch(`http://localhost:3000/send-approval-request/${clientId}`, {
+        const response = await fetch(`${API_BASE_URL}/${clientId}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,

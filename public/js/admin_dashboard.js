@@ -1,3 +1,5 @@
+import { API_BASE_URL } from './apiconfig';
+
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('adminToken');
     const adminId = localStorage.getItem('adminId');
@@ -14,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const fetchAdminDetails = async () => {
         try {
-            const response = await fetch(`/admin/${adminId}`, {
+            const response = await fetch(`${API_BASE_URL}/admin/${adminId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -43,7 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const fetchVisitorDetails = async () => {
         try {
-            const response = await fetch('/visitor-details', {
+            const response = await fetch(`${API_BASE_URL}/visitor-details`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const selectElement = document.querySelector(`.status-select[data-visitor-id="${visitorId}"]`);
                     const newStatus = selectElement.value;
                     try {
-                        const response = await fetch(`/visitors/${visitorId}/status`, {
+                        const response = await fetch(`${API_BASE_URL}/visitors/${visitorId}/status`, {
                             method: 'PUT',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const fetchClientCount = async () => {
         try {
-            const response = await fetch('/clients-count', {
+            const response = await fetch(`${API_BASE_URL}/clients-count`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -156,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await fetchClientCount();
     updateMetrics()
     initializeNavigation();
-    
+
     document.getElementById('logoutButton').style.display = 'block';
    
 
@@ -217,7 +219,7 @@ async function updateClientTable(status = null) {
         // Clear existing rows
         tableBody.innerHTML = "";
 
-        let url = '/api/clients';
+        let url = `${API_BASE_URL}/api/clients`;
         if (status) {
             // Map the client-side status to the MongoDB status value
             const statusMapping = {
@@ -266,7 +268,7 @@ async function updateClientTable(status = null) {
                 }
                 const newStatus = selectElement.value;
                 try {
-                    const response = await fetch(`/visitors/${clientId}/status`, {
+                    const response = await fetch(`${API_BASE_URL}/visitors/${clientId}/status`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -314,7 +316,7 @@ function updateStatus(select) {
 async function updateMetrics() {
     console.log('Updating metrics...');
     try {
-        const response = await fetch('/api/status-counts', {
+        const response = await fetch(`${API_BASE_URL}/api/status-counts`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('adminToken')}`

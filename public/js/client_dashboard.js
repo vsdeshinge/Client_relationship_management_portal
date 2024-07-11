@@ -1,3 +1,4 @@
+import { API_BASE_URL } from './apiconfig';
 document.addEventListener('DOMContentLoaded', loadForms);
 
 function loadForms() {
@@ -249,7 +250,7 @@ async function submitFormData() {
 async function fetchUserData(email, password) {
     console.log('Attempting to log in with email:', email);
     try {
-        const response = await fetch('http://localhost:3000/login', {
+        const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -293,7 +294,7 @@ async function submitAllData(event) {
     console.log('Retrieved access token from localStorage:', token);
 
     try {
-        const response = await fetch('http://localhost:3000/api/submit-form', {
+        const response = await fetch(`${API_BASE_URL}/api/submit-form`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
