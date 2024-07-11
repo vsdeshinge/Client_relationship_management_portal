@@ -29,46 +29,6 @@ header {
     transition: background-color 0.3s ease-in-out;
 }
 
-
-
-#logoutButton {
-    display: none; /* Initial state, can be toggled by JavaScript */
-    background-color: #f44336; /* Red background */
-    color: white; /* White text */
-    border: none; /* Remove border */
-    padding: 10px 20px; /* Padding */
-    text-align: center; /* Center text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Inline-block */
-    font-size: 16px; /* Font size */
-    margin: 4px 2px; /* Margin */
-    cursor: pointer; /* Pointer cursor on hover */
-    border-radius: 4px; /* Rounded corners */
-}
-
-#logoutButton:hover {
-    background-color: #d32f2f; /* Darker red on hover */
-}
-
-/* Add additional styles for your conditional buttons */
-.save-button , .add-fields-button{
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    border: none; /* Remove border */
-    padding: 10px 20px; /* Padding */
-    text-align: center; /* Center text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Inline-block */
-    font-size: 16px; /* Font size */
-    margin: 4px 2px; /* Margin */
-    cursor: pointer; /* Pointer cursor on hover */
-    border-radius: 4px; /* Rounded corners */
-}
-
-.save-button:hover, .add-fields-button:hover {
-    background-color: #45a049; /* Darker green on hover */
-}
-
 header:hover {
     background-color: #1a1a1a;
 }
@@ -225,12 +185,12 @@ main:hover {
     justify-content: space-between;
 }
 
-.qualified-leads, .business-proposal {
+.qualified-leads, .business-proposal,.client-type {
     width: 48%;
     transition: transform 0.3s ease-in-out;
 }
 
-.qualified-leads:hover, .business-proposal:hover {
+.qualified-leads:hover, .business-proposal:hover, .client-type:hover {
     transform: scale(1.02);
 }
 
@@ -381,3 +341,34 @@ nav ul li.active .submenu {
     color: white;
     transform: scale(1.1);
 }
+
+
+/*manufacturer */
+.form {
+    background-color: #1a1a1a;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.form-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    flex-basis: 30%;
+}
+
+.form-group input, .form-group select {
+    flex-basis: 65%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3a3a3a;
+}
+
+#domain{
+
+}
+

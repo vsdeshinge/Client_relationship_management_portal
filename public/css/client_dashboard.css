@@ -149,3 +149,22 @@ footer a {
         font-size: 11px;
     }
 }
+
+/*metrics */
+ .metrics {
+    background-color: #252525;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.metrics:hover {
+    transform: translateY(-5px);
+}
+
+
+.metrics {
+    display: flex;
+    justify-content: space-between;
+}

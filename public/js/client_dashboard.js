@@ -10,6 +10,7 @@ function loadForms() {
 
 function loadMarketAccessForm() {
     document.getElementById('formContainer').innerHTML += `
+            
         <div class="details market-access">
             <span class="title">Market Access</span>
             <div class="fields">

@@ -63,6 +63,41 @@ button:hover {
     background-color: #1565c0;
 }
 
+button {
+    background-color: #1976d2;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+
+.add-fields-button {
+    background-color: #008CBA; /* Blue background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Padding */
+    text-align: center; /* Center text */
+    text-decoration: none; /* Remove underline */
+    display: inline-block; /* Inline-block */
+    font-size: 16px; /* Font size */
+    margin: 4px 2px; /* Margin */
+    cursor: pointer; /* Pointer cursor on hover */
+    border-radius: 4px; /* Rounded corners */
+}
+
+.add-fields-button:hover {
+    background-color: #007bb5; /* Darker blue on hover */
+}
+
+
+button:hover {
+    background-color: #1565c0;
+}
 .client-details {
     margin-top: 20px;
 }
@@ -133,4 +168,22 @@ hr {
 
 #logoutButton:hover {
     background-color: #198ed2;
+}
+
+/*save */
+
+.save-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+.save-button:hover {
+    background-color: #45a049;
 }

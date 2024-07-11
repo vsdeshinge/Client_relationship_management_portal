@@ -1,0 +1,324 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSSPOLE Qualified Leads</title>
+    <link rel="stylesheet" href="./css/profile_data_entry.css">
+    <link rel="stylesheet" href="./css/profile_data_entry_animation.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span class="globe-icon">&#127760;</span>
+                POSSPOLE
+            </div>
+        </header>
+        <section class="metrics">
+            <div class="qualified-leads">
+                <h3>Qualified Leads</h3>
+                <div class="counts">
+                    <div>Accepted: <span id="accepted-leads">55</span></div>
+                    <div>Deferred: <span id="deferred-leads">50</span></div>
+                    <div>Not Now: <span id="not-now-leads">50</span></div>
+                </div>
+            </div>
+        </section>
+        <br>
+        <main>
+            <section class="main-content">
+                <div class="user-info">
+                    <span id="visitor-name">Name: </span>
+                    <span id="visitor-company">Company Name: </span>
+                    <span id="visitor-phone">Phone no: </span>
+                    <span id="visitor-email">Email: </span>
+                </div>
+                <div class="categories">
+                    <button class="category-btn" data-category="customer">Customer</button>
+                    <button class="category-btn" data-category="serviceProvider">Service Provider</button>
+                    <button class="category-btn" data-category="manufacturer">Manufacturer</button>
+                    <button class="category-btn" data-category="marketAccess">Market Access</button>
+                    <button class="category-btn" data-category="others">Others</button>
+                </div>
+                <div class="section-details">
+                    <p id="default-message">Click the suitable tab which suits you</p>
+                    <div id="customer-details" class="details-content">
+                        <h3>Customer Section:</h3>
+                        <div class="sections">
+                            <button class="sub-section-btn" data-section="project">PROJECT</button>
+                            <button class="sub-section-btn" data-section="service">SERVICE</button>
+                            <button class="sub-section-btn" data-section="product">PRODUCT</button>
+                            <button class="sub-section-btn" data-section="solution">SOLUTION</button>
+                            <button class="sub-section-btn" data-section="othersSection">Others</button>
+                        </div>
+                        <div id="project-details" class="sub-details-content">
+                            <h3>Project Description:</h3>
+                            <div class="description">
+                                <input type="text" placeholder="Title">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                        </div>
+                        <div id="service-details" class="sub-details-content">
+                            <h3>Service Description:</h3>
+                        <div class="options">
+                            <div>
+                                <h4>Description:</h4>
+                                <div class="options">
+                                    <label><input type="checkbox"> 2D</label>
+                                    <label><input type="checkbox"> 3D</label>
+                                    <label><input type="checkbox"> Mechanical</label>
+                                    <label><input type="checkbox"> Electronic</label>
+                                    <label><input type="checkbox"> Civil</label>
+                                    <label><input type="checkbox"> Animation</label>
+                                    <label><input type="checkbox"> Website</label>
+                                    <label><input type="checkbox"> Marketing Collaterals</label>
+                                    <label><input type="checkbox"> Interior</label>
+                                </div>
+                                <h4>Manufacturing:</h4>
+                                <label><input type="checkbox"> Casting</label>
+                                <label><input type="checkbox"> Fabrication</label>
+                                <label><input type="checkbox"> Moulding</label>
+                                <label><input type="checkbox"> Additive</label>
+                                <label><input type="checkbox"> Pneumatics</label>
+                                <label><input type="checkbox"> Process Control</label>
+                                <label><input type="checkbox"> Hydraulics</label>
+                            </div>
+                            <div>
+                                <h4>Supply Chain:</h4>
+                                <label><input type="checkbox"> Sourcing</label>
+                                <label><input type="checkbox"> Logistics</label>
+                                <label><input type="checkbox"> Facility</label>
+                            </div>
+                            <div>
+                                <h4>Prototyping:</h4>
+                                <label><input type="checkbox"> Ergonomics</label>
+                                <label><input type="checkbox"> Testing</label>
+                                <label><input type="checkbox"> Golden Sample</label>
+                                <label><input type="checkbox"> Mass Production</label>
+                            </div>
+                        </div>
+                            <!-- Add service description content here -->
+                        </div>
+                        <div id="product-details" class="sub-details-content">
+                            <h3>Projects:</h3>
+                            <div class="description">
+                                <input type="text" placeholder="Title">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <div>
+                                <h4>Types of Product:</h4>
+                                <label><input type="checkbox"> Consumer Product</label>
+                                <label><input type="checkbox">Hardware Product</label>
+                                <label><input type="checkbox"> Industrial Product</label>
+                                <label><input type="checkbox"> Software Product</label>
+                            </div>
+                            <div class="description">
+                                <h3>Product Description:</h3>
+                                <textarea placeholder="Description"></textarea>
+                            </div><div class="description">
+                                <h3>Ket Features and Specifications:</h3>
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <div class="description">
+                                <h3>Target Audience:</h3>
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <div class="description">
+                                <h3>Competative Analysis:</h3>
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <div class="description">
+                                <h3>Unique Selling Policy:</h3>
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <!-- Add product description content here -->
+                        </div>
+                        <div id="solution-details" class="sub-details-content">
+                            <h3>Solution Description:</h3>
+                            <div class="description">
+                                <input type="text" placeholder="Title">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <!-- Add solution description content here -->
+                        </div>
+                        <div id="othersSection-details" class="sub-details-content">
+                            <h3>Other Description:</h3>
+                            <div class="description">
+                                <input type="text" placeholder="Title">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <!-- Add other description content here -->
+                        </div>
+                    </div>
+                    <div id="serviceProvider-details" class="details-content">
+                        <h3>Service Provider Section:</h3>
+                        <form class="form">
+                            <div class="form-group">
+                                <label for="domain">Domain:</label>
+                                <input type="text" id="domain" name="domain">
+                            </div>
+                            <div class="form-group">
+                                <label for="established-year">Established Year:</label>
+                                <input type="text" id="established-year" name="established-year">
+                            </div>
+                            <div class="form-group">
+                                <label for="team-size">Team Size:</label>
+                                <input type="text" id="team-size" name="team-size">
+                            </div>
+                            <div class="form-group">
+                                <label for="turnover">Turnover:</label>
+                                <input type="text" id="turnover" name="turnover">
+                            </div>
+                            <div class="form-group">
+                                <label for="branches">Branches:</label>
+                                <input type="text" id="branches" name="branches">
+                            </div>
+                            <div class="form-group">
+                                <label for="expertise">Expertise:</label>
+                                <input type="text" id="expertise" name="expertise">
+                            </div>
+                            <div class="form-group">
+                                <label for="clients">Existing Clients:</label>
+                                <input type="text" id="clients" name="clients">
+                            </div>
+                            <div class="form-group">
+                                <label for="projects">On Hold Projects:</label>
+                                <input type="text" id="projects" name="projects">
+                            </div>
+                            <div class="form-group">
+                                <label for="company-type">Company Type:</label>
+                                <select id="company-type" name="company-type">
+                                    <option value="llp">LLP&LLC</option>
+                                    <option value="co-op">Co-op/NPO</option>
+                                    <option value="jv">JV</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="experience">Experience:</label>
+                                <input type="text" id="experience" name="experience">
+                            </div>
+                            <div class="form-group">
+                                <label for="usp">USP:</label>
+                                <input type="text" id="usp" name="usp">
+                            </div>
+                            <div class="form-group">
+                                <label for="certifications">Certifications:</label>
+                                <input type="text" id="certifications" name="certifications">
+                            </div>
+                            <div class="form-group">
+                                <label for="milestones">Milestones:</label>
+                                <input type="text" id="milestones" name="milestones">
+                            </div>
+                            <div class="form-group">
+                                <label for="others">Others:</label>
+                                <input type="text" id="others" name="others">
+                            </div>
+                        </form>
+                        
+                        <!-- Add service provider section content here -->
+                    </div>
+                    <div id="manufacturer-details" class="details-content">
+                        <h3>Manufacturer Section:</h3>
+                        <form class="form">
+                            <div class="form-group">
+                                <label for="domain">Domain:</label>
+                                <input type="text" id="domain" name="domain">
+                            </div>
+                            <div class="form-group">
+                                <label for="established-year">Established Year:</label>
+                                <input type="text" id="established-year" name="established-year">
+                            </div>
+                            <div class="form-group">
+                                <label for="team-size">Product Line:</label>
+                                <input type="text" id="product-line" name="product-line">
+                            </div>
+                            <div class="form-group">
+                                <label for="turnover">Assembly Line:</label>
+                                <input type="text" id="assembly-line" name="assembly-line">
+                            </div>
+                            <div class="form-group">
+                                <label for="branches">Facility:</label>
+                                <input type="text" id="facility" name="facility">
+                            </div>
+                            <div class="form-group">
+                                <label for="expertise">Equipments:</label>
+                                <input type="text" id="equipment" name="equipment">
+                            </div>
+                            <div class="form-group">
+                                <label for="clients">Area:</label>
+                                <input type="text" id="area" name="area">
+                            </div>
+                            <div class="form-group">
+                                <label for="projects">Certifications:</label>
+                                <input type="text" id="certifications" name="certifications">
+                            </div>
+                            <div class="form-group">
+                                <label for="projects">Talent:</label>
+                                <input type="text" id="talent" name="talent">
+                            </div>
+                            <div class="form-group">
+                                <label for="projects">Location:</label>
+                                <input type="text" id="location" name="loation">
+                            </div>
+                            <div class="form-group">
+                                <label for="projects">Product Line:</label>
+                                <input type="text" id="product-line" name="product-line">
+                            </div>
+                            <div class="form-group">
+                                <label for="projects">Others:</label>
+                                <input type="text" id="others" name="others">
+                            </div>
+                        </form>
+                        <!-- Add manufacturer section content here -->
+                    </div>
+                    <div id="marketAccess-details" class="details-content">
+                        <h3>Market Access Section:</h3>
+                        <div class="description">
+                            <input type="text" placeholder="Title">
+                        </div>
+                        <div>
+                            <h4>Bandwidth:</h4>
+                            <label><input type="checkbox"> Local</label>
+                            <label><input type="checkbox"> State</label>
+                            <label><input type="checkbox"> National</label>
+                            <label><input type="checkbox"> International</label>
+                        </div>
+                        <div>
+                            <h4>Field:</h4>
+                            <label><input type="checkbox">Govt</label>
+                            <label><input type="checkbox">Private </label>
+                            
+                        </div>
+                        <h3>Milestones:</h3>
+                            <div class="description">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                            <h3>Keynotes:</h3>
+                            <div class="description">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+
+                        <!-- Add market access section content here -->
+                    </div>
+                    <div id="others-details" class="details-content">
+                        <h3>Others Section:</h3>
+                            <div class="description">
+                                <input type="text" placeholder="Title">
+                                <textarea placeholder="Description"></textarea>
+                            </div>
+                        <!-- Add others section content here -->
+                    </div>
+                </div>
+                <button id="submit-btn">Submit</button>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; Copyright 2023-2024 By POSSPOLE</p>
+        </footer>
+    </div>
+    <script src="./js/profile_data_entry.js"></script>
+</body>
+</html>

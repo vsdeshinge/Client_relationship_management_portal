@@ -265,80 +265,11 @@ app.post('/syndicate-login', async (req, res) => {
   }
 });
 
-// Route to get clients for a specific syndicate
-app.get('/syndicate-data', async (req, res) => {
-  const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
-
-  try {
-    if (!token) {
-      return res.status(401).json({ message: 'Token not provided' });
-    }
-
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const clients = await Client.find({ syndicate_name: decoded.syndicate_name.trim() });
-    res.json(clients);
-  } catch (error) {
-    console.error('Error fetching clients:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 
 
-app.post('/update-client-data/:clientId', authenticateToken, async (req, res) => {
-  const clientId = req.params.clientId;
-  const editedData = req.body;
-
-  console.log(`Received update for client ID: ${clientId}`, editedData); // Log client ID and data
-
-  try {
-      const existingClient = await Client.findById(clientId);
-      if (!existingClient) {
-          console.error(`Client not found: ${clientId}`); // Log if client not found
-          return res.status(404).json({ error: 'Client not found' });
-      }
-
-      // Update the client data with the editedData
-      Object.keys(editedData).forEach(key => {
-          existingClient[key] = editedData[key];
-      });
-
-      // Save the updated client data
-      await existingClient.save();
-      res.status(200).json(existingClient);
-  } catch (error) {
-      console.error('Error saving edited data:', error);
-      res.status(500).json({ error: 'Failed to save edited data' });
-  }
-});
 
 
-
-app.post('/send-approval-request/:clientId', authenticateToken, async (req, res) => {
-  const clientId = req.params.clientId;
-  const { adminComments } = req.body;
-
-  console.log('Received approval request for client:', clientId);
-  console.log('Admin comments:', adminComments);
-
-  try {
-    const updatedClient = await Client.findByIdAndUpdate(clientId, {
-      approved: false,
-      adminComment: adminComments || ''
-    }, { new: true });
-
-    if (!updatedClient) {
-      console.error('Client not found');
-      return res.status(404).json({ error: 'Client not found' });
-    }
-
-    console.log('Client updated successfully:', updatedClient);
-    res.status(200).json({ message: 'Approval request sent', client: updatedClient });
-  } catch (error) {
-    console.error('Error sending approval request:', error);
-    res.status(500).json({ error: 'Failed to send approval request' });
-  }
-});
 
 
 
@@ -369,60 +300,7 @@ app.post('/admin/login', async (req, res) => {
   }
 });
 
-  router.post('/api/clientFieldData', authenticateToken, async (req, res) => {
-      try {
-          const data = req.body;
-  
-          // Find the client in MongoDB by email
-          const client = await Client.findOne({ email: req.user.email });
-          if (!client) {
-              return res.status(404).json({ error: 'Client not found' });
-          }
-  
-          // Ensure clientFieldData exists and initialize if it doesn't
-          if (!client.clientFieldData) {
-              client.clientFieldData = {};
-          }
-  
-          // Update each field in clientFieldData separately
-          for (let field in data) {
-              // Ensure each field in data is not undefined
-              if (data.hasOwnProperty(field) && data[field] !== undefined && data[field] !== null) {
-                  client.clientFieldData[field] = data[field];
-              }
-          }
-  
-          // Save the client document
-          await client.save();
-  
-          res.status(200).json({ message: 'Data submitted successfully' });
-      } catch (error) {
-          console.error('Error submitting client field data:', error);
-          res.status(500).json({ error: 'Internal server error' });
-      }
-  });
-// GET route to fetch client field data
-router.get('/api/clientdata', authenticateToken, async (req, res) => {
-  console.log('Fetching client data for email:', req.user.email); // Log email
-  
-  try {
-      const client = await Client.findOne({ email: req.user.email }); // Assuming email is stored in req.user
-      if (!client) {
-          console.log('Client not found for email:', req.user.email); // Log if client not found
-          return res.status(404).json({ error: 'Client not found' });
-      }
-      // Extract and send the client field data as needed
-      const clientFieldData = client.clientFieldData;
-      console.log('Client field data:', clientFieldData); // Log client field data
-      res.status(200).json(clientFieldData);
-  } catch (error) {
-      console.error('Error fetching client field data:', error);
-      res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // admin dashboard 
-
 router.get('/admin/:id', authenticateToken, async (req, res) => {
   try {
       const admin = await Admin.findById(req.params.id).select('username');
@@ -435,50 +313,27 @@ router.get('/admin/:id', authenticateToken, async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
   }
 });
-router.get('/visitors-count', authenticateToken, async (req, res) => {
-  try {
-    const walkInClientsCount = await Client.countDocuments({ status: 'walk_in' });
-    const customersCount = await Client.countDocuments({ status: 'customer' });
-    const qualifiedLeadCount = await Client.countDocuments({ status: 'qualified_lead' });
-    const onHoldClientsCount = await Client.countDocuments({ status: 'on_hold' });
-    const businessProposalCount = await Client.countDocuments({ status: 'business_proposal' });
 
-    res.status(200).json({
-      walkInClients: walkInClientsCount,
-      customers: customersCount,
-      qualifiedLead: qualifiedLeadCount,
-      onHoldClients: onHoldClientsCount,
-      businessProposal: businessProposalCount,
-    });
+
+
+
+// Update visitor status route
+app.put('/visitors/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+      const client = await Client.findByIdAndUpdate(id, { status }, { new: true });
+      if (!client) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+      res.json({ message: 'Status updated successfully', client });
   } catch (error) {
-    console.error('Error fetching visitor counts:', error);
-    res.status(500).json({ error: 'Internal server error' });
+      console.error('Error updating client status:', error);
+      res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-router.get('/visitors', authenticateToken, async (req, res) => {
-  try {
-    const clients = await Client.find().select('name companyName domain approved');
-    res.status(200).json(clients);
-  } catch (error) {
-    console.error('Error fetching visitors:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-router.put('/visitor/:id/status', authenticateToken, async (req, res) => {
-  try {
-    const { status } = req.body;
-    const visitor = await Client.findByIdAndUpdate(req.params.id, { status }, { new: true });
-    if (!visitor) {
-      return res.status(404).json({ error: 'Visitor not found' });
-    }
-    res.status(200).json(visitor);
-  } catch (error) {
-    console.error('Error updating visitor status:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 router.get('/clients-count', authenticateToken, async (req, res) => {
   try {
@@ -489,16 +344,34 @@ router.get('/clients-count', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
-
-router.get('/clients', authenticateToken, async (req, res) => {
+// Get counts of each status
+app.get('/api/status-counts', async (req, res) => {
   try {
-    const clients = await Client.find().select('name companyName status');
-    res.status(200).json(clients);
+      const qualifiedCount = await Client.countDocuments({ status: 'qualified' });
+      const onHoldCount = await Client.countDocuments({ status: 'on-hold' });
+      const notRelevantCount = await Client.countDocuments({ status: 'not-relevant' });
+
+      res.json({
+          qualified: qualifiedCount,
+          onHold: onHoldCount,
+          notRelevant: notRelevantCount
+      });
   } catch (error) {
-    console.error('Error fetching clients:', error);
-    res.status(500).json({ error: 'Internal server error' });
+      console.error('Error fetching status counts:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+// Fetch visitor details endpoint
+app.get('/visitor-details', authenticateToken, async (req, res) => {
+  try {
+      const visitors = await Client.find({}, 'name companyName phone email status');
+      res.status(200).json(visitors);
+  } catch (error) {
+      console.error('Error fetching visitor details:', error);
+      res.status(500).json({ error: 'Error fetching visitor details. Please try again later.' });
   }
 });
 
@@ -517,81 +390,44 @@ router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
   }
 });
 
-
-// Define a new route for fetching detailed visitor data
-router.get('/api/visitorDetails/:id', authenticateToken, async (req, res) => {
-  console.log('Received request for detailed visitor data for ID:', req.params.id);
+// Route to fetch clients based on status
+router.get('/api/clients', authenticateToken, async (req, res) => {
+  const { status } = req.query;
+  console.log('Fetching clients with status:', status);
   try {
-      const visitor = await Client.findById(req.params.id).populate('projects products services solutions');
-      if (!visitor) {
-          console.log('Visitor not found for ID:', req.params.id);
-          return res.status(404).json({ error: 'Visitor not found' });
+      let query = {};
+      if (status) {
+          query.status = status;
       }
-      console.log('Detailed visitor data found:', visitor);
-      res.status(200).json(visitor);
+      const clients = await Client.find(query);
+      console.log('Clients fetched:', clients.length);
+      if (clients.length === 0) {
+          return res.status(404).json({ message: 'No clients found' });
+      }
+      res.status(200).json(clients);
   } catch (error) {
-      console.error('Error fetching detailed visitor data:', error);
+      console.error('Error fetching clients:', error);
       res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+// Endpoint to update client data
+router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+  const clientData = req.body;
 
-
-app.post('/api/visitors/:id/details', authenticateToken, async (req, res) => {
   try {
-      console.log('Request body:', req.body);
-
-      const visitorId = req.params.id;
-      const { projects, products, services, solutions } = req.body;
-
-      const updatedVisitor = await Client.findByIdAndUpdate(
-          visitorId,
-          { projects, products, services, solutions },
-          { new: true, runValidators: true }
-      );
-
-      if (!updatedVisitor) {
-          return res.status(404).json({ error: 'Visitor not found' });
-      }
-
-      res.status(200).json({ message: 'Data saved successfully', visitor: updatedVisitor });
-  } catch (error) {
-      console.error('Error saving visitor details:', error);
-      res.status(500).json({ error: error.message || 'Internal server error' });
-  }
-});
-// Route to update additional client field data
-router.post('/api/visitors/:id/details/more', authenticateToken, async (req, res) => {
-  try {
-      const visitorId = req.params.id;
-      const { financialCapacity, annualTurnover, netWorth, decisionMakers, leadTime, leadTimeUnit } = req.body;
-
-      // Find the visitor in MongoDB by visitor ID
-      const client = await Client.findById(visitorId);
-
-      if (!client) {
+      const updatedClient = await Client.findByIdAndUpdate(clientId, clientData, { new: true, runValidators: true });
+      if (!updatedClient) {
           return res.status(404).json({ error: 'Client not found' });
       }
-
-      // Update client's financial information
-      client.financialCapacity = financialCapacity;
-      client.annualTurnover = annualTurnover;
-      client.netWorth = netWorth;
-      client.decisionMakers = decisionMakers;
-      client.leadTime = {
-          value: leadTime,
-          unit: leadTimeUnit
-      };
-
-      // Save the updated client document
-      await client.save();
-
-      res.status(200).json({ message: 'Data saved successfully' });
+      res.status(200).json({ message: 'Client data updated successfully' });
   } catch (error) {
-      console.error('Error saving client field data:', error);
+      console.error('Error updating client data:', error);
       res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 app.use('/', router); // Mount the router
 
@@ -605,3 +441,58 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
+
+
+
+
+//   router.post('/api/clientFieldData', authenticateToken, async (req, res) => {
+//       try {
+//           const data = req.body;
+  
+//           // Find the client in MongoDB by email
+//           const client = await Client.findOne({ email: req.user.email });
+//           if (!client) {
+//               return res.status(404).json({ error: 'Client not found' });
+//           }
+  
+//           // Ensure clientFieldData exists and initialize if it doesn't
+//           if (!client.clientFieldData) {
+//               client.clientFieldData = {};
+//           }
+  
+//           // Update each field in clientFieldData separately
+//           for (let field in data) {
+//               // Ensure each field in data is not undefined
+//               if (data.hasOwnProperty(field) && data[field] !== undefined && data[field] !== null) {
+//                   client.clientFieldData[field] = data[field];
+//               }
+//           }
+  
+//           // Save the client document
+//           await client.save();
+  
+//           res.status(200).json({ message: 'Data submitted successfully' });
+//       } catch (error) {
+//           console.error('Error submitting client field data:', error);
+//           res.status(500).json({ error: 'Internal server error' });
+//       }
+//   });
+// // GET route to fetch client field data
+// router.get('/api/clientdata', authenticateToken, async (req, res) => {
+//   console.log('Fetching client data for email:', req.user.email); // Log email
+  
+//   try {
+//       const client = await Client.findOne({ email: req.user.email }); // Assuming email is stored in req.user
+//       if (!client) {
+//           console.log('Client not found for email:', req.user.email); // Log if client not found
+//           return res.status(404).json({ error: 'Client not found' });
+//       }
+//       // Extract and send the client field data as needed
+//       const clientFieldData = client.clientFieldData;
+//       console.log('Client field data:', clientFieldData); // Log client field data
+//       res.status(200).json(clientFieldData);
+//   } catch (error) {
+//       console.error('Error fetching client field data:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
