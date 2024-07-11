@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiconfig';
+import { API_BASE_URL } from './apiconfig.js';
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('connectForm');
     const thankYouContainer = document.getElementById('thankYouContainer');

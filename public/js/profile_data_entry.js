@@ -1,4 +1,4 @@
-import { API_BASE_URL } from './apiconfig';
+import { API_BASE_URL } from './apiconfig.js';
 document.addEventListener('DOMContentLoaded', () => {
     const categoryButtons = document.querySelectorAll('.category-btn');
     const subSectionButtons = document.querySelectorAll('.sub-section-btn');
