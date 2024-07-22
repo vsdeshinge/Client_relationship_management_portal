@@ -1,4 +1,3 @@
-import { API_BASE_URL } from './apiconfig.js';
 document.addEventListener('DOMContentLoaded', () => {
     const categoryButtons = document.querySelectorAll('.category-btn');
     const subSectionButtons = document.querySelectorAll('.sub-section-btn');
@@ -65,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function updateMetrics() {
         console.log('Updating metrics...');
         try {
-            const response = await fetch(`${API_BASE_URL}/api/status-counts`, {
+            const response = await fetch('/api/status-counts', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -104,7 +103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await fetch(`${API_BASE_URL}/api/visitors/${clientId}`, {
+        const response = await fetch(`/api/visitors/${clientId}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -247,7 +246,7 @@ document.getElementById('submit-btn').addEventListener('click', async (e) => {
 
     // Send data to the server
     try {
-        const response = await fetch(`${API_BASE_URL}/api/clients/${clientId}`, {
+        const response = await fetch(`/api/clients/${clientId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

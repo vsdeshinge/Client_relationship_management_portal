@@ -5,7 +5,7 @@ document.getElementById('adminForm').addEventListener('submit', async (e) => {
 
     console.log(`Attempting login with username: ${username}`);
     try {
-        const response = await fetch(`https://client-relationship-management-portal.onrender.com/admin/login`, {
+        const response = await fetch('http://localhost:3000/admin/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

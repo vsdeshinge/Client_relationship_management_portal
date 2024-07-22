@@ -1,0 +1,586 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1E1E1E;
+    color: #FFFFFF;
+}
+
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #252525;
+    padding: 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.logo img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.nav-item {
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.nav-item.active {
+    background-color: #3D3D3D;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #252525;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #3D3D3D;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.details p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.btn {
+    background-color: #252525;
+    border: 1px solid #3D3D3D;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.main-nav {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.main-nav .nav-item {
+    margin-right: 20px;
+}
+
+.main-nav .nav-item.active {
+    color: #3498DB;
+}
+
+.welcome-card {
+    background-color: #2C2C2C;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.welcome-card h2 {
+    margin-top: 0;
+    color: #3498DB;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    background-color: #252525;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.checkbox-group label {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.next-btn {
+    align-self: flex-end;
+    float: right;
+}
+
+.back-btn {
+    align-self: flex-start;
+    float: left;
+}
+
+.submit-btn {
+    align-self: flex-end;
+    float: right;
+}
+
+/*  product */   
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1E1E1E;
+    color: #FFFFFF;
+}
+
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #252525;
+    padding: 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.nav-item {
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.nav-item.active {
+    background-color: #3D3D3D;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #252525;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #3D3D3D;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.details p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.btn {
+    background-color: #252525;
+    border: 1px solid #3D3D3D;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.main-nav {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.main-nav .nav-item {
+    margin-right: 20px;
+}
+
+.main-nav .nav-item.active {
+    color: #3498DB;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    background-color: #252525;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.checkbox-group label {
+    margin-right: 20px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.next-btn {
+    align-self: flex-end;
+}
+
+/*  project */ 
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1E1E1E;
+    color: #FFFFFF;
+}
+
+.dashboard {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #252525;
+    padding: 20px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+.nav-item {
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.nav-item.active {
+    background-color: #3D3D3D;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #252525;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.avatar {
+    width: 60px;
+    height: 60px;
+    background-color: #3D3D3D;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.details p {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.btn {
+    background-color: #252525;
+    border: 1px solid #3D3D3D;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.main-nav {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.main-nav .nav-item {
+    margin-right: 20px;
+}
+
+.main-nav .nav-item.active {
+    color: #3498DB;
+}
+
+.welcome-card {
+    background-color: #2C2C2C;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.welcome-card h2 {
+    margin-top: 0;
+    color: #3498DB;
+}
+
+.content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    background-color: #252525;
+    border: none;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.next-btn {
+    align-self: flex-end;
+}
+.back-btn {
+    align-self: flex-start;
+
+}
+
+/*  services  */  
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #1e1e1e;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard {
+    display: flex;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #2d2d2d;
+    padding: 20px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    margin-bottom: 30px;
+}
+
+.nav-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.nav-item.active {
+    background-color: #3a3a3a;
+    border-radius: 5px;
+}
+
+main {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #555;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.actions {
+    margin-top: 20px;
+}
+
+.btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.main-nav {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.main-nav .nav-item {
+    margin-right: 20px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 10px;
+    background-color: #3a3a3a;
+    border: none;
+    color: white;
+    border-radius: 5px;
+}
+
+.next-btn {
+    float: right;
+}
+
+.dashboard main .content {
+    display: none;
+}
+
+.dashboard main .content.active {
+    display: block;
+}
+
+

@@ -103,6 +103,6 @@ const clientSchema = new mongoose.Schema({
     manufacturer: manufacturerSchema,
     marketAccess: marketAccessSchema,
     others: otherDetailsSchema
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Client', clientSchema);

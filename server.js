@@ -59,12 +59,7 @@ mongoose.connection.once('open', () => {
 });
 
 // Middleware
-app.use(cors({
-  origin: 'https://client-relationship-management-portal.onrender.com/', // Replace with your frontend domain
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -338,17 +333,36 @@ app.put('/visitors/:id/status', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 router.get('/clients-count', authenticateToken, async (req, res) => {
   try {
-    const clientsCount = await Client.countDocuments();
-    res.status(200).json({ clientsCount });
+    const today = new Date();
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const startOfWeek = new Date(today.setDate(today.getDate() - today.getDay()));
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    const totalClientsCount = await Client.countDocuments();
+    const todayClientsCount = await Client.countDocuments({ createdAt: { $gte: startOfToday } });
+    const weekClientsCount = await Client.countDocuments({ createdAt: { $gte: startOfWeek } });
+    const monthClientsCount = await Client.countDocuments({ createdAt: { $gte: startOfMonth } });
+
+    console.log('Total Clients:', totalClientsCount);
+    console.log('Today Clients:', todayClientsCount);
+    console.log('Week Clients:', weekClientsCount);
+    console.log('Month Clients:', monthClientsCount);
+
+    res.status(200).json({
+      totalClientsCount,
+      todayClientsCount,
+      weekClientsCount,
+      monthClientsCount
+    });
   } catch (error) {
     console.error('Error fetching clients count:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 // Get counts of each status
 app.get('/api/status-counts', async (req, res) => {
   try {

@@ -4,103 +4,327 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>POSSPOLE Dashboard</title>
-    <link rel="stylesheet" href="./css/admindash.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.4/flowbite.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/admindash.css">
 </head>
-<body>
-    <div class="dashboard">
-        <header>
-            <div class="logo">POSSPOLE</div>
-            <div class="search-container">
-                <input type="text" placeholder="Search" id="searchInput" class="search-input">
+<header>
+    <div class="bg-gray-900 text-white shadow-md p-4 flex justify-between items-center">
+    <!-- Logo -->
+    <a href="admin_dashboard.html" class="flex items-center">
+        <img src="assets/logo (1).png" alt="POSSPOLE" class="h-10 w-60">
+    </a>
+    
+    <!-- Search Bar -->
+    <div class="flex-1 mx-4 ml-5">
+        <input type="text" placeholder="Search..." class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500">
+    </div>
+    
+    <!-- Notifications and Profile -->
+    <div class="flex items-center space-x-4">
+        <!-- Notifications -->
+        <div class="relative">
+            <button id="notificationButton" class="focus:outline-none relative">
+                <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C8.67 6.165 7 8.388 7 11v3.159c0 .538-.214 1.055-.595 1.436L5 17h5m5 0a2 2 0 01-2 2H8a2 2 0 01-2-2m7 0H9"></path>
+                </svg>
+                <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+            </button>
+            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
+                <ul>
+                    <li class="p-4 border-b border-gray-700 text-white">Message 1</li>
+                    <li class="p-4 border-b border-gray-700 text-white">Message 2</li>
+                    <li class="p-4 text-white">Message 3</li>
+                </ul>
             </div>
-        </header>
-        <aside>
-            <section class="welcome">
-                <div class="welcome-card">
-                    <h2>Welcome ABC,</h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur sed.</p>
-                    <button id="logoutButton" onclick="logout()" style="display: none;">Logout</button>
-                </div>
-            </section>
+        </div>
+        
+        <!-- Profile -->
+        <div class="relative">
+            <button id="profileButton" class="flex items-center focus:outline-none">
+                <img src="profile.jpg" alt="Profile" class="h-8 w-8 rounded-full border border-gray-700">
+                <svg class="h-4 w-4 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </button>
+            <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
+                <ul>
+                    <li class="p-4 border-b border-gray-700 text-white cursor-pointer">Profile</li>
+                    <li class="p-4 border-b border-gray-700 text-white cursor-pointer">Settings</li>
+                    <li class="p-4 text-white cursor-pointer" id="logoutButton">Logout</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+</header>
+<body class="bg-gray-900 text-white flex flex-col min-h-screen">
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <div class="w-64 bg-gray-800 p-5">
+            
+           <!-- Updated welcome message HTML element -->
+<div style="background-color: #374151; padding: 10px; border-radius: 5px;">
+    <div class="mb-10 welcome-card">
+        <h2 class="text-xl mb-2 text-blue-400 font-bold text-aqua-500">Welcome,</h2>
+        <p class="text-sm text-white-400">Let's Enable Engage and Explore</p>
+    </div>
+</div>
+
+            <br>
             <nav>
                 <ul>
-                    <li class="active" data-section="visitors" id="visitorsTab" >Visitors</li>
-                    <li data-section="qualified-lead">Qualified Lead
-                        <ul class="submenu">
-                            <li data-status="qualified">Qualified</li>
-                            <li data-status="on-hold">On Hold</li>
-                            <li data-status="not-now">Not Now</li>
-                        </ul>
+                    <li id="nav-home" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Home</li>
+                    <li id="nav-visitors" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Visitors</li>
+                    <li id="nav-qualified-lead" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">
+                        Qualified Lead
+                      
                     </li>
-                    <li data-section="business-proposal">Business Proposal</li>
-                    <li data-section="customer">Customer</li>
+                    <li id="nav-business-proposal" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Business Proposal</li>
+                    <li id="nav-customer" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Customer</li>
                 </ul>
             </nav>
-        </aside>
-        <main>
-            <div class="metrics">
-                <div class="metric-card large">
-                    <h3>Walk In Clients</h3>
-                    <div class="metric-value" id="walkInClients">95</div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-10">
+            <!-- Home Content -->
+            <div id="content-home">
+                <!-- Walk In Clients -->
+                <div class="mb-10">
+                    <h2 class="text-2xl mb-5 font-bold text-grey-00">Walk In Clients</h2><br>
+                    <div class="flex justify-between">
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="totalClients"></canvas></div>
+                            <p class="mt-2">Total Clients</p>
+                            
+                        </div>
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="todayClients"></canvas></div>
+                            <p class="mt-2">Today</p>
+                        
+                        </div>
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="weekClients"></canvas></div>
+                            <p class="mt-2">This Week</p>
+                            
+                        </div>
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="monthClients"></canvas></div>
+                            <p class="mt-2">This Month</p>
+                            
+                        </div>
+                    </div>
                 </div>
+                
+                
+
+
+                <!-- Type of Clients and Projects Chart -->
+                <div class="flex mb-10">
+                    
+                    <div class="container mx-auto mt-10">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="flex-1">
+                                <h2 class="text-xl mb-5 font-bold text-white">Business Proposal</h2>
+                                <div id="barGraph" class="bg-gray-800 p-6 rounded-lg shadow-lg mx-auto mt-10 custom-size">
+                                    <!-- Bar graph elements will be injected here by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="flex-1 ">
+                               <div class="py-6 bg-gray-800 p-6 rounded-lg shadow-lg mx-auto mt-10"  id="donut-chart"></div>
+                                <br> 
+                            
+                        </div>
+                    </div>
+                </div>
+                 </div>
             </div>
-            <section class="metrics">
-                <div id="qualifiedLeads">
-                    <h3>Qualified Leads</h3>
-                    <div class="counts">
-                        <div>Qualified: <span id="accepted-leads">55</span></div>
-                        <div>On hold: <span id="deferred-leads">50</span></div>
-                        <div>Not Now: <span id="not-now-leads">50</span></div>
+
+            <!-- Visitors Content -->
+            <div id="content-visitors" class="hidden">
+                <h2 class="text-2xl mb-5 font-bold text-white-400">Walk In Clients</h2><br>
+                <div class="mb-10">
+                    <div class="flex justify-between">
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="visitorsTotalClients"></canvas></div>
+                            <p class="mt-2">Total Clients</p>
+                           
+                        </div>
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="visitorsTodayClients"></canvas></div>
+                            <p class="mt-2">Today</p>
+                            
+                        </div>
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="visitorsWeekClients"></canvas></div>
+                            <p class="mt-2">This Week</p>
+                            
+                        </div>
+                        <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                            <div class="circle-chart"><canvas id="visitorsMonthClients"></canvas></div>
+                            <p class="mt-2">This Month</p>
+                           
+                        </div>
                     </div>
                 </div>
-            </section>
-            <section class="metrics">
-                <div id="client-numbers">
-                    <h3>Types of Clients</h3>
-                    <div class="counts">
-                        <div>Customers <span id="cust-no">55</span></div>
-                        <div>Market Access Providers<span id="mark-no">50</span></div>
-                        <div>Manufacturers<span id="manu-no">50</span></div>
-                        <div>Service Providers<span id="ser-no">50</span></div>
+                
+                <div class="relative">
+                    <h3 class="text-xl mb-3 text-blue-400 inline-block">Clients data</h3>
+                    <button id="dropdownButton" class="ml-2 bg-gray-700 text-white px-3 py-1 rounded">
+                        Select Period ▼
+                    </button>
+                    <div id="dropdownMenu" class="absolute hidden bg-gray-700 text-white mt-1 rounded shadow-lg">
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600">Today</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600">This Week</a>
+                        <a href="#" class="block px-4 py-2 hover:bg-gray-600">This Month</a>
                     </div>
                 </div>
-            </section>
-            <section class="metrics">
-                <div id="businessProposal">
-                    <h3>Business Proposal</h3>
-                    <div class="counts">
-                        <div>Progress: <span id="progress-proposals">55</span></div>
-                        <div>Discussion: <span id="discussion-proposals">50</span></div>
-                        <div>Offered: <span id="offered-proposals">50</span></div>
-                        <div>Accepted: <span id="accepted-proposals">50</span></div>
-                    </div>
-                </div>
-            </section>
-            <div id="visitors" class="content">
-                <section class="client-details">
-                    <h3>Client details</h3>
-                    <table id="client-table">
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
                         <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Company Name</th>
-                                <th>Phone no.</th>
-                                <th>Email</th>
-                                <th>Status</th>
-                                <th>Action</th>
+                            <tr class="bg-gray-800">
+                                <th class="p-2 text-left">Name</th>
+                                <th class="p-2 text-left">DD/MM</th>
+                                <th class="p-2 text-left">Company Name</th>
+                                <th class="p-2 text-left">Phone no.</th>
+                                <th class="p-2 text-left">Email</th>
+                                <th class="p-2 text-left">Action</th>
+                                <th class="p-2 text-left">Status</th>
+                                <th class="p-2 text-left">Update Status</th>
                             </tr>
                         </thead>
-                        <tbody id="clientTable">
-                            <!-- Client rows will be inserted here by JavaScript -->
+                        <tbody id="visitorsTableBody">
+                            <!-- Table rows will be dynamically added here -->
                         </tbody>
                     </table>
-                </section>
+                </div>
             </div>
-        </main>
-        <footer>
-            <p>© Copyright 2023-2024 By POSSPOLE</p>
-        </footer>
-    </div>
-    <script type="module" src="./js/admin_dashboard.js"></script>
+
+            
+<!--  qualified lead content  -->
+            <div id="content-qualified-lead" class="hidden">
+                <!--  -->
+                <div class="mb-10">
+                    <h2 class="text-2xl mb-5 font-bold text-white-400">Client Categories</h2><br>
+                    <div class="grid-container">
+                        <div id="customersChart" class="chart-item">
+                            <div class="circle-chart"><canvas id="customers"></canvas></div>
+                            <p class="mt-2">Customers</p>
+                           
+                        </div>
+                        <div id="manufacturersChart" class="chart-item">
+                            <div class="circle-chart"><canvas id="manufacturers"></canvas></div>
+                            <p class="mt-2">Manufacturers</p>
+                           
+                        </div>
+                        <div id="serviceProvidersChart" class="chart-item">
+                            <div class="circle-chart"><canvas id="serviceProviders"></canvas></div>
+                            <p class="mt-2">Service Providers</p>
+                           
+                        </div>
+                        <div id="channelPartnersChart" class="chart-item">
+                            <div class="circle-chart"><canvas id="channelPartners"></canvas></div>
+                            <p class="mt-2">Channel Partners</p>
+                           
+                        </div>
+                        <div id="investorsChart" class="chart-item">
+                            <div class="circle-chart"><canvas id="investors"></canvas></div>
+                            <p class="mt-2">Investors</p>
+                           
+                        </div>
+                        <div id="domainExpertsChart" class="chart-item">
+                            <div class="circle-chart"><canvas id="domainExperts"></canvas></div>
+                            <p class="mt-2">Domain Experts</p>
+                            
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-800">
+                                <th class="p-2 text-left">Name</th>
+                                <th class="p-2 text-left">DD/MM</th>
+                                <th class="p-2 text-left">Company Name</th>
+                                <th class="p-2 text-left">Phone no.</th>
+                                <th class="p-2 text-left">Email</th>
+                                <th class="p-2 text-left">Action</th>
+                                <th class="p-2 text-left">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="qualifiedLeadTableBody">
+                            <!-- Table rows will be dynamically added here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+    
+
+        <!--  business praposal content  -->
+        <div id="content-business-proposal" class="hidden">
+            <h2 class="text-2xl mb-5 font-bold text-white-400">Business Proposal</h2><br>
+            <div class="mb-10">
+                <div class="flex justify-between">
+                    <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                        <div class="circle-chart"><canvas id="acceptedClients"></canvas></div>
+                        <p class="mt-2">Accepted</p>
+                     
+                    </div>
+                    <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                        <div class="circle-chart"><canvas id="inProgressClients"></canvas></div>
+                        <p class="mt-2">In Progress</p>
+                      
+                    </div>
+                    <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                        <div class="circle-chart"><canvas id="inDiscussionClients"></canvas></div>
+                        <p class="mt-2">In Discussion </p>
+                       
+                    </div>
+                    <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                        <div class="circle-chart"><canvas id="OfferedClients"></canvas></div>
+                        <p class="mt-2">Offered</p>
+                      
+                    </div>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-800">
+                            <th class="p-2 text-left">Name</th>
+                            <th class="p-2 text-left">DD/MM</th>
+                            <th class="p-2 text-left">Company Name</th>
+                            <th class="p-2 text-left">Phone no.</th>
+                            <th class="p-2 text-left">Email</th>
+                            <th class="p-2 text-left">Action</th>
+                            <th class="p-2 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="businessProposalTableBody">
+                        <!-- Table rows will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+        </div>
+                
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-center p-4">
+        <p>&copy; Copyright 2023-2024 By POSSPOLE. All rights reserved.</p>
+    </footer>
+
+    <script src="./js/admin_dashboard.js"></script>
 </body>
 </html>

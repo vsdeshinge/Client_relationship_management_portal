@@ -1,383 +1,120 @@
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #1a1a1a;
-    color: #ffffff;
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+Copybody { 
+    font-family: poppins, sans-serif; 
 }
 
-.dashboard {
+.custom-bar {
+    background: linear-gradient(90deg, rgba(255,0,132,1) 0%, rgba(255,0,255,1) 100%);
+}
+
+.grid-container {
     display: grid;
-    grid-template-areas: 
-        "header header"
-        "sidebar main"
-        "footer footer";
-    grid-template-columns: 200px 1fr;
-    grid-template-rows: auto 1fr auto;
-    height: 100vh;
-    transition: all 0.3s ease-in-out;
-}
-
-header {
-    grid-area: header;
-    background-color: #252525;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s ease-in-out;
+    grid-template-columns: repeat(3, 1fr);
+    gap:4%;
 }
 
 
-
-#logoutButton {
-    display: none; /* Initial state, can be toggled by JavaScript */
-    background-color: #f44336; /* Red background */
-    color: white; /* White text */
-    border: none; /* Remove border */
-    padding: 10px 20px; /* Padding */
-    text-align: center; /* Center text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Inline-block */
-    font-size: 16px; /* Font size */
-    margin: 4px 2px; /* Margin */
-    cursor: pointer; /* Pointer cursor on hover */
-    border-radius: 4px; /* Rounded corners */
-}
-
-#logoutButton:hover {
-    background-color: #d32f2f; /* Darker red on hover */
-}
-
-/* Add additional styles for your conditional buttons */
-.save-button , .add-fields-button{
-    background-color: #4CAF50; /* Green background */
-    color: white; /* White text */
-    border: none; /* Remove border */
-    padding: 10px 20px; /* Padding */
-    text-align: center; /* Center text */
-    text-decoration: none; /* Remove underline */
-    display: inline-block; /* Inline-block */
-    font-size: 16px; /* Font size */
-    margin: 4px 2px; /* Margin */
-    cursor: pointer; /* Pointer cursor on hover */
-    border-radius: 4px; /* Rounded corners */
-}
-
-.save-button:hover, .add-fields-button:hover {
-    background-color: #45a049; /* Darker green on hover */
-}
-
-header:hover {
-    background-color: #1a1a1a;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    transition: transform 0.3s ease-in-out;
-}
-
-.logo:hover {
-    transform: scale(1.1);
-}
-
-.search-bar input {
-    background-color: #333;
-    border: none;
-    padding: 0.5rem;
-    color: white;
-    border-radius: 4px;
-    width: 200px;
-    transition: background-color 0.3s ease-in-out, width 0.3s ease-in-out;
-}
-
-.search-bar input:focus {
-    background-color: #444;
-    width: 250px;
-}
-
-aside {
-    grid-area: sidebar;
-    background-color: #252525;
-    padding: 1rem;
-    transition: all 0.3s ease-in-out;
-}
-
-aside:hover {
-    background-color: #1a1a1a;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.welcome {
-    margin-bottom: 2rem;
-    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
-}
-
-.welcome:hover {
-    transform: translateY(-5px);
-    color: #00aaff;
-}
-
-nav ul {
-    list-style-type: none;
-    padding: 0;
-    transition: color 0.3s ease-in-out;
-}
-
-nav ul li {
-    margin-bottom: 1rem;
-    cursor: pointer;
-    color: #888;
-    transition: color 0.3s ease-in-out;
-}
-
-nav ul li:hover {
-    color: #ffffff;
-}
-
-nav ul li.active {
-    color: #00aaff;
-    font-weight: bold;
-    transition: transform 0.3s ease-in-out;
-}
-
-nav ul li.active:hover {
-    transform: scale(1.05);
-}
-
-.submenu {
-    display: none;
-    padding-left: 20px;
-    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-}
-
-.submenu.show {
-    display: block;
-    max-height: 300px;
-    opacity: 1;
-}
-
-.submenu li {
-    padding: 5px 0;
-    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.submenu li:hover {
-    color: #ffffff;
-    transform: translateX(5px);
-}
-
-.submenu li.active {
-    color: #00aaff;
-    font-weight: bold;
-}
-
-main {
-    grid-area: main;
-    padding: 1rem;
-    transition: transform 0.3s ease-in-out;
-}
-
-main:hover {
-    transform: translateY(-5px);
-}
-
-.walk-in-clients, .metrics, .client-details {
-    background-color: #252525;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border-radius: 4px;
-    transition: transform 0.3s ease-in-out;
-}
-
-.walk-in-clients:hover, .metrics:hover, .client-details:hover {
-    transform: translateY(-5px);
-}
-
-.walk-in-clients {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.walk-in-clients:hover {
-    background-color: #1a1a1a;
-}
-
-.walk-in-clients .count {
-    font-size: 2rem;
-    color: #00aaff;
-    transition: color 0.3s ease-in-out;
-}
-
-.walk-in-clients .count:hover {
-    color: #ffffff;
-}
-
-.metrics {
-    display: flex;
-    justify-content: space-between;
-}
-
-.qualified-leads, .business-proposal {
-    width: 48%;
-    transition: transform 0.3s ease-in-out;
-}
-
-.qualified-leads:hover, .business-proposal:hover {
-    transform: scale(1.02);
-}
-
-.counts {
-    display: flex;
-    justify-content: space-between;
-}
-
-.counts div {
-    background-color: #333;
-    padding: 0.5rem;
-    border-radius: 4px;
-    flex: 1;
-    margin-right: 0.5rem;
-    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
-}
-
-.counts div:hover {
-    transform: translateY(-5px);
-    background-color: #444;
-}
-
-.counts div:last-child {
-    margin-right: 0;
-}
-
-.counts span {
-    color: #00aaff;
-    transition: color 0.3s ease-in-out;
-}
-
-.counts span:hover {
-    color: #ffffff;
-}
-
-table {
+.circle-chart {
     width: 100%;
-    border-collapse: collapse;
-    transition: transform 0.3s ease-in-out;
-}
+    max-width: 150px;
+    margin: 0 auto;
+  }
+  
+  .circle-chart canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
 
-table:hover {
-    transform: scale(1.02);
-}
-
-th, td {
-    text-align: left;
-    padding: 0.5rem;
-    border-bottom: 1px solid #333;
-    transition: background-color 0.3s ease-in-out;
-}
-
-th:hover, td:hover {
-    background-color: #333;
-}
-
-footer {
-    grid-area: footer;
-    background-color: #252525;
-    padding: 1rem;
+.chart-item {
     text-align: center;
-    transition: background-color 0.3s ease-in-out;
+    padding: 4%;
+    background: linear-gradient(to top, #1F2937, transparent);
+    border-radius: 0.5rem;
+    color: white !important;
 }
 
-footer:hover {
-    background-color: #1a1a1a;
+.chart-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background: linear-gradient(to top, #1F2937, transparent);
+    border-radius: 0.5rem;
+    color: white !important;
 }
 
-select {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 0.3rem;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background-color 0.3s ease-in-out;
+.circle-chart {
+    width: 100%;
+    max-width: 150px;
+    margin: 0 auto;
+  }
+
+  .circle-chart canvas {
+    margin-left: -10%;
+    width: 120% !important;
+    height: auto !important;
+  }
+
+  @media (max-width: 640px) {
+    .text-2xl {
+      font-size: 1.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .p-5 {
+      padding: 1rem;
+    }
+  }
+
+#totalClients {
+    border: none; /* Ensure there's no border */
+    background-color: transparent; /* Optional: Make sure there's no background */
 }
 
-select:hover {
-    background-color: #444;
-}
-/* extra */
-/* Import Montserrat font */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-
-/* Apply Montserrat font */
-body {
-    font-family: 'Montserrat', sans-serif;
+.custom-center {
+    display: flex;
+    justify-content: center;
+    align-items: end;
 }
 
-/* Style the aside menu to look like buttons */
-nav ul li {
-    background: linear-gradient(145deg, #3a3a3a, #484848);
-    color: white;
-    padding: 10px 15px;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+.apexcharts-datalabel-label,
+.apexcharts-text,
+.apexcharts-legend-text,
+.apexcharts-pie-label {
+    color: white !important;
 }
 
-nav ul li:hover {
-    background: linear-gradient(145deg, #484848, #5c5c5c);
-    transform: scale(1.05);
+.custom_size{
+ margin-top: -3px;
+
 }
 
-nav ul li.active {
-    background: linear-gradient(145deg, #00aaff, #00d4ff);
-    color: white;
-    transform: scale(1.1);
+
+
+.custom-size{
+    margin-top: -7px;
+    padding-bottom: 9px;
+    
 }
 
-/* Style submenu container */
-.submenu {
-    display: none;
-    background-color: #333;
-    border-radius: 10px;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
+.w-40 {
+    margin-top: -40px;
+    margin-left: -30px;
+    width: 10rem;
 }
 
-/* Show submenu when the parent menu item is active */
-nav ul li:hover .submenu,
-nav ul li.active .submenu {
-    display: block;
+.text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    margin-top: -15px;
+}
+#weekClients {
+    border: none !important; /* Remove any border */
+    background-color: transparent !important; /* Ensure no background color */
 }
 
-/* Style submenu items */
-.submenu li {
-    background: linear-gradient(145deg, #3a3a3a, #484848);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 10px;
-    margin-bottom: 0.5rem;
-    cursor: pointer;
-    text-align: center;
-    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
-}
-
-.submenu li:hover {
-    background: linear-gradient(145deg, #484848, #5c5c5c);
-    transform: scale(1.05);
-}
-
-.submenu li.active {
-    background: linear-gradient(145deg, #00aaff, #00d4ff);
-    color: white;
-    transform: scale(1.1);
+.remove_border{
+    border: none !important;
+    border:0 px !important;
 }

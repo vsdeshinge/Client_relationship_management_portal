@@ -147,7 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         try {
-            const response = await fetch(`${API_BASE_URL}/register`, {
+            const response = await fetch(`/register`, {
                 method: 'POST',
                 body: formData
             });

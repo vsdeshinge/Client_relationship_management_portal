@@ -1,124 +1,52 @@
-import { API_BASE_URL } from './apiconfig.js';
-
-document.addEventListener('DOMContentLoaded', async () => {
-    const token = localStorage.getItem('adminToken');
-    const adminId = localStorage.getItem('adminId');
-
-    if (!token || !adminId) {
-        window.location.href = 'index.html';
-        return;
-    }
-
-    const handleUnauthorized = () => {
-        alert('Login session expired, please login again');
-        logout();
-    };
-
-    const fetchAdminDetails = async () => {
+document.addEventListener('DOMContentLoaded', () => {
+    async function fetchAdminDetails() {
+        const token = localStorage.getItem('adminToken');
+        const adminId = localStorage.getItem('adminId');
         try {
-            const response = await fetch(`${API_BASE_URL}/admin/${adminId}`, {
+            const response = await fetch(`/admin/${adminId}`, {
                 method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
                 const adminData = await response.json();
                 console.log('Admin Data:', adminData);
-                if (adminData && adminData.username) {
-                    document.querySelector('.welcome-card h2').textContent = `Welcome ${adminData.username},`;
+                const welcomeCard = document.querySelector('.welcome-card h2');
+                console.log('Welcome Card Element:', welcomeCard);  // Debugging statement
+                if (welcomeCard) {
+                    welcomeCard.textContent = adminData && adminData.username ? `Welcome ${adminData.username},` : 'Welcome,';
                 } else {
-                    console.error('Admin username is undefined or null');
-                    document.querySelector('.welcome-card h2').textContent = 'Welcome,';
+                    console.error('Element .welcome-card h2 not found');
                 }
-                document.querySelector('.welcome-card p').textContent = 'Welcome to the admin panel';
+                const welcomeParagraph = document.querySelector('.welcome-card p');
+                console.log('Welcome Paragraph Element:', welcomeParagraph);  // Debugging statement
+                if (welcomeParagraph) {
+                    welcomeParagraph.textContent = 'Welcome to the admin panel';
+                } else {
+                    console.error('Element .welcome-card p not found');
+                }
             } else if (response.status === 401) {
                 handleUnauthorized();
             } else {
-                const errorData = await response.json();
-                console.error('Error fetching admin details:', errorData.error);
+                console.error('Error fetching admin details:', await response.json());
             }
         } catch (error) {
             console.error('Error fetching admin details:', error);
         }
-    };
+    }
 
-    const fetchVisitorDetails = async () => {
+    const logoutButton = document.getElementById('logoutButton');
+    if (logoutButton) {
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminId');
+            window.location.href = 'index.html';
+        });
+    }
+
+    async function fetchClientCount() {
+        const token = localStorage.getItem('adminToken');
         try {
-            const response = await fetch(`${API_BASE_URL}/visitor-details`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (response.ok) {
-                const visitorDetails = await response.json();
-                console.log('Visitor Details:', visitorDetails);
-                renderVisitorDetails(visitorDetails);
-            } else {
-                console.error('Error fetching visitor details');
-            }
-        } catch (error) {
-            console.error('Error fetching visitor details:', error);
-        }
-    };
-
-    const renderVisitorDetails = (visitorDetails) => {
-        const visitorTable = document.getElementById('clientTable');
-        if (visitorTable) {
-            visitorTable.innerHTML = ''; // Clear existing rows
-            visitorDetails.forEach(visitor => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${visitor.name}</td>
-                    <td>${visitor.companyName || 'N/A'}</td>
-                    <td>${visitor.phone}</td>
-                    <td>${visitor.email}</td>
-                    <td>
-                        <select class="status-select" data-visitor-id="${visitor._id}">
-                            <option value="qualified" ${visitor.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-                            <option value="on-hold" ${visitor.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-                            <option value="not-relevant" ${visitor.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-                        </select>
-                    </td>
-                    <td><button class="save-button" data-visitor-id="${visitor._id}">Save</button></td>
-                `;
-                visitorTable.appendChild(row);
-            });
-    
-            // Add event listeners to save buttons
-            document.querySelectorAll('.save-button').forEach(button => {
-                button.addEventListener('click', async (event) => {
-                    const visitorId = event.target.dataset.visitorId;
-                    const selectElement = document.querySelector(`.status-select[data-visitor-id="${visitorId}"]`);
-                    const newStatus = selectElement.value;
-                    try {
-                        const response = await fetch(`${API_BASE_URL}/visitors/${visitorId}/status`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${token}`
-                            },
-                            body: JSON.stringify({ status: newStatus })
-                        });
-                        if (response.ok) {
-                            alert('Status updated successfully');
-                        } else {
-                            console.error('Error updating status');
-                        }
-                    } catch (error) {
-                        console.error('Error updating status:', error);
-                    }
-                });
-            });
-        } else {
-            console.error('Element with ID "clientTable" not found.');
-        }
-    };
-
-    const fetchClientCount = async () => {
-        try {
-            const response = await fetch(`${API_BASE_URL}/clients-count`, {
+            const response = await fetch('/clients-count', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -126,256 +54,565 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             const countData = await response.json();
             if (response.ok) {
-                document.getElementById('walkInClients').textContent = countData.clientsCount;
+                console.log('Client Count Data:', countData); // Add this line to debug
+                const totalClientsElement = document.getElementById('visitorsTotalClients');
+                console.log('Total Clients Element:', totalClientsElement);  // Debugging statement
+                if (totalClientsElement) {
+                    totalClientsElement.textContent = countData.totalClientsCount;
+                } else {
+                    console.error('Element #visitorsTotalClients not found');
+                }
+                const todayClientsElement = document.getElementById('visitorsTodayClients');
+                console.log('Today Clients Element:', todayClientsElement);  // Debugging statement
+                if (todayClientsElement) {
+                    todayClientsElement.textContent = countData.todayClientsCount;
+                } else {
+                    console.error('Element #visitorsTodayClients not found');
+                }
+                const weekClientsElement = document.getElementById('visitorsWeekClients');
+                console.log('Week Clients Element:', weekClientsElement);  // Debugging statement
+                if (weekClientsElement) {
+                    weekClientsElement.textContent = countData.weekClientsCount;
+                } else {
+                    console.error('Element #visitorsWeekClients not found');
+                }
+                const monthClientsElement = document.getElementById('visitorsMonthClients');
+                console.log('Month Clients Element:', monthClientsElement);  // Debugging statement
+                if (monthClientsElement) {
+                    monthClientsElement.textContent = countData.monthClientsCount;
+                } else {
+                    console.error('Element #visitorsMonthClients not found');
+                }
+
+                // Update circle charts with fetched data
+                updateCircleCharts(countData);
+
             } else {
                 console.error('Error fetching client count:', countData.error);
             }
         } catch (error) {
             console.error('Error fetching client count:', error);
         }
-    };
-
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.addEventListener('input', (event) => {
-            const query = event.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#clientTable tr');
-            rows.forEach(row => {
-                const name = row.querySelector('td:first-child').textContent.toLowerCase();
-                if (name.includes(query)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    } else {
-        console.error('Element with ID "searchInput" not found.');
     }
-
-    await fetchAdminDetails();
-    await fetchVisitorDetails();
-    await fetchClientCount();
-    updateMetrics()
-    initializeNavigation();
-
-    document.getElementById('logoutButton').style.display = 'block';
-   
-
-    document.querySelectorAll('.nav-item').forEach(navItem => {
-        navItem.addEventListener('click', (event) => {
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            navItem.classList.add('active');
-
-            const section = navItem.dataset.section;
-            document.querySelectorAll('.content').forEach(content => content.style.display = 'none');
-            document.getElementById(section).style.display = 'block';
-
-            if (section === 'visitors') {
-                fetchVisitorDetails();
-            } else if (section === 'qualified-lead' || section === 'on-hold' || section === 'not-relevant') {
-                updateClientTable(section);
-            }
-        });
-    });
+    
+    fetchAdminDetails();
+    fetchClientCount();
 });
 
-function logout() {
-    localStorage.removeItem('adminToken');
-    alert('You have been logged out.');
-    window.location.href = 'index.html';
-}
-
-function fetchStatusOptions() {
-    return [
-        { value: 'qualified', label: 'Qualified', color: '#4CAF50' },
-        { value: 'on-hold', label: 'On Hold', color: '#FFC107' },
-        { value: 'not-relevant', label: 'Not Relevant', color: '#F44336' }
-    ];
-}
-function createStatusDropdown(options, currentStatus, clientId) {
-    let html = `<select class="status-dropdown" data-client-id="${clientId}" onchange="updateStatus(this)">`;
-    options.forEach(option => {
-        html += `<option value="${option.value}" ${currentStatus === option.value ? 'selected' : ''} 
-                 style="background-color: ${option.color};">
-                 ${option.label}</option>`;
-    });
-    html += '</select>';
-    return html;
-}
-
-
-
-async function updateClientTable(status = null) {
-    console.log('updateClientTable called with status:', status);
-    
-    const tableBody = document.querySelector("#clientTable");
-    if (!tableBody) {
-        console.error('Table body element not found.');
+function createCircleChart(id, value, color) {
+    const canvas = document.getElementById(id);
+    if (!canvas) {
+        console.error(`Canvas element with id ${id} not found`);
         return;
     }
 
-    try {
-        // Clear existing rows
-        tableBody.innerHTML = "";
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas before drawing
 
-        let url = `${API_BASE_URL}/api/clients`;
-        if (status) {
-            // Map the client-side status to the MongoDB status value
-            const statusMapping = {
-                'qualified': 'qualified',
-                'on-hold': 'on-hold',
-                'not-now': 'not-relevant'
-            };
-            url += `?status=${statusMapping[status]}`;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = '#333';
+    ctx.stroke();
+
+    // Progress arc
+    const startAngle = -0.5 * Math.PI;
+    const endAngle = startAngle + (2 * Math.PI * value / 100);
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 10;
+    ctx.stroke();
+
+    // Center text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 24px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(value.toString(), centerX, centerY);
+}
+
+function updateCircleCharts(countData) {
+    createCircleChart('totalClients', countData.totalClientsCount, '#7221FD');
+    createCircleChart('todayClients', countData.todayClientsCount, '#7221FD');
+    createCircleChart('weekClients', countData.weekClientsCount, '#7221FD');
+    createCircleChart('monthClients', countData.monthClientsCount, '#7221FD');
+    createCircleChart('visitorsTotalClients', countData.totalClientsCount, '#7221FD');
+    createCircleChart('visitorsTodayClients', countData.todayClientsCount, '#7221FD');
+    createCircleChart('visitorsWeekClients', countData.weekClientsCount, '#7221FD');
+    createCircleChart('visitorsMonthClients', countData.monthClientsCount, '#7221FD');
+}
+
+
+
+// Business Proposal data
+const businessProposalData = [
+    { name: 'John Doe', date: '15/07', company: 'ABC Corp', phone: '1234567890', email: 'john@example.com', status: 'Accepted' },
+    { name: 'Jane Smith', date: '16/07', company: 'XYZ Ltd', phone: '9876543210', email: 'jane@example.com', status: 'In Progress' },
+    { name: 'Bob Johnson', date: '17/07', company: '123 Inc', phone: '5555555555', email: 'bob@example.com', status: 'In Discussion' },
+    { name: 'Alice Brown', date: '18/07', company: 'Tech Co', phone: '1112223333', email: 'alice@example.com', status: 'Offered' },
+    { name: 'Charlie Davis', date: '19/07', company: 'Innovate Inc', phone: '4445556666', email: 'charlie@example.com', status: 'Accepted' },
+];
+
+
+// Navigation functionality
+function showContent(contentId) {
+    document.querySelectorAll('[id^="content-"]').forEach(el => el.style.display = 'none');
+    document.getElementById(contentId).style.display = 'block';
+}
+
+document.querySelectorAll('nav li').forEach(el => {
+    el.addEventListener('click', function() {
+        if (!this.classList.contains('has-submenu')) {
+            document.querySelectorAll('nav li').forEach(item => item.classList.remove('bg-gray-700'));
+            this.classList.add('bg-gray-700');
+            showContent('content-' + this.id.split('-')[1]);
         }
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const clientData = await response.json();
-        console.log('Fetched client data:', clientData);
+    });
+});
 
-        clientData.forEach(client => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${client.name}</td>
-                <td>${client.companyName || 'N/A'}</td>
-                <td>${client.phone}</td>
-                <td>${client.email}</td>
-                <td>${createStatusDropdown(fetchStatusOptions(), client.status, client._id)}</td>
-            `;
-            if (status === 'on-hold') {
-                row.innerHTML += `<td><button class="save-button" data-client-id="${client._id}">Save</button></td>`;
-            } else if (status === 'qualified') {
-                row.innerHTML += `<td><button class="add-fields-button" data-client-id="${client._id}">Add Fields</button></td>`;
-            }
-            tableBody.appendChild(row);
-        });
 
-        document.querySelectorAll('.save-button').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const clientId = event.target.dataset.clientId;
-                const selectElement = document.querySelector(`.status-dropdown[data-client-id="${clientId}"]`);
-                if (!selectElement) {
-                    console.error('Dropdown element not found for client ID:', clientId);
-                    return;
-                }
-                const newStatus = selectElement.value;
-                try {
-                    const response = await fetch(`${API_BASE_URL}/visitors/${clientId}/status`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+//Header 
+document.getElementById('notificationButton').addEventListener('click', function() {
+    var dropdown = document.getElementById('notificationDropdown');
+    dropdown.classList.toggle('hidden');
+});
+
+document.getElementById('profileButton').addEventListener('click', function() {
+    var dropdown = document.getElementById('profileDropdown');
+    dropdown.classList.toggle('hidden');
+});
+
+document.addEventListener('click', function(event) {
+    var isClickInsideNotification = document.getElementById('notificationButton').contains(event.target);
+    var isClickInsideProfile = document.getElementById('profileButton').contains(event.target);
+
+    if (!isClickInsideNotification) {
+        document.getElementById('notificationDropdown').classList.add('hidden');
+    }
+
+    if (!isClickInsideProfile) {
+        document.getElementById('profileDropdown').classList.add('hidden');
+    }
+});
+
+
+
+
+// Projects Chart
+document.addEventListener('DOMContentLoaded', function () {
+       // Data for the horizontal bar chart
+       const data = [
+        { label: "Customers", value: 5, max: 25 },
+        { label: "Service Providers", value: 5, max: 25 },
+        { label: "Manufacturers", value: 15, max: 25 },
+        { label: "Channel Providers", value: 20, max: 25 },
+        { label: "Investors", value: 20, max: 25 },
+        { label: "Domain Expert", value: 20, max: 25 },
+    ];
+    
+    const container = document.getElementById('barGraph');
+    
+    data.forEach(item => {
+        const percentage = (item.value / item.max) * 100;
+        const barElement = `
+            <div class="mb-4 custom_size">
+                <div class="flex justify-between mb-2">
+                    <span class="text-white">${item.label}</span>
+                    <span class="text-white">${item.value}</span>
+                </div>
+                <div class="w-full bg-white rounded-full " style="height: 5px;"> <!-- Decrease the height here -->
+                    <div class="bg-purple-500 rounded-full" style="height: 5px; width: ${percentage}%;"></div> <!-- Decrease the height here -->
+                </div>
+            </div>
+        `;
+        container.innerHTML += barElement;
+    });
+    
+    // circle - pie chart
+    const getChartOptions = () => {
+        return {
+            series: [5.1, 4.5, 4.4, 5.4 ],
+            colors: ["#369FFF", "#2D246B", "#51546F", "#4154FF" ],
+            chart: {
+                height: 320,
+                width: "100%",
+                type: "donut",
+            },
+            stroke: {
+                colors: ['#1F2937'],  // Set the stroke color to match your background color
+                width: 4 // Set the stroke width to create the spacing effect
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        labels: {
+                            show: true,
+                            name: {
+                                show: true,
+                                fontFamily: "Poppins, sans-serif",
+                                offsetY: 20,
+                                color: "white",
+                                className: "apexcharts-datalabel-label"
+                            },
+                            total: {
+                                showAlways: true,
+                                show: true,
+                                label: "Proposal Status",
+                                fontSize: "17px",
+                                fontFamily: "Poppins, sans-serif",
+                                fontWeight: "bold",
+                                color: "white",
+                                formatter: function (w) {
+                                    const sum = w.globals.seriesTotals.reduce((a, b) => {
+                                        return a + b
+                                    }, 0)
+                                    return sum + ' visitors'
+                                },
+                            },
+                            value: {
+                                show: false,
+                                fontFamily: "Poppins, sans-serif",
+                                offsetY: -0,
+                                formatter: function (value) {
+                                    return value + " " + "visitors"
+                                },
+                            },
                         },
-                        body: JSON.stringify({ status: newStatus })
-                    });
-                    if (response.ok) {
-                        alert('Status updated successfully');
-                    } else {
-                        console.error('Error updating status');
-                        console.log(await response.json());
-                    }
-                } catch (error) {
-                    console.error('Error updating status:', error);
+                        size: "80%",
+                    },
+                },
+            },
+            grid: {
+                padding: {
+                    top: -2,
                 }
-            });
-        });
-// Add event listeners to "Add Fields" buttons
-document.querySelectorAll('.add-fields-button').forEach(button => {
-    button.addEventListener('click', (event) => {
-        const clientId = event.target.dataset.clientId;
-        localStorage.setItem('currentClientId', clientId);
-        window.location.href = 'profile_data_entry.html';
-    });
-});
-        updateMetrics(); // Update metrics after updating table
-    } catch (error) {
-        console.error('Error fetching client data:', error);
-    }
-}
-
-function updateStatus(select) {
-    const newStatus = select.value;
-    const statusOptions = fetchStatusOptions();
-    const selectedOption = statusOptions.find(option => option.value === newStatus);
-    
-    if (selectedOption) {
-        select.style.backgroundColor = selectedOption.color;
-    }
-    
-    console.log(`Status updated to: ${newStatus}`);
-    // Optionally, update server with new status
-}
-async function updateMetrics() {
-    console.log('Updating metrics...');
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/status-counts`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+            },
+            labels: ["Discussion",
+                "Offered",
+                "Rejected",
+                "Accepted",
+            ],
+            dataLabels: {
+                enabled: false,
+                color: "white"
+            },
+            legend: {
+                position: "bottom",
+                fontFamily: "Poppins, sans-serif",
+                color: "white",
+            },
+            yaxis: {
+                labels: {
+                    fontFamily: "Poppins, sans-serif",
+                    fontWeight: "bold",
+                    color: "white",
+                    formatter: function (value) {
+                        return value + " " + "visitors"
+                    },
+                },
+            },
+            xaxis: {
+                labels: {
+                    color: "white",
+                    formatter: function (value) {
+                        return value + " " + "visitors"
+                    },
+                },
+                axisTicks: {
+                    show: false,
+                },
+                axisBorder: {
+                    show: false,
+                },
+            },
         }
-        const counts = await response.json();
-        console.log('Fetched counts:', counts);
+    }
+    
+    if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined') {
+        const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
+        chart.render();
+    
+        // Get all the checkboxes by their class name
+        const checkboxes = document.querySelectorAll('#devices input[type="checkbox"]');
+    
+        // Function to handle the checkbox change event
+        function handleCheckboxChange(event, chart) {
+            const checkbox = event.target;
+            if (checkbox.checked) {
+                switch (checkbox.value) {
+                    case 'desktop':
+                        chart.updateSeries([15.1, 22.5, 4.4, 8.4]);
+                        break;
+                    case 'tablet':
+                        chart.updateSeries([25.1, 26.5, 1.4, 3.4]);
+                        break;
+                    case 'mobile':
+                        chart.updateSeries([45.1, 27.5, 8.4, 2.4]);
+                        break;
+                    default:
+                        chart.updateSeries([55.1, 28.5, 1.4, 5.4]);
+                }
+    
+            } else {
+                chart.updateSeries([35.1, 23.5, 2.4, 5.4]);
+            }
+        }
+    
+        // Attach the event listener to each checkbox
+        checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', (event) => handleCheckboxChange(event, chart));
+        });
+    }
+    
+});
 
-        document.getElementById('accepted-leads').textContent = counts.qualified;
-        document.getElementById('deferred-leads').textContent = counts.onHold;
-        document.getElementById('not-now-leads').textContent = counts.notRelevant;
-        console.log('Metrics updated:', counts);
-    } catch (error) {
-        console.error('Error updating metrics:', error);
+
+// Visitors data
+const visitorsData = [
+    { name: 'John Doe', date: '15/07', company: 'ABC Corp', phone: '1234567890', email: 'john@example.com', status: 'qualified' },
+    { name: 'Bob Johnson', date: '15/07', company: '123 Inc', phone: '5555555555', email: 'bob@example.com', status: 'notnow' },
+    { name: 'Jane Smith', date: '15/07', company: 'XYZ Ltd', phone: '9876543210', email: 'jane@example.com', status: 'onhold' },
+    // ... other visitors data
+];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdownButton = document.getElementById('dropdownButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    dropdownButton.addEventListener('click', function() {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Close the dropdown when clicking outside of it
+    document.addEventListener('click', function(event) {
+        if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+});
+
+
+// Populate visitors table
+function populateVisitorsTable() {
+    const tableBody = document.getElementById('visitorsTableBody');
+    tableBody.innerHTML = '';
+    visitorsData.forEach((visitor, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="p-2">${visitor.name}</td>
+            <td class="p-2">${visitor.date}</td>
+            <td class="p-2">${visitor.company}</td>
+            <td class="p-2">${visitor.phone}</td>
+            <td class="p-2">${visitor.email}</td>
+            <td class="p-2"><button class="text-blue-400 hover:text-blue-300">View Profile</button></td>
+            <td class="p-2">
+                <select id="status-${index}" class="bg-gray-700 p-1 rounded">
+                    <option value="qualified" ${visitor.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+                    <option value="onhold" ${visitor.status === 'onhold' ? 'selected' : ''}>On Hold</option>
+                    <option value="notnow" ${visitor.status === 'notnow' ? 'selected' : ''}>Not Now</option>
+                </select>
+            </td>
+            <td class="p-2">
+                <button onclick="updateStatus(${index})" class="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">Save</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Update visitor status
+function updateStatus(index) {
+    const newStatus = document.getElementById(`status-${index}`).value;
+    visitorsData[index].status = newStatus;
+    populateVisitorsTable();
+}
+
+// Initialize visitors page
+function initVisitorsPage() {
+   
+    populateVisitorsTable();
+}
+
+
+// Dummy data for categories
+const categories = [
+    { id: 'customers', label: 'Customers', value: 100, color: '#7221FD' },
+    { id: 'manufacturers', label: 'Manufacturers', value: 50, color: '#7221FD' },
+    { id: 'serviceProviders', label: 'Service Providers', value: 75, color: '#7221FD' },
+    { id: 'channelPartners', label: 'Channel Partners', value: 30, color: '#7221FD' },
+    { id: 'investors', label: 'Investors', value: 20, color: '#7221FD' },
+    { id: 'domainExperts', label: 'Domain Experts', value: 10, color: '#7221FD' },
+];
+
+// Create charts for each category
+categories.forEach(category => {
+    createCircleChart(category.id, category.value, category.color);
+});
+
+// Qualified Lead data
+const qualifiedLeadData = [
+    { name: 'John Doe', date: '15/07',company: 'ABC Corp', phone: '1234567890', email: 'john@example.com', status: 'accepted' },
+    { name: 'Jane Smith', date: '15/07',company: 'XYZ Ltd', phone: '9876543210', email: 'jane@example.com', status: 'onhold' },
+    { name: 'Bob Johnson', date: '15/07',company: '123 Inc', phone: '5555555555', email: 'bob@example.com', status: 'notnow' },
+    { name: 'Alice Brown', date: '15/07',company: 'Tech Co', phone: '1112223333', email: 'alice@example.com', status: 'accepted' },
+    { name: 'Charlie Davis', date: '15/07',company: 'Innovate Inc', phone: '4445556666', email: 'charlie@example.com', status: 'onhold' },
+];
+
+// Populate qualified lead table
+function populateQualifiedLeadTable(status) {
+    const tableBody = document.getElementById('qualifiedLeadTableBody');
+    tableBody.innerHTML = '';
+    qualifiedLeadData.filter(lead => lead.status === status).forEach(lead => {
+        const row = document.createElement('tr');
+                    row.innerHTML = `
+                <td class="p-2">${lead.name}</td>
+                <td class="p-2">${lead.date}</td>
+                <td class="p-2">${lead.company}</td>
+                <td class="p-2">${lead.phone}</td>
+                <td class="p-2">${lead.email}</td>
+                <td class="p-2"><button class="add-edit-button text-blue-400 hover:text-blue-300">Add / Edit Details</button></td>
+                <td class="p-2 ${lead.status === 'accepted' ? 'text-green-400' : lead.status === 'onhold' ? 'text-yellow-400' : 'text-red-400'}">
+                    ${lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                </td>
+`;
+        tableBody.appendChild(row);
+    });
+}
+
+
+// add details button event listner 
+document.addEventListener('DOMContentLoaded', function() {
+    const tableBody = document.querySelector('table tbody'); // Adjust this selector if needed
+
+    tableBody.addEventListener('click', function(event) {
+        if (event.target.classList.contains('add-edit-button')) {
+            window.location.href = '.subForms/vistor_data_entry_needfrom.html';
+        }
+    });
+});
+
+
+// Initialize qualified lead page
+function initQualifiedLeadPage(status) {
+    showContent('content-qualified-lead');
+    populateQualifiedLeadTable(status);
+}
+
+// Set up sidebar dropdown for Qualified Leads
+function setupQualifiedLeadsDropdown() {
+    const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
+    qualifiedLeadItem.classList.add('has-submenu');
+    
+    const submenu = document.createElement('ul');
+    submenu.className = 'pl-4 mt-2 space-y-2 hidden';
+    submenu.innerHTML = `
+        <li id="nav-qualified-lead-accepted" class="cursor-pointer">Accepted</li>
+        <li id="nav-qualified-lead-onhold" class="cursor-pointer">On Hold</li>
+        <li id="nav-qualified-lead-notnow" class="cursor-pointer">Not Now</li>
+    `;
+    
+    qualifiedLeadItem.appendChild(submenu);
+    
+    qualifiedLeadItem.addEventListener('click', function(e) {
+        e.stopPropagation();
+        submenu.classList.toggle('hidden');
+    });
+    
+    ['accepted', 'onhold', 'notnow'].forEach(status => {
+        document.getElementById(`nav-qualified-lead-${status}`).addEventListener('click', function(e) {
+            e.stopPropagation();
+            initQualifiedLeadPage(status);
+        });
+    });
+}
+
+// Initialize all functionality
+document.addEventListener('DOMContentLoaded', () => {
+    setupQualifiedLeadsDropdown();
+    document.getElementById('nav-home').click();
+    initVisitorsPage();
+
+    // Add event listeners for other nav items
+    document.getElementById('nav-visitors').addEventListener('click', initVisitorsPage);
+    document.getElementById('nav-business-proposal').addEventListener('click', initBusinessProposalPage);
+
+        // Implement business proposal page functionality
+
+    document.getElementById('nav-customer').addEventListener('click', function() {
+        // Implement customer page functionality
+    });
+});
+
+
+// create circle charts
+function setProgress(element, percent) {
+    const progressRing = element.querySelector('.progress-ring');
+    const progressText = element.querySelector('.progressText');
+    const circumference = 2 * Math.PI * 15.91549430918954;
+    const offset = circumference - (percent / 100) * circumference;
+    progressRing.style.strokeDashoffset = offset;
+    progressText.textContent = percent.toString().padStart(2, '0');
+}
+
+// document.querySelectorAll('.circle-chart').forEach(chart => {
+//     const value = parseInt(chart.querySelector('.progressText').textContent);
+//     setProgress(chart, value);
+// });
+
+
+
+// Populate business proposal table
+function populateBusinessProposalTable() {
+    const tableBody = document.getElementById('businessProposalTableBody');
+    tableBody.innerHTML = '';
+    businessProposalData.forEach(proposal => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="p-2">${proposal.name}</td>
+            <td class="p-2">${proposal.date}</td>
+            <td class="p-2">${proposal.company}</td>
+            <td class="p-2">${proposal.phone}</td>
+            <td class="p-2">${proposal.email}</td>
+            <td class="p-2"><button class="text-blue-400 hover:text-blue-300">View Details</button></td>
+            <td class="p-2 ${getStatusColor(proposal.status)}">${proposal.status}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
+// Helper function to get status color
+function getStatusColor(status) {
+    switch (status) {
+        case 'Accepted':
+            return 'text-green-400';
+        case 'In Progress':
+            return 'text-yellow-400';
+        case 'In Discussion':
+            return 'text-blue-400';
+        case 'Offered':
+            return 'text-purple-400';
+        default:
+            return 'text-gray-400';
     }
 }
 
-function initializeNavigation() {
-    console.log('Initializing navigation...');
-    const navItems = document.querySelectorAll('nav > ul > li');
-    const qualifiedLeadItem = document.querySelector('nav ul li[data-section="qualified-lead"]');
-    const submenu = qualifiedLeadItem.querySelector('.submenu');
-
-    navItems.forEach(item => {
-        item.addEventListener('click', function() {
-            console.log('Nav item clicked:', this.dataset.section);
-            navItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-
-            if (this.dataset.section === 'qualified-lead') {
-                submenu.classList.add('show');
-            } else {
-                submenu.classList.remove('show');
-                if (this.dataset.section === 'visitors') {
-                    fetchVisitorDetails();
-                } else {
-                    updateClientTable(this.dataset.section);
-                }
-            }
-        });
-    });
-
-    const submenuItems = submenu.querySelectorAll('li');
-    submenuItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.stopPropagation();
-            console.log('Submenu item clicked:', this.dataset.status);
-            submenuItems.forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            updateClientTable(this.dataset.status);
-        });
-    });
+// Create circle charts for business proposal
+function createBusinessProposalCharts() {
+    createCircleChart('acceptedClients', 60, '#7221FD');
+    createCircleChart('inProgressClients', 5, '#7221FD');
+    createCircleChart('inDiscussionClients', 15, '#7221FD');
+    createCircleChart('OfferedClients', 40, '#7221FD');
 }
 
-// vidtor reload
-
-document.getElementById('visitorsTab').addEventListener('click', function() {
-    location.reload();
-});
+// Initialize business proposal page
+function initBusinessProposalPage() {
+    showContent('content-business-proposal');
+    createBusinessProposalCharts();
+    populateBusinessProposalTable();
+}
