@@ -1,324 +1,1051 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POSSPOLE Qualified Leads</title>
-    <link rel="stylesheet" href="./css/profile_data_entry.css">
-    <link rel="stylesheet" href="./css/profile_data_entry_animation.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <span class="globe-icon">&#127760;</span>
-                POSSPOLE
-            </div>
-        </header>
-        <section class="metrics">
-            <div class="qualified-leads">
-                <h3>Qualified Leads</h3>
-                <div class="counts">
-                    <div>Accepted: <span id="accepted-leads">55</span></div>
-                    <div>Deferred: <span id="deferred-leads">50</span></div>
-                    <div>Not Now: <span id="not-now-leads">50</span></div>
-                </div>
-            </div>
-        </section>
-        <br>
-        <main>
-            <section class="main-content">
-                <div class="user-info">
-                    <span id="visitor-name">Name: </span>
-                    <span id="visitor-company">Company Name: </span>
-                    <span id="visitor-phone">Phone no: </span>
-                    <span id="visitor-email">Email: </span>
-                </div>
-                <div class="categories">
-                    <button class="category-btn" data-category="customer">Customer</button>
-                    <button class="category-btn" data-category="serviceProvider">Service Provider</button>
-                    <button class="category-btn" data-category="manufacturer">Manufacturer</button>
-                    <button class="category-btn" data-category="marketAccess">Market Access</button>
-                    <button class="category-btn" data-category="others">Others</button>
-                </div>
-                <div class="section-details">
-                    <p id="default-message">Click the suitable tab which suits you</p>
-                    <div id="customer-details" class="details-content">
-                        <h3>Customer Section:</h3>
-                        <div class="sections">
-                            <button class="sub-section-btn" data-section="project">PROJECT</button>
-                            <button class="sub-section-btn" data-section="service">SERVICE</button>
-                            <button class="sub-section-btn" data-section="product">PRODUCT</button>
-                            <button class="sub-section-btn" data-section="solution">SOLUTION</button>
-                            <button class="sub-section-btn" data-section="othersSection">Others</button>
-                        </div>
-                        <div id="project-details" class="sub-details-content">
-                            <h3>Project Description:</h3>
-                            <div class="description">
-                                <input type="text" placeholder="Title">
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                        </div>
-                        <div id="service-details" class="sub-details-content">
-                            <h3>Service Description:</h3>
-                        <div class="options">
-                            <div>
-                                <h4>Description:</h4>
-                                <div class="options">
-                                    <label><input type="checkbox"> 2D</label>
-                                    <label><input type="checkbox"> 3D</label>
-                                    <label><input type="checkbox"> Mechanical</label>
-                                    <label><input type="checkbox"> Electronic</label>
-                                    <label><input type="checkbox"> Civil</label>
-                                    <label><input type="checkbox"> Animation</label>
-                                    <label><input type="checkbox"> Website</label>
-                                    <label><input type="checkbox"> Marketing Collaterals</label>
-                                    <label><input type="checkbox"> Interior</label>
-                                </div>
-                                <h4>Manufacturing:</h4>
-                                <label><input type="checkbox"> Casting</label>
-                                <label><input type="checkbox"> Fabrication</label>
-                                <label><input type="checkbox"> Moulding</label>
-                                <label><input type="checkbox"> Additive</label>
-                                <label><input type="checkbox"> Pneumatics</label>
-                                <label><input type="checkbox"> Process Control</label>
-                                <label><input type="checkbox"> Hydraulics</label>
-                            </div>
-                            <div>
-                                <h4>Supply Chain:</h4>
-                                <label><input type="checkbox"> Sourcing</label>
-                                <label><input type="checkbox"> Logistics</label>
-                                <label><input type="checkbox"> Facility</label>
-                            </div>
-                            <div>
-                                <h4>Prototyping:</h4>
-                                <label><input type="checkbox"> Ergonomics</label>
-                                <label><input type="checkbox"> Testing</label>
-                                <label><input type="checkbox"> Golden Sample</label>
-                                <label><input type="checkbox"> Mass Production</label>
-                            </div>
-                        </div>
-                            <!-- Add service description content here -->
-                        </div>
-                        <div id="product-details" class="sub-details-content">
-                            <h3>Projects:</h3>
-                            <div class="description">
-                                <input type="text" placeholder="Title">
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <div>
-                                <h4>Types of Product:</h4>
-                                <label><input type="checkbox"> Consumer Product</label>
-                                <label><input type="checkbox">Hardware Product</label>
-                                <label><input type="checkbox"> Industrial Product</label>
-                                <label><input type="checkbox"> Software Product</label>
-                            </div>
-                            <div class="description">
-                                <h3>Product Description:</h3>
-                                <textarea placeholder="Description"></textarea>
-                            </div><div class="description">
-                                <h3>Ket Features and Specifications:</h3>
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <div class="description">
-                                <h3>Target Audience:</h3>
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <div class="description">
-                                <h3>Competative Analysis:</h3>
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <div class="description">
-                                <h3>Unique Selling Policy:</h3>
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <!-- Add product description content here -->
-                        </div>
-                        <div id="solution-details" class="sub-details-content">
-                            <h3>Solution Description:</h3>
-                            <div class="description">
-                                <input type="text" placeholder="Title">
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <!-- Add solution description content here -->
-                        </div>
-                        <div id="othersSection-details" class="sub-details-content">
-                            <h3>Other Description:</h3>
-                            <div class="description">
-                                <input type="text" placeholder="Title">
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <!-- Add other description content here -->
-                        </div>
-                    </div>
-                    <div id="serviceProvider-details" class="details-content">
-                        <h3>Service Provider Section:</h3>
-                        <form class="form">
-                            <div class="form-group">
-                                <label for="domain">Domain:</label>
-                                <input type="text" id="domain" name="domain">
-                            </div>
-                            <div class="form-group">
-                                <label for="established-year">Established Year:</label>
-                                <input type="text" id="established-year" name="established-year">
-                            </div>
-                            <div class="form-group">
-                                <label for="team-size">Team Size:</label>
-                                <input type="text" id="team-size" name="team-size">
-                            </div>
-                            <div class="form-group">
-                                <label for="turnover">Turnover:</label>
-                                <input type="text" id="turnover" name="turnover">
-                            </div>
-                            <div class="form-group">
-                                <label for="branches">Branches:</label>
-                                <input type="text" id="branches" name="branches">
-                            </div>
-                            <div class="form-group">
-                                <label for="expertise">Expertise:</label>
-                                <input type="text" id="expertise" name="expertise">
-                            </div>
-                            <div class="form-group">
-                                <label for="clients">Existing Clients:</label>
-                                <input type="text" id="clients" name="clients">
-                            </div>
-                            <div class="form-group">
-                                <label for="projects">On Hold Projects:</label>
-                                <input type="text" id="projects" name="projects">
-                            </div>
-                            <div class="form-group">
-                                <label for="company-type">Company Type:</label>
-                                <select id="company-type" name="company-type">
-                                    <option value="llp">LLP&LLC</option>
-                                    <option value="co-op">Co-op/NPO</option>
-                                    <option value="jv">JV</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="experience">Experience:</label>
-                                <input type="text" id="experience" name="experience">
-                            </div>
-                            <div class="form-group">
-                                <label for="usp">USP:</label>
-                                <input type="text" id="usp" name="usp">
-                            </div>
-                            <div class="form-group">
-                                <label for="certifications">Certifications:</label>
-                                <input type="text" id="certifications" name="certifications">
-                            </div>
-                            <div class="form-group">
-                                <label for="milestones">Milestones:</label>
-                                <input type="text" id="milestones" name="milestones">
-                            </div>
-                            <div class="form-group">
-                                <label for="others">Others:</label>
-                                <input type="text" id="others" name="others">
-                            </div>
-                        </form>
-                        
-                        <!-- Add service provider section content here -->
-                    </div>
-                    <div id="manufacturer-details" class="details-content">
-                        <h3>Manufacturer Section:</h3>
-                        <form class="form">
-                            <div class="form-group">
-                                <label for="domain">Domain:</label>
-                                <input type="text" id="domain" name="domain">
-                            </div>
-                            <div class="form-group">
-                                <label for="established-year">Established Year:</label>
-                                <input type="text" id="established-year" name="established-year">
-                            </div>
-                            <div class="form-group">
-                                <label for="team-size">Product Line:</label>
-                                <input type="text" id="product-line" name="product-line">
-                            </div>
-                            <div class="form-group">
-                                <label for="turnover">Assembly Line:</label>
-                                <input type="text" id="assembly-line" name="assembly-line">
-                            </div>
-                            <div class="form-group">
-                                <label for="branches">Facility:</label>
-                                <input type="text" id="facility" name="facility">
-                            </div>
-                            <div class="form-group">
-                                <label for="expertise">Equipments:</label>
-                                <input type="text" id="equipment" name="equipment">
-                            </div>
-                            <div class="form-group">
-                                <label for="clients">Area:</label>
-                                <input type="text" id="area" name="area">
-                            </div>
-                            <div class="form-group">
-                                <label for="projects">Certifications:</label>
-                                <input type="text" id="certifications" name="certifications">
-                            </div>
-                            <div class="form-group">
-                                <label for="projects">Talent:</label>
-                                <input type="text" id="talent" name="talent">
-                            </div>
-                            <div class="form-group">
-                                <label for="projects">Location:</label>
-                                <input type="text" id="location" name="loation">
-                            </div>
-                            <div class="form-group">
-                                <label for="projects">Product Line:</label>
-                                <input type="text" id="product-line" name="product-line">
-                            </div>
-                            <div class="form-group">
-                                <label for="projects">Others:</label>
-                                <input type="text" id="others" name="others">
-                            </div>
-                        </form>
-                        <!-- Add manufacturer section content here -->
-                    </div>
-                    <div id="marketAccess-details" class="details-content">
-                        <h3>Market Access Section:</h3>
-                        <div class="description">
-                            <input type="text" placeholder="Title">
-                        </div>
-                        <div>
-                            <h4>Bandwidth:</h4>
-                            <label><input type="checkbox"> Local</label>
-                            <label><input type="checkbox"> State</label>
-                            <label><input type="checkbox"> National</label>
-                            <label><input type="checkbox"> International</label>
-                        </div>
-                        <div>
-                            <h4>Field:</h4>
-                            <label><input type="checkbox">Govt</label>
-                            <label><input type="checkbox">Private </label>
-                            
-                        </div>
-                        <h3>Milestones:</h3>
-                            <div class="description">
-                                <textarea placeholder="Description"></textarea>
-                            </div>
-                            <h3>Keynotes:</h3>
-                            <div class="description">
-                                <textarea placeholder="Description"></textarea>
-                            </div>
+    <title>POSSPOLE Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        let currentSubMenu = 0;
+        const subMenus = ["project", "service", "product", "solution", "others-sub"];
 
-                        <!-- Add market access section content here -->
-                    </div>
-                    <div id="others-details" class="details-content">
-                        <h3>Others Section:</h3>
-                            <div class="description">
-                                <input type="text" placeholder="Title">
-                                <textarea placeholder="Description"></textarea>
+        function highlightButton(buttonId, contentId) {
+            const buttons = document.querySelectorAll('.main-button');
+            buttons.forEach(button => button.classList.remove('bg-blue-600', 'bg-blue-500'));
+            document.getElementById(buttonId).classList.add('bg-blue-600');
+
+            const contents = document.querySelectorAll('.main-content');
+            contents.forEach(content => content.classList.add('hidden'));
+            document.getElementById(contentId).classList.remove('hidden');
+
+            if (buttonId === 'customer-button') {
+                currentSubMenu = 0;
+                toggleSubMenu('project-button', 'project-content');
+            }
+            
+        }
+
+    
+        function toggleSubMenu(buttonId, subMenuId) {
+            const buttons = document.querySelectorAll('.sub-menu-button');
+            buttons.forEach(button => button.classList.remove('bg-blue-600', 'bg-blue-500'));
+            document.getElementById(buttonId).classList.add('bg-blue-600');
+
+            const contents = document.querySelectorAll('.sub-menu-content');
+            contents.forEach(content => content.classList.add('hidden'));
+            document.getElementById(subMenuId).classList.remove('hidden');
+        }
+
+        function nextSubMenu() {
+            if (currentSubMenu < subMenus.length - 1) {
+                const currentButton = subMenus[currentSubMenu] + '-button';
+                const currentContent = subMenus[currentSubMenu] + '-content';
+
+                currentSubMenu++;
+                const nextButton = subMenus[currentSubMenu] + '-button';
+                const nextContent = subMenus[currentSubMenu] + '-content';
+
+                toggleSubMenu(nextButton, nextContent);
+
+                if (currentSubMenu === subMenus.length - 1) {
+                    document.getElementById('submit-button').classList.remove('hidden');
+                }
+            }
+        }
+    
+    function showVisitingCardPopup() {
+        document.getElementById('visiting-card-popup').classList.remove('hidden');
+    }
+
+    function hideVisitingCardPopup() {
+        document.getElementById('visiting-card-popup').classList.add('hidden');
+    }
+
+    function showNeedFormPopup() {
+        document.getElementById('need-form-popup').classList.remove('hidden');
+    }
+
+    function hideNeedFormPopup() {
+        document.getElementById('need-form-popup').classList.add('hidden');
+    }
+
+    // visitor dynamic 
+    function addMoreFields() {
+    const projectFields = document.getElementById('project-fields');
+    const newFields = document.createElement('div');
+    newFields.className = 'project-item mb-4';
+    newFields.innerHTML = `
+                    <div class="mb-4">
+                                <label class="block font-bold text-white">Title:</label>
+                                <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
                             </div>
-                        <!-- Add others section content here -->
+                            <div class="mb-4">
+                                <label class="block font-bold text-white">Description:</label>
+                                <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                            </div>
+    `;
+    projectFields.appendChild(newFields);
+}
+
+function addMoreSolutionFields() {
+    const solutionFields = document.getElementById('solution-fields');
+    const newFields = document.createElement('div');
+    newFields.className = 'solution-item mb-4';
+    newFields.innerHTML = `
+        
+        <div class="mb-4">
+                                <label class="block font-bold text-white">Title:</label>
+                                <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block font-bold text-white">Description:</label>
+                                <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                            </div>
+    `;
+    solutionFields.appendChild(newFields);
+}
+</script>
+
+    </script>
+    <style>
+
+     .rounded-card {
+        padding-left : 10 px;
+        padding-top : 10 px;
+        margin-top: 35px;
+        margin-left: 30px;
+        border-radius: 10px; /* Adjust border radius as needed */
+        border: 2px solid white; /* Transparent border */
+        padding: 20px;
+        background-color: rgba(27, 27, 27, 0.8); /* Semi-transparent white background */
+    }
+    
+    .container2{
+        border-radius: 10px; /* Adjust border radius as needed */
+        border: 2px solid white; /* Transparent border */
+    }
+    .container1{
+        margin-right: 20px;
+        margin-top: 10px;
+    }
+    .profile-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin-right: 20px;
+    }
+
+    
+        body { font-family: "Montserrat", sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex min-h-screen">
+
+    <!-- Main Content -->
+    <main class="flex-1 p-10">
+        <!-- User Information and Buttons -->
+        <div id="user-info-container" class="container2 mx-auto">
+            <div class="flex items-center justify-between mb-10">
+                <div id="profile-card" class="rounded-card">
+                    <div class="flex items-center">
+                        <img id="profile-img" src="https://via.placeholder.com/80" alt="Profile" class="profile-img">
+                        <div>
+                            <p class="text-lg font-bold">Name: Vidya</p>
+                            <p class="text-sm">Company: Liv-Lif</p>
+                            <p class="text-sm">Domain: ABC</p>
+                            <p class="text-sm">Email: vidya@gmail.com</p>
+                            <p class="text-sm">Phone no.: 1234567890</p>
+                        </div>
                     </div>
                 </div>
-                <button id="submit-btn">Submit</button>
-            </section>
-        </main>
-        <footer>
-            <p>&copy; Copyright 2023-2024 By POSSPOLE</p>
-        </footer>
+                <div id="action-buttons" class="container1">
+                    <div class="flex space-x-4">
+                        <button id="visiting-card-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="showVisitingCardPopup()">Visiting Card</button>
+                        <button id="need-form-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="showNeedFormPopup()">View Need Form</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Visiting Card Popup -->
+        <div id="visiting-card-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-gray-800 p-5 rounded-lg text-white">
+                <h2 class="text-xl mb-4">Visiting Card</h2>
+                <img id="visiting-card-img" src="URL_TO_VISITING_CARD_IMAGE" alt="Visiting Card" class="mb-4">
+                <button id="close-visiting-card-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="hideVisitingCardPopup()">Close</button>
+            </div>
+        </div>
+    
+        <!-- Need Form Popup -->
+        <div id="need-form-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-gray-800 p-5 rounded-lg text-white">
+                <h2 class="text-xl mb-4">Need Form</h2>
+                <!-- Add the Need Form details here -->
+                <button id="close-need-form-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="hideNeedFormPopup()">Close</button>
+            </div>
+        </div>
+
+<br>
+       
+     <!-- Customer Types -->
+        <div class="mb-10">
+            <h2 class="text-xl mb-5 text-blue-400">Client Types</h2>
+            <div class="flex space-x-4">
+                <button id="customer-button" class="main-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="highlightButton('customer-button', 'customer-content')">Customer</button>
+                <button id="service-provider-button" class="main-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="highlightButton('service-provider-button', 'service-provider-content')">Service Provider</button>
+                <button id="manufacturer-button" class="main-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="highlightButton('manufacturer-button', 'manufacturer-content')">Manufacturer</button>
+                <button id="market-access-button" class="main-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="highlightButton('market-access-button', 'market-access-content')">Channel Partner</button>
+                <button id="others-button" class="main-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="highlightButton('others-button', 'investors-content')">Investor</button>
+                <button id="domain-expert-button" class="main-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="highlightButton('domain-expert-button', 'domain-expert-content')">Domain Expert</button>
+            </div>
+        </div>
+        
+        <!-- Main Content Sections -->
+        <div id="customer-content" class="main-content hidden">
+            <h2 class="text-xl mb-5 text-blue-400">Customer</h2>
+            <div class="flex space-x-4 mb-5">
+                <button id="project-button" class="sub-menu-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="toggleSubMenu('project-button', 'project-content')">PROJECT</button>
+                <button id="service-button" class="sub-menu-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="toggleSubMenu('service-button', 'service-content')">SERVICE</button>
+                <button id="product-button" class="sub-menu-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="toggleSubMenu('product-button', 'product-content')">PRODUCT</button>
+                <button id="solution-button" class="sub-menu-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="toggleSubMenu('solution-button', 'solution-content')">SOLUTION</button>
+                <button id="others-sub-button" class="sub-menu-button bg-transparent px-4 py-2 rounded border border-gray-500" onclick="toggleSubMenu('others-sub-button', 'others-sub-content')">OTHERS</button>
+            </div>
+
+            <!-- Project Content -->
+            <div id="project-content" class="sub-menu-content hidden">
+                <div id="project-fields">
+                    <div class="project-item mb-4">
+                        <div class="mb-4">
+                            <label class="block font-bold text-white">Title:</label>
+                            <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block font-bold text-white">Description:</label>
+                            <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <button class="bg-blue-500 px-4 py-2 rounded" onclick="nextSubMenu()">Next</button>
+                    <button class="bg-green-500 px-4 py-2 rounded" onclick="addMoreFields()">Add More</button>
+                </div>
+            </div>
+            <!-- Service Content -->
+           
+            <div id="service-content" class="sub-menu-content hidden">
+                <h3 class="text-xl mb-5 text-blue-400">Service:</h3>
+
+                <!-- Looking for -->
+                <h4 class="text-lg font-bold white mb-3">Looking for:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-looking-for">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="looking-product-development" class="mr-2"> Product Development</label>
+                                <label><input type="checkbox" id="looking-cost-optimisation" class="mr-2"> Cost Optimisation</label>
+                                <label><input type="checkbox" id="looking-market-growth" class="mr-2"> Market Growth</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Design -->
+                <h4 class="text-lg font-bold mb-3">Design:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-design">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="design-hardware" class="mr-2"> Hardware</label>
+                                <label><input type="checkbox" id="design-firmware" class="mr-2"> Firmware</label>
+                                <label><input type="checkbox" id="design-mechanical" class="mr-2"> Mechanical</label>
+                                <label><input type="checkbox" id="design-2d" class="mr-2"> 2D</label>
+                                <label><input type="checkbox" id="design-3d" class="mr-2"> 3D</label>
+                                <label><input type="checkbox" id="design-animation" class="mr-2"> Animation</label>
+                                <label><input type="checkbox" id="design-electronics" class="mr-2"> Electronics</label>
+                                <label><input type="checkbox" id="design-website" class="mr-2"> Website</label>
+                                <label><input type="checkbox" id="design-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="design-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+                <!-- IT Services -->
+                <h4 class="text-lg mt-5 font-bold mb-3">IT Services:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-it-services">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="it-website-maintenance" class="mr-2"> Website Maintenance</label>
+                                <label><input type="checkbox" id="it-ai-ml" class="mr-2"> AI/ML</label>
+                                <label><input type="checkbox" id="it-cloud-computing-aws" class="mr-2"> Cloud Computing/AWS</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Architecture -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Architecture:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-architecture">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="architecture-civil-planning" class="mr-2"> Civil Planning</label>
+                                <label><input type="checkbox" id="architecture-interiors" class="mr-2"> Interiors</label>
+                                <label><input type="checkbox" id="architecture-mockups" class="mr-2"> Mockups</label>
+                                <label><input type="checkbox" id="architecture-space-design" class="mr-2"> Space Design</label>
+                                <label><input type="checkbox" id="architecture-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="architecture-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+
+                <!-- Market Access Reach -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Market Access Reach:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-market-access-reach">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="market-access-local" class="mr-2"> Local</label>
+                                <label><input type="checkbox" id="market-access-state" class="mr-2"> State</label>
+                                <label><input type="checkbox" id="market-access-national" class="mr-2"> National</label>
+                                <label><input type="checkbox" id="market-access-international" class="mr-2"> International</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Product Launch -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Product Launch:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-product-launch">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="product-launch-traditional" class="mr-2"> Traditional</label>
+                                <label><input type="checkbox" id="product-launch-digital-marketing" class="mr-2"> Digital Marketing</label>
+                                <label><input type="checkbox" id="product-launch-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="product-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+
+                <!-- Marketing -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Marketing:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-marketing">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="marketing-business-strategy" class="mr-2"> Business Strategy</label>
+                                <label><input type="checkbox" id="marketing-pricing" class="mr-2"> Pricing</label>
+                                <label><input type="checkbox" id="marketing-market-positioning" class="mr-2"> Market Positioning</label>
+                                <label><input type="checkbox" id="marketing-branding-packaging" class="mr-2"> Branding & Packaging</label>
+                                <label><input type="checkbox" id="marketing-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="marketing-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+
+                <!-- Market Intelligence -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Market Intelligence:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-market-intelligence">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="market-intelligence-study" class="mr-2"> Market Study</label>
+                                <label><input type="checkbox" id="market-intelligence-viability" class="mr-2"> Viability</label>
+                                <label><input type="checkbox" id="market-intelligence-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="market-intelligence-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+
+                <!-- Expert Talent -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Expert Talent:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-expert-talent">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="expert-talent-scm" class="mr-2"> SCM</label>
+                                <label><input type="checkbox" id="expert-talent-it" class="mr-2"> IT</label>
+                                <label><input type="checkbox" id="expert-talent-ip" class="mr-2"> IP</label>
+                                <label><input type="checkbox" id="expert-talent-branding" class="mr-2"> Branding</label>
+                                <label><input type="checkbox" id="expert-talent-finance" class="mr-2"> Finance</label>
+                                <label><input type="checkbox" id="expert-talent-manufacturing" class="mr-2"> Manufacturing</label
+
+            >
+                                <label><input type="checkbox" id="expert-talent-certification" class="mr-2"> Certification</label>
+                                <label><input type="checkbox" id="expert-talent-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="expert-talent-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+
+                <!-- Is Workstation Required -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Is Workstation Required:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-workstation-required">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="workstation-required-yes" class="mr-2"> Yes</label>
+                                <label><input type="checkbox" id="workstation-required-no" class="mr-2"> No</label>
+                                <label><input type="checkbox" id="workstation-required-maybe" class="mr-2"> Maybe</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Is Product Display Required -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Is Product Display Required:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-product-display-required">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="product-display-required-yes" class="mr-2"> Yes</label>
+                                <label><input type="checkbox" id="product-display-required-no" class="mr-2"> No</label>
+                                <label><input type="checkbox" id="product-display-required-maybe" class="mr-2"> Maybe</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <!-- After Sales -->
+                <h4 class="text-lg mt-5 font-bold mb-3">After Sales:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-after-sales">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="after-sales-installation" class="mr-2"> Installation</label>
+                                <label><input type="checkbox" id="after-sales-operation" class="mr-2"> Operation</label>
+                                <label><input type="checkbox" id="after-sales-commissioning" class="mr-2"> Commissioning</label>
+                                <label><input type="checkbox" id="after-sales-service-centers" class="mr-2"> Service Centers (geo)</label>
+                                <label><input type="checkbox" id="after-sales-others" class="mr-2"> Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div id="after-sales-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+
+                <br>
+
+                <!-- Funding -->
+                <h4 class="text-lg mt-5 font-bold mb-3">Funding:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-funding">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="funding-equity" class="mr-2"> Equity</label>
+                                <label><input type="checkbox" id="funding-debt" class="mr-2"> Debt</label>
+                                <label><input type="checkbox" id="funding-project-finance" class="mr-2"> Project Finance</label>
+                                <label><input type="checkbox" id="funding-royalty" class="mr-2"> Royalty</label>
+                                <label><input type="checkbox" id="funding-subsidy" class="mr-2"> Subsidy (BLI/PLI)</label>
+                                <label><input type="checkbox" id="funding-jv" class="mr-2"> JV</label>
+                                <label><input type="checkbox" id="funding-not-required" class="mr-2"> Not Required</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <button class="bg-blue-500 px-4 py-2 rounded" onclick="nextSubMenu()">Next</button>
+            </div>
+
+            
+            <!-- Product Content -->
+
+            <div id="product-content" class="sub-menu-content hidden">
+                <h4 class="text-lg font-bold mb-3">Product:</h4>
+                <div class="mb-4">
+                    <label class="block font-bold text-white">Title:</label>
+                    <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                </div>
+                <div class="mb-4">
+                    <label class="block font-bold text-white">Description:</label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                
+                <h4 class="text-lg font-bold mb-3" >Type of Product:</h4>            
+                <div class="container p-4 bg-gray-800 rounded-lg" id ="Type-of-Product">
+                    <div class="grid grid-cols-2 gap-4">
+
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="type-consumer-product" class="mr-2">Consumer Product</label>
+                                <label><input type="checkbox" id="type-industrial-product" class="mr-2">Industrial Product</label>
+                                <label><input type="checkbox" id="type-software-product" class="mr-2">Software Product</label>
+                                <label><input type="checkbox" id="type-hardware-product" class="mr-2">Hardware Product</label>
+                            </div>
+                        
+                    </div>
+                </div>  
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Development Stage:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="Development-Stage">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="stage-concept" class="mr-2">Concept</label>
+                                <label><input type="checkbox" id="stage-design" class="mr-2">Design</label>
+                                <label><input type="checkbox" id="stage-prototype" class="mr-2">Prototype</label>
+                                <label><input type="checkbox" id="stage-testing" class="mr-2">Testing</label>
+                                <label><input type="checkbox" id="stage-ready-to-manufacture" class="mr-2">Ready to Manufacture</label>
+                                <label><input type="checkbox" id="stage-others" class="mr-2">Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>   
+                <br>
+                <div id="stage-others-description"class="mb-4">
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32"></textarea>
+                </div>
+
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Product Description:</h4>
+                <div class="mb-4" id ="Product-Description">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >USP of Product:</h4>
+                <div class="mb-4" id="USP-of-Product">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Key Features and Specification:</h4>
+                <div class="mb-4" id="key">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Target Audience:</h4>
+                <div class="mb-4" id="target">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Competitive Analysis:</h4>
+                <div class="mb-4" id="Competitive-Analysis">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Competitors:</h4>
+                <div class="mb-4" id="Competitors">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" >Unique Selling Proposition:</h4>
+                <div class="mb-4" id="Unique">
+                    <label class="block font-bold text-white"></label>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                </div>
+                <br>
+                
+                <h4 class="text-lg font-bold mb-3" ></h4>Manufacturing Support:</h4>
+                <div class="container p-4 bg-gray-800 rounded-lg" id="Manufacturing">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <div class="options grid grid-cols-2 gap-2">
+                                <label><input type="checkbox" id="support-setup-facility" class="mr-2">Setup a Facility</label>
+                                <label><input type="checkbox" id="support-find-facility" class="mr-2">Find a Facility</label>
+                                <label><input type="checkbox" id="support-indiginization" class="mr-2">Indiginization</label>
+                                <label><input type="checkbox" id="support-cost-optimization" class="mr-2">Cost Optimization</label>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <br>
+                
+                <button class="bg-blue-500 px-4 py-2 rounded" onclick="nextSubMenu()">Next</button>
+            </div>
+
+            <!-- Solution Content -->
+            <div id="solution-content" class="sub-menu-content hidden">
+                <div id="solution-fields">
+                    <div class="solution-item mb-4" id="solution-solution">
+                        <h4 class="text-lg font-bold mb-3">Solution:</h4>
+                        <div class="mb-4" id="solution-title">
+                            <label class="block font-bold text-white">Title:</label>
+                            <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                        </div>
+                        <div class="mb-4" id="solution-description">
+                            <label class="block font-bold text-white">Description:</label>
+                            <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <button class="bg-blue-500 px-4 py-2 rounded" onclick="nextSubMenu()">Next</button>
+                    <button class="bg-green-500 px-4 py-2 rounded" onclick="addMoreSolutionFields()">Add More</button>
+                </div>
+            </div>
+
+            <!-- Others Content -->
+            <!-- Others Content -->
+<div id="others-sub-content" class="sub-menu-content hidden">
+    <div id="others-fields">
+        <div>
+            <h4 class="text-lg font-bold mb-3">Domain Expert:</h4>
+            <div class="mb-4">
+                <label class="block font-bold text-white">Title:</label>
+                <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+            </div>
+            <div class="mb-4">
+                <label class="block font-bold text-white">Description:</label>
+                <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+            </div>
+        </div>
     </div>
-    <script  type="module" src="./js/profile_data_entry.js"></script>
+    <br>
+    <button id="submit-button" class="bg-blue-500 px-4 py-2 rounded hidden">Submit</button>
+</div>
+
+        </div>
+
+        <!-- Default Content Sections -->
+       
+        <div id="service-provider-content" class="main-content hidden p-5">
+            <!-- <form id="service-provider-form"> -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Left Column -->
+                    <div>
+                        <div class="mb-4" id="service-provider-services">
+                            <label for="services" class="block font-bold text-white">Services:</label>
+                            <input id="service1" type="text" class="w-full p-2 bg-gray-800 text-white rounded mb-2" />
+                            <input id="service2" type="text" class="w-full p-2 bg-gray-800 text-white rounded mb-2" />
+                            <input id="service3" type="text" class="w-full p-2 bg-gray-800 text-white rounded mb-2" />
+                            <input id="service4" type="text" class="w-full p-2 bg-gray-800 text-white rounded mb-2" />
+                            <input id="service5" type="text" class="w-full p-2 bg-gray-800 text-white rounded mb-2" />
+                        </div>
+                        <div class="mb-4" id="service-provider-domain">
+                            <label for="domain" class="block font-bold text-white">Domain:</label>
+                            <input id="domain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-establishment">
+                            <label for="established-year" class="block font-bold text-white">Established Year:</label>
+                            <input id="established-year" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-teamsize">
+                            <label for="team-size" class="block font-bold text-white">Team Size:</label>
+                            <input id="team-size" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-turnover">
+                            <label for="turnover" class="block font-bold text-white">Turnover:</label>
+                            <input id="turnover" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-branches">
+                            <label for="branches" class="block font-bold text-white">Branches:</label>
+                            <input id="branches" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-experties">
+                            <label for="expertise" class="block font-bold text-white">Expertise:</label>
+                            <input id="expertise" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-exsisting">
+                            <label for="existing-clients" class="block font-bold text-white">Existing Clients:</label>
+                            <input id="existing-clients" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-onhand">
+                            <label for="on-hand-projects" class="block font-bold text-white">On Hand Projects:</label>
+                            <input id="on-hand-projects" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div>
+                        <div class="mb-4" id="service-provider-companytypes">
+                            <label for="company-type" class="block font-bold text-white">Company Type:</label>
+                            <select id="company-type" class="w-full p-2 bg-gray-800 text-white rounded">
+                                <option value="">Select</option>
+                                <option value="LLP&LLC">LLP&LLC</option>
+                                <option value="Co-orp/NPO">Co-orp/NPO</option>
+                                <option value="JV">JV</option>
+                                <option value="Pvt-Ltd">Pvt-Ltd</option>
+                            </select>
+                        </div>
+                        <div class="mb-4" id="service-provider-experiences">
+                            <label for="experience" class="block font-bold text-white">Experience:</label>
+                            <input id="experience" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-usp">
+                            <label for="usp" class="block font-bold text-white">USP:</label>
+                            <input id="usp" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-certifications">
+                            <label for="certifications" class="block font-bold text-white">Certifications:</label>
+                            <input id="certifications" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-milestones">
+                            <label for="milestones" class="block font-bold text-white">Milestones:</label>
+                            <input id="milestones" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4" id="service-provider-others">
+                            <label for="others-final" class="block font-bold text-white">Others:</label>
+                            <input id="others-final" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4" >
+                    <button id="service-provider-submit-button" class="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+                </div>
+            <!-- </form> -->
+        </div>
+        <div id="manufacturer-content" class="main-content hidden">
+            <form id="manufacturer-form">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Left Column -->
+                    <div>
+                        <div class="mb-4">
+                            <label for="domain" class="block font-bold text-white">Domain:</label>
+                            <input id="domain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="established-year" class="block font-bold text-white">Established Year:</label>
+                            <input id="established-year" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="facility" class="block font-bold text-white">Facility:</label>
+                            <input id="facility" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="area" class="block font-bold text-white">Area:</label>
+                            <input id="area" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="talent" class="block font-bold text-white">Talent:</label>
+                            <input id="talent" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="engineers" class="block font-bold text-white">Engineers:</label>
+                            <input id="engineers" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div>
+                        <div class="mb-4">
+                            <label for="product-line" class="block font-bold text-white">Product Line:</label>
+                            <input id="product-line" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="assembly-line" class="block font-bold text-white">Assembly Line:</label>
+                            <input id="assembly-line" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="equipments" class="block font-bold text-white">Equipments:</label>
+                            <input id="equipments" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="certifications" class="block font-bold text-white">Certifications:</label>
+                            <input id="certifications" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="locations" class="block font-bold text-white">Locations:</label>
+                            <input id="locations" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="machine-details" class="block font-bold text-white">Machine Details:</label>
+                            <input id="machine-details" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                    </div>
+                </div>
+        
+                <!-- File Upload Section -->
+                <div class="mb-4 mt-4">
+                    <label for="facility-inventory" class="block font-bold text-white">Facility Inventory:</label>
+                    <input id="facility-inventory" type="file" class="w-full p-2 bg-gray-800 text-white rounded" accept=".xlsx,.xls" />
+                    <p class="text-white mt-2">
+                        Please upload your Inventory details as per the <a href="https://docs.google.com/spreadsheets/d/1EYfm0WN6eGxNlZFma-NgoJpn0hpSFrQ1I8dyrZZuGHw/edit?gid=320495814#gid=320495814" target="_blank" class="text-blue-400 underline">template</a>.
+                    </p>                                       
+                </div>
+        
+                <div class="mt-4">
+                    <button id="manufacture-submit-button" class="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+                </div>
+            </form>
+        </div>
+        
+
+        <!-- Default Content Sections -->
+<div id="market-access-content" class="main-content hidden">
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Left Column -->
+        <div>
+            <div class="mb-4">
+                <label for="title_market_access" class="block font-bold text-white">Title:</label>
+                <select id="title_market_access" class="w-full p-2 bg-gray-800 font-bold text-white rounded">
+                    <option value="">Select</option>
+                    <option value="Distribution Provider">Distribution Provider</option>
+                    <option value="Retailer">Retailer</option>
+                    <option value="Integrator">Integrator</option>
+                    <option value="Trade">Trade</option>
+                    <option value="Import/Export">Import/Export</option>
+                    <option value="Reseller">Reseller</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="sales-coverage" class="block font-bold text-white">Sales Coverage:</label>
+                <input id="sales-coverage" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+            </div>
+        </div>
+        <!-- Right Column -->
+        <div>
+            <div class="mb-4">
+                <label for="domain" class="block font-bold text-white">Domain:</label>
+                <input id="channeldomain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+            </div>
+            <div class="mb-4">
+                <label for="turn-over" class="block font-bold text-white">Turn Over:</label>
+                <input id="turn-over" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+            </div>
+        </div>
+    </div>
+    <br>
+    <h4 class="text-lg font-bold mb-3">Reach:</h4>  
+    <div class="container p-4 bg-gray-800 rounded-lg" id="market-access-reach">
+        <div class="grid grid-cols-2 gap-4">
+            <div>         
+                <div class="flex">
+                    <div class="flex items-center me-4">
+                        <input id="reach-local" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="reach-local" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">Local</label>
+                    </div>
+                    <div class="flex items-center me-4">
+                        <input id="reach-state" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="reach-state" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">State</label>
+                    </div>
+                    <div class="flex items-center me-4">
+                        <input id="reach-national" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="reach-national" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">National</label>
+                    </div>
+                    <div class="flex items-center me-4">
+                        <input id="reach-international" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="reach-international" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">International</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <h4 class="text-lg font-bold mb-3">Field:</h4> 
+    <div class="container p-4 bg-gray-800 rounded-lg" id="market-access-field">
+        <div class="grid grid-cols-2 gap-4">
+            <div>        
+                <div class="flex">
+                    <div class="flex items-center me-4">
+                        <input id="field-govt" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="field-govt" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">Govt</label>
+                    </div>
+                    <div class="flex items-center me-4">
+                        <input id="field-pvt" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                        <label for="field-pvt" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">Pvt</label>
+                    </div>  
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="mb-4">
+        <label for="items-list" class="text-lg font-bold mb-3">Items List:</label>
+        <textarea id="items-list" class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+    </div>
+    <br>
+    <div class="mb-4">
+        <label for="channelexperience" class="text-lg font-bold mb-3"> Experience:</label>
+        <textarea id="channelexperience" class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+    </div>
+    <br>
+    <div class="mb-4">
+        <label for="network" class="text-lg font-bold mb-3">Network:</label>
+        <textarea id="network" class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+    </div>
+    <br>
+    <div class="mb-4">
+        <label for="channelmilestones" class="text-lg font-bold mb-3">Milestones:</label>
+        <textarea id="channelmilestones" class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+    </div>
+    <br>
+    <div class="mb-4">
+        <label for="key-notes" class="text-lg font-bold mb-3">Key Notes:</label>
+        <textarea id="key-notes" class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+    </div>
+    <br>            
+    <div class="mt-4">
+        <button id="channel-submit-button" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+    </div>
+</div>
+
+     
+
+        <!-- Default Content Sections -->
+
+       <!-- Investor Content -->
+<div id="investors-content" class="main-content hidden">
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Left Column -->
+        <div>
+            <div id="investor-content-title" class="mb-4">
+                <label class="block font-bold text-white">Title :</label>
+                <select class="w-full p-2 bg-gray-800 text-white rounded" id="investor-title">
+                    <option value="">Select</option>
+                    <option value="ventureCapital">Venture Capital</option>
+                    <option value="angleInvestor">Angel Investor</option>
+                    <option value="instutionalInvestor">Institutional Investor</option>
+                    <option value="trade">Active Board Member</option>
+                </select>
+            </div>
+            <div id="investor-content-companyname" class="mb-4">
+                <label class="block font-bold text-white">Company Name:</label>
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-companyName" />
+            </div>
+        </div>
+        <!-- Right Column -->
+        <div>
+            <div id="investor-content-domain" class="mb-4">
+                <label class="block font-bold text-white">Domain:</label>
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-domain" />
+            </div>
+            <div id="investor-content-networth" class="mb-4">
+                <label class="block font-bold text-white">Networth :</label>
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-networth" />
+            </div>
+        </div>
+    </div>
+    <br>
+    <h4 class="text-lg font-bold mb-3">Investment Portfolio:</h4>
+    <div class="container p-4 bg-gray-800 rounded-lg">
+        <div id="investor-content-investments" class="grid grid-cols-2 gap-4">
+            <div class="flex items-center me-4">
+                <input id="startup-checkbox" type="checkbox" value="Startup" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" name="investmentPortfolio">
+                <label for="startup-checkbox" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">Startup</label>
+            </div>
+            <div class="flex items-center me-4">
+                <input id="sme-checkbox" type="checkbox" value="SME" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" name="investmentPortfolio">
+                <label for="sme-checkbox" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">SME</label>
+            </div>
+            <div class="flex items-center me-4">
+                <input id="established-checkbox" type="checkbox" value="Established" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" name="investmentPortfolio">
+                <label for="established-checkbox" class="ms-2 text-sm font-medium text-white-900 dark:text-gray-300">Established</label>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div id="investor-content-prev-investments" class="mb-4">
+        <label class="text-lg font-bold mb-3">Previous Investments:</label>
+        <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" id="investor-previousInvestments"></textarea>
+    </div>
+    <div id="investor-content-keynotes" class="mb-4">
+        <label class="text-lg font-bold mb-3">Key notes:</label>
+        <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" id="investor-keyNotes"></textarea>
+    </div>
+    <div class="mt-4">
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded" id="investor-submit-button">Submit</button>
+    </div>
+</div>
+
+     <!-- Domain Expert Content -->
+<div id="domain-expert-content" class="main-content hidden">
+    <div class="grid grid-cols-2 gap-4">
+        <!-- Left Column -->
+        <div>
+            <div id="domain-expert-role" class="mb-4">
+                <label class="block font-bold text-white">Role:</label>
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+            </div>
+            <div id="domain-expert-position" class="mb-4">
+                <label class="block font-bold text-white">Position :</label>
+                <select class="w-full p-2 bg-gray-800 text-white rounded">
+                    <option value="">Select</option>
+                    <option value="decisionMaker">Decision Maker</option>
+                    <option value="advisor">Advisor</option>
+                </select>
+            </div>
+        </div>
+        <!-- Right Column -->
+        <div>
+            <div id="domain-expert-domain" class="mb-4">
+                <label class="block font-bold text-white">Domain:</label>
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+            </div>
+        </div>
+    </div>
+    <div id="domain-expert-academics" class="mb-4">
+        <label class="block font-bold text-white">Academics:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div id="domain-expert-field" class="mb-4">
+        <label class="block font-bold text-white">Field:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div id="domain-expert-experience" class="mb-4">
+        <label class="block font-bold text-white">Experience:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div id="domain-expert-recognition" class="mb-4">
+        <label class="block font-bold text-white">Recognition:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div id="domain-expert-patents" class="mb-4">
+        <label class="block font-bold text-white">Patents/Inventions:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div id="domain-expert-network" class="mb-4">
+        <label class="block font-bold text-white">Network:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div id="domain-expert-keynotes" class="mb-4">
+        <label class="block font-bold text-white">Keynotes:</label>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+    </div>
+    <div class="mt-4">
+        <button type="submit" id="domain-expert-submit" class="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>
+    </div>
+</div>
+
+
+    </div>
+    </main>
+    <script src="./js/profile_data_entry.js"></script>
 </body>
 </html>

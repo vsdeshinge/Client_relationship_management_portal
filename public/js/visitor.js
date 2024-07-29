@@ -1,4 +1,3 @@
-import { API_BASE_URL } from './apiconfig.js';
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('connectForm');
     const thankYouContainer = document.getElementById('thankYouContainer');
@@ -152,15 +151,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: formData
             });
 
-            const result = await response.json();
+            if (response.headers.get('Content-Type')?.includes('application/json')) {
+                const result = await response.json();
 
-            if (response.ok) {
-                document.getElementById('message').textContent = 'Registration successful! Thank you.';
-                setTimeout(() => {
-                    location.href = 'visitor.html';
-                }, 2000);
+                if (response.ok) {
+                    document.getElementById('message').textContent = 'Registration successful! Thank you.';
+                    setTimeout(() => {
+                        location.href = 'visitor.html';
+                    }, 2000);
+                } else {
+                    document.getElementById('message').textContent = `Error: ${result.error}`;
+                }
             } else {
-                document.getElementById('message').textContent = `Error: ${result.error}`;
+                console.error('Expected JSON response but received:', await response.text());
+                document.getElementById('message').textContent = 'Unexpected server response. Please try again later.';
             }
         } catch (error) {
             console.error('Error during registration:', error);

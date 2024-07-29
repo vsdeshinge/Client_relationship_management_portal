@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Proposal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        .rounded-card {
+            padding-left: 10px;
+            padding-top: 10px;
+            margin-top: 35px;
+            margin-left: 30px;
+            border-radius: 10px;
+            border: 2px solid white;
+            padding: 20px;
+            background-color: rgba(27, 27, 27, 0.8);
+        }
+
+        .container2 {
+            border-radius: 10px;
+            border: 2px solid white;
+        }
+
+        .container1 {
+            margin-right: 20px;
+            margin-top: 10px;
+        }
+
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        body { font-family: "Montserrat", sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-900 text-white flex min-h-screen">
+    <!-- Main Content -->
+    <main class="flex-1 p-10">
+        <!-- User Information and Buttons -->
+        <div class="container2 mx-auto">
+            <div class="flex items-center justify-between mb-10">
+                <div class="rounded-card">
+                    <div class="flex items-center">
+                        <img src="https://via.placeholder.com/80" alt="Profile" class="profile-img">
+                        <div>
+                            <p class="text-lg font-bold">Name: Vidya</p>
+                            <p class="text-sm">Company: Liv-Lif</p>
+                            <p class="text-sm">Domain: ABC</p>
+                            <p class="text-sm">Email: vidya@gmail.com</p>
+                            <p class="text-sm">Phone no.: 1234567890</p>
+                            <p class="text-sm">Location: <span class="font-bold">Your Location Here</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="container1">
+                    <div class="flex space-x-4">
+                        <button class="bg-blue-500 px-4 py-2 rounded" onclick="showVisitingCardPopup()">Visiting Card</button>
+                        <button class="bg-blue-500 px-4 py-2 rounded" onclick="showNeedFormPopup()">View Need Form</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Visiting Card Popup -->
+        <div id="visiting-card-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-gray-800 p-5 rounded-lg text-white">
+                <h2 class="text-xl mb-4">Visiting Card</h2>
+                <img src="URL_TO_VISITING_CARD_IMAGE" alt="Visiting Card" class="mb-4">
+                <button class="bg-blue-500 px-4 py-2 rounded" onclick="hideVisitingCardPopup()">Close</button>
+            </div>
+        </div>
+
+        <!-- Need Form Popup -->
+        <div id="need-form-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+            <div class="bg-gray-800 p-5 rounded-lg text-white">
+                <h2 class="text-xl mb-4">Need Form</h2>
+                <!-- Add the Need Form details here -->
+                <button class="bg-blue-500 px-4 py-2 rounded" onclick="hideNeedFormPopup()">Close</button>
+            </div>
+        </div>
+
+        <br>
+        <!-- Business Proposal Form -->
+        <div class="mb-10">
+            <h2 class="text-xl mb-5 font-bold text-white-400">Business Proposal</h2>
+        
+            <form id="business-proposal-form">
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Left Column -->
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-white">Type Of Registration:</label>
+                            <select id="typeOfRegistration" class="w-full p-2 bg-gray-800 text-white rounded">
+                                <option value="">Select</option>
+                                <option value="LLP&LLC">LLP&LLC</option>
+                                <option value="Co-orp/NPO">Co-orp/NPO</option>
+                                <option value="JV">JV</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-white">GST No:</label>
+                            <input id="gstNo" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-white">PAN No:</label>
+                            <input id="panNo" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                    </div>
+                    <!-- Right Column -->
+                    <div>
+                        <div class="mb-4">
+                            <label class="block text-white">Annual Turnover:</label>
+                            <input id="annualTurnover" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-white">Decision Makers:</label>
+                            <textarea id="decisionMakers" class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded">Send Email</button>
+                    <button id="sign-deal-button" type="submit" class="px-4 py-2 bg-blue-500 text-white rounded">Sign Deal</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <script src="./js/buisness_proposal.js"></script>
+</body>
+</html>
