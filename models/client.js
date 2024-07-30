@@ -124,7 +124,6 @@ const clientSchema = new mongoose.Schema({
   // Domain Expert fields
   domainExpert: {
     domaintitle: { type: String },
-    position: { type: String },
     expertdomain: { type: String },
     academics: { type: String },
     field: { type: String },

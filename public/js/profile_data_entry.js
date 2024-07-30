@@ -430,7 +430,6 @@ function submitDomainExpertForm(event) {
 
     const domainExpertData = {
         domaintitle: getValue('#domain-expert-role input[type="text"]'),
-        position: getValue('#domain-expert-position select'),
         expertdomain: getValue('#domain-expert-domain input[type="text"]'),
         academics: getValue('#domain-expert-academics textarea'),
         field: getValue('#domain-expert-field textarea'),
