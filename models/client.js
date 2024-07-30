@@ -123,7 +123,7 @@ const clientSchema = new mongoose.Schema({
   },
   // Domain Expert fields
   domainExpert: {
-    role: { type: String },
+    domaintitle: { type: String },
     position: { type: String },
     expertdomain: { type: String },
     academics: { type: String },

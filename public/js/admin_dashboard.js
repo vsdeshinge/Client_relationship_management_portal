@@ -950,63 +950,35 @@ function fetchCustomerCounts() {
         console.error('Error fetching counts:', error);
     });
 }
-
-// Populate customer table
-function populateCustomerTable() {
-    const tableBody = document.getElementById('customerTableBody');
-    const token = localStorage.getItem('adminToken');
-    
-    fetch('/api/clients?status=qualified', {
-        headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        tableBody.innerHTML = ''; // Clear existing rows
-        data.forEach((client, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="p-2">${client.name}</td>
-                <td class="p-2">${new Date(client.createdAt).toLocaleDateString()}</td>
-                <td class="p-2">${client.companyName}</td>
-                <td class="p-2">${client.phone}</td>
-                <td class="p-2">${client.email}</td>
-                <td class="p-2">
-                    <button class="view-profile-button text-blue-400 hover:text-blue-300" data-client-id="${client._id}">View Profile</button>
-                </td>
-               
-            `;
-            tableBody.appendChild(row);
-        });
-
-         // Add event listener to all View Profile buttons
-         document.querySelectorAll('.view-profile-button').forEach(button => {
-            button.addEventListener('click', (event) => {
-                const clientId = event.target.getAttribute('data-client-id');
-                localStorage.setItem('clientId', clientId);
-                window.location.href = 'customer_view.html';
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (event) => {
+            const query = event.target.value.toLowerCase();
+            const tableBodies = [
+                document.getElementById('visitorsTableBody'),
+                document.getElementById('qualifiedLeadTableBody'),
+                document.getElementById('businessProposalTableBody'),
+                document.getElementById('customerTableBody')
+            ];
+            
+            tableBodies.forEach(tableBody => {
+                if (tableBody) {
+                    const rows = tableBody.querySelectorAll('tr');
+                    rows.forEach(row => {
+                        const name = row.querySelector('td:first-child').textContent.toLowerCase();
+                        if (name.includes(query)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                } else {
+                    console.error('Table body not found.');
+                }
             });
         });
-    })
-    .catch(error => {
-        console.error('Error fetching clients:', error);
-    });
-}
-
-// Initialize customer page
-function initCustomerPage() {
-    fetchCustomerCounts();
-    populateCustomerTable();
-}
-
-// Call the function to initialize the customer page when the content is shown
-document.getElementById('nav-customer').addEventListener('click', function() {
-    initCustomerPage();
+    } else {
+        console.error('Element with ID "searchInput" not found.');
+    }
 });

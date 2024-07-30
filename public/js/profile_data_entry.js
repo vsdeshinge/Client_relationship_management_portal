@@ -429,7 +429,7 @@ function submitDomainExpertForm(event) {
     const token = localStorage.getItem('adminToken');
 
     const domainExpertData = {
-        role: getValue('#domain-expert-role input[type="text"]'),
+        domaintitle: getValue('#domain-expert-role input[type="text"]'),
         position: getValue('#domain-expert-position select'),
         expertdomain: getValue('#domain-expert-domain input[type="text"]'),
         academics: getValue('#domain-expert-academics textarea'),
