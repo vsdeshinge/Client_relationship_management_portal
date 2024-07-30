@@ -41,7 +41,7 @@ async function main() {
 
     // Manually create admin users
     const adminsToCreate = [
-      { username: 'shakthi', password: 'shakthi123' },
+      { username: 'kiran', password: 'kiran123' },
       // Add more admin users as needed
     ];
 

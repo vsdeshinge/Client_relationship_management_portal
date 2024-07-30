@@ -134,7 +134,7 @@ function renderVisitorDetails(visitorDetails) {
                 </select>
             </td>
             <td class="p-2">
-                <button class="save-button" data-visitor-id="${visitor._id}">Save</button>
+                <button class="save-button" data-visitor-id="${visitor._id}"  style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
             </td>
         `;
         tableBody.appendChild(row);
@@ -766,7 +766,7 @@ function populateBusinessProposalTable() {
                     </select>
                 </td>
                 <td class="p-2">
-                    <button class="save-button text-green-400 hover:text-green-300" data-proposal-id="${proposal._id}">Save</button>
+                    <button class="save-button " data-proposal-id="${proposal._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
                 </td>
             `;
             tableBody.appendChild(row);

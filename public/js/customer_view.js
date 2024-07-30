@@ -79,27 +79,33 @@ async function fetchClientData(clientId) {
 }
 
 function renderField(key, value) {
-    return `<div class="mb-2">
-        <label class="block text-sm font-medium mb-1">${key}</label>
-        <input type="text" class="w-full p-2 custom-input rounded" value="${value}" readonly>
+    return `<div class="field-container">
+        <span class="field-label"><strong>${key}:</strong></span>
+        <div class="field-value-container">
+            <textarea class="field-value" readonly>${value}</textarea>
+        </div>
     </div>`;
 }
 
 function renderSection(title, data) {
     let html = `<div class="section-container">
-        <h2 class="section-title">${title}</h2>`;
-    
+        <h2 class="section-title"><strong>${title.toUpperCase()}</strong></h2>`;
+
     if (title === 'project') {
         const { titles, descriptions } = data;
         if (Array.isArray(titles) && Array.isArray(descriptions)) {
             for (let i = 0; i < titles.length; i++) {
                 html += `<div class="field-container">
-                    <span class="field-label">title:</span>
-                    <span class="field-value">${titles[i]}</span>
+                    <span class="field-label"><strong>title:</strong></span>
+                    <div class="field-value-container">
+                        <textarea class="field-value" readonly>${titles[i]}</textarea>
+                    </div>
                 </div>`;
                 html += `<div class="field-container">
-                    <span class="field-label">description:</span>
-                    <span class="field-value">${descriptions[i]}</span>
+                    <span class="field-label"><strong>description:</strong></span>
+                    <div class="field-value-container">
+                        <textarea class="field-value" readonly>${descriptions[i]}</textarea>
+                    </div>
                 </div>`;
             }
         }
@@ -113,13 +119,17 @@ function renderSection(title, data) {
                     continue; // Skip rendering here, handled above
                 }
                 html += `<div class="field-container">
-                    <span class="field-label">${key}:</span>
-                    <span class="field-value">${value.join(', ')}</span>
+                    <span class="field-label"><strong>${key}:</strong></span>
+                    <div class="field-value-container">
+                        <textarea class="field-value" readonly>${value.join(', ')}</textarea>
+                    </div>
                 </div>`;
-            } else if (key.endsWith('OthersDescription')) {
+            } else if (key.endsWith('OtherDescription')) {
                 html += `<div class="field-container">
-                    <span class="field-label">${key.replace('OthersDescription', ' (Other Description)')}:</span>
-                    <span class="other-description">${value}</span>
+                    <span class="field-label"><strong>${key.replace('OtherDescription', ' (Other Description)')}:</strong></span>
+                    <div class="field-value-container">
+                        <textarea class="field-value" readonly>${value}</textarea>
+                    </div>
                 </div>`;
             } else {
                 html += renderField(key, value);
