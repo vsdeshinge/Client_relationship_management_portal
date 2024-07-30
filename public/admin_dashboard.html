@@ -315,6 +315,51 @@
     </div>
 
 
+    <!-- Customer Content -->
+    <div id="content-customer" class="hidden">
+        <h2 class="text-2xl mb-5 font-bold text-white-400">Customer</h2><br>
+        <div class="mb-10">
+            <div class="flex justify-between">
+                <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                    <div class="circle-chart"><canvas id="customerAccepted"></canvas></div>
+                    <p class="mt-2">Accepted</p>
+                </div>
+                <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                    <div class="circle-chart"><canvas id="customerDiscussion"></canvas></div>
+                    <p class="mt-2">Discussion</p>
+                </div>
+                <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                    <div class="circle-chart"><canvas id="customerOffered"></canvas></div>
+                    <p class="mt-2">Offered</p>
+                </div>
+                <div class="text-center p-5 bg-gradient-to-t from-gray-800 to-transparent rounded-lg">
+                    <div class="circle-chart"><canvas id="customerProgress"></canvas></div>
+                    <p class="mt-2">Progress</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Customer-specific Content -->
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="bg-gray-800">
+                        <th class="p-2 text-left">Name</th>
+                        <th class="p-2 text-left">DD/MM</th>
+                        <th class="p-2 text-left">Company Name</th>
+                        <th class="p-2 text-left">Phone no.</th>
+                        <th class="p-2 text-left">Email</th>
+                        <th class="p-2 text-left">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="customerTableBody">
+                    <!-- Table rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
     <!-- Footer -->
     <footer class="bg-gray-800 text-center p-4">
         <p>&copy; Copyright @ POSSPOLE. All rights reserved.</p>

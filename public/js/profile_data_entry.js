@@ -61,7 +61,7 @@ function displayVisitorDetails(visitor) {
     console.log('Displaying visitor details:', visitor);
     const visitorDetails = document.querySelector('.container2');
     if (visitorDetails) {
-        const faceImageUrl = visitor.faceImage ? `/uploads/blob/${visitor.faceImage}` : 'https://via.placeholder.com/80';
+        const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
         visitorDetails.innerHTML = `
             <div class="rounded-card">
                 <div class="flex items-center">
@@ -80,6 +80,7 @@ function displayVisitorDetails(visitor) {
         console.error('Element for visitor details not found.');
     }
 }
+
 
 
 function submitForm(event) {
@@ -241,118 +242,82 @@ fetch(`/api/clients/${leadId}`, {
 });
 }
 
-// function submitManufacturerForm(event) {
-//     event.preventDefault();
-
-//     const leadId = localStorage.getItem('leadId');
-//     const token = localStorage.getItem('adminToken');
-
-//     const manufacturerData = {
-//         manufacturerdomain: getValue('#domain'),
-//         manufacturerestablishedYear: getValue('#establishedYear'),
-//         facility: getValue('#facility'),
-//         area: getValue('#area'),
-//         talent: getValue('#talent'),
-//         engineers: getValue('#engineers'),
-//         productLine: getValue('#productLine'),
-//         assemblyLine: getValue('#assemblyLine'),
-//         equipments: getValue('#equipments'),
-//         certifications: getValue('#certifications'),
-//         locations: getValue('#locations'),
-//         machineDetails: getValue('#machineDetails')
-//     };
-
-//     const formData = new FormData();
-//     formData.append('manufacturer', JSON.stringify(manufacturerData));
-
-//     const facilityInventoryFile = document.getElementById('facility-inventory').files[0];
-//     if (facilityInventoryFile) {
-//         formData.append('facilityInventory', facilityInventoryFile);
-//     }
-
-//     console.log('Data to send:', Array.from(formData.entries()));
-
-//     fetch(`/api/clients/${leadId}`, {
-//         method: 'PATCH',
-//         headers: {
-//             'Authorization': `Bearer ${token}`
-//         },
-//         body: formData
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         console.log('Success:', data);
-//         alert('Manufacturer data submitted successfully!');
-//     })
-//     .catch(error => {
-//         console.error('Error:', error);
-//         alert('Error submitting manufacturer data');
-//     });
-// }
 function submitManufacturerForm(event) {
     event.preventDefault();
-  
+
     const leadId = localStorage.getItem('leadId');
     const token = localStorage.getItem('adminToken');
-  
+
     const manufacturerData = {
-      manufacturerdomain: getValue('#domain'),
-      manufacturerestablishedYear: getValue('#established-year'),  // Ensure correct naming
-      facility: getValue('#facility'),
-      area: getValue('#area'),
-      talent: getValue('#talent'),
-      engineers: getValue('#engineers'),
-      productLine: getValue('#product-line'),
-      assemblyLine: getValue('#assembly-line'),
-      equipments: getValue('#equipments'),
-      locations: getValue('#locations'),
-      machineDetails: getValue('#machine-details')
+        manufacturerdomain: getValue('#manufacturedomain'),
+        manufacturerestablishedYear: getValue('#establishedyear'),
+        facility: getValue('#facility'),
+        area: getValue('#area'),
+        talent: getValue('#talent'),
+        engineers: getValue('#engineers'),
+        productLine: getValue('#product-line'),
+        assemblyLine: getValue('#assembly-line'),
+        equipments: getValue('#equipments'),
+        certifications: getValue('#certification'),
+        locations: getValue('#locations'),
+        machineDetails: getValue('#machine-details')
     };
-  
-    const fileInput = document.querySelector('#facility-inventory');
-    const formData = new FormData();
-  
-    for (const key in manufacturerData) {
-      if (manufacturerData.hasOwnProperty(key)) {
-        formData.append(`manufacturer.${key}`, manufacturerData[key]);
-      }
-    }
-  
-    // Check if file input is used
-    if (fileInput && fileInput.files.length > 0) {
-      formData.append('facilityInventory', fileInput.files[0]);
-    } else {
-      console.warn('No file selected for upload.');
-    }
-  
-    fetch(`/api/manufacture/${leadId}`, {
-      method: 'PATCH',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
+
+    // Send manufacturer data
+    fetch(`/api/manufacture/${leadId}/data`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(manufacturerData)
     })
     .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
     })
     .then(data => {
-      console.log('Success:', data);
-      alert('Manufacturer data submitted successfully!');
+        console.log('Manufacturer data submitted successfully:', data);
+
+        // Check if there is a file to upload
+        const fileInput = document.querySelector('#facility-inventory');
+        if (fileInput && fileInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('facilityInventory', fileInput.files[0]);
+
+            // Send the file data
+            fetch(`/api/manufacture/${leadId}/file`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('File uploaded successfully:', data);
+                alert('Manufacturer data and file submitted successfully!');
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                alert('Error uploading file');
+            });
+        } else {
+            alert('Manufacturer data submitted successfully without file!');
+        }
     })
     .catch(error => {
-      console.error('Error:', error);
-      alert('Error submitting manufacturer data');
+        console.error('Error submitting manufacturer data:', error);
+        alert('Error submitting manufacturer data');
     });
-  }
-  
+}
 
 function submitMarketAccessForm(event) {
     event.preventDefault();
@@ -473,7 +438,7 @@ function submitDomainExpertForm(event) {
         recognition: getValue('#domain-expert-recognition textarea'),
         patentsInvention: getValue('#domain-expert-patents textarea'),
         network: getValue('#domain-expert-network textarea'),
-        keynotes: getValue('#domain-expert-keynotes textarea')
+        expertkeynotes: getValue('#domain-expert-keynotes textarea')
     };
 
     const dataToSend = { domainExpert: domainExpertData };

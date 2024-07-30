@@ -877,3 +877,131 @@ function formatDate(dateString) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
     return `${day}/${month}`;
 }
+
+
+// customer
+
+
+
+// Customer data
+// Create circle charts
+function createCircleChart(id, value, color) {
+    const canvas = document.getElementById(id);
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) - 10;
+
+    // Background circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 10;
+    ctx.stroke();
+
+    // Progress arc
+    const startAngle = -0.5 * Math.PI;
+    const endAngle = startAngle + (2 * Math.PI * value / 100);
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 10;
+    ctx.stroke();
+
+    // Center text
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 24px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(value.toString().padStart(2, '0'), centerX, centerY);
+}
+
+// Fetch and update customer counts
+function fetchCustomerCounts() {
+    fetch('/api/clients/counts', {
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+        }
+    })
+    .then(response => response.json())
+    .then(countData => {
+        const counts = {
+            'Accepted': 0,
+            'In Progress': 0,
+            'In Discussion': 0,
+            'Offered': 0
+        };
+
+        countData.forEach(item => {
+            counts[item._id] = item.count;
+        });
+
+        createCircleChart('customerAccepted', counts['Accepted'], '#7221FD');
+        createCircleChart('customerDiscussion', counts['In Discussion'], '#7221FD');
+        createCircleChart('customerOffered', counts['Offered'], '#7221FD');
+        createCircleChart('customerProgress', counts['In Progress'], '#7221FD');
+    })
+    .catch(error => {
+        console.error('Error fetching counts:', error);
+    });
+}
+
+// Populate customer table
+function populateCustomerTable() {
+    const tableBody = document.getElementById('customerTableBody');
+    const token = localStorage.getItem('adminToken');
+    
+    fetch('/api/clients?status=qualified', {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        tableBody.innerHTML = ''; // Clear existing rows
+        data.forEach((client, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="p-2">${client.name}</td>
+                <td class="p-2">${new Date(client.createdAt).toLocaleDateString()}</td>
+                <td class="p-2">${client.companyName}</td>
+                <td class="p-2">${client.phone}</td>
+                <td class="p-2">${client.email}</td>
+                <td class="p-2">
+                    <button class="view-profile-button text-blue-400 hover:text-blue-300" data-client-id="${client._id}">View Profile</button>
+                </td>
+               
+            `;
+            tableBody.appendChild(row);
+        });
+
+         // Add event listener to all View Profile buttons
+         document.querySelectorAll('.view-profile-button').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const clientId = event.target.getAttribute('data-client-id');
+                localStorage.setItem('clientId', clientId);
+                window.location.href = 'customer_view.html';
+            });
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching clients:', error);
+    });
+}
+
+// Initialize customer page
+function initCustomerPage() {
+    fetchCustomerCounts();
+    populateCustomerTable();
+}
+
+// Call the function to initialize the customer page when the content is shown
+document.getElementById('nav-customer').addEventListener('click', function() {
+    initCustomerPage();
+});

@@ -20,9 +20,13 @@ const socketIo = require('socket.io');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const multer = require('multer');
-const { GridFsStorage } = require('multer-gridfs-storage');
 const Grid = require('gridfs-stream');
-const crypto = require('crypto');
+const methodOverride = require('method-override');
+const fs = require('fs');
+const crypto = require('crypto'); 
+const { GridFSBucket } = require('mongodb');
+
+
 
 const app = express();
 const server = http.createServer(app);
@@ -46,14 +50,16 @@ mongoose.connect(process.env.MONGODB_URI, {
   process.exit(1);
 });
 
-// Init GridFS
-let gfs;
+// Init GridFSBucket
+let gridfsBucket;
 
 mongoose.connection.once('open', () => {
-  gfs = Grid(mongoose.connection.db, mongoose.mongo);
-  gfs.collection('uploads');
-  console.log('GridFS initialized');
+  gridfsBucket = new GridFSBucket(mongoose.connection.db, {
+    bucketName: 'faceImages'
+  });
+  console.log('GridFSBucket initialized');
 });
+
 
 // Middleware
 app.use(cors());
@@ -67,51 +73,13 @@ app.use('/facility', express.static(path.join(__dirname, 'facility')));
 // Temporary workaround to ensure MONGODB_URI is defined
 process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
 
-// Multer setup for faceImage and xls uploads
-const faceImageStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, 'public', 'uploads', 'blob'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
-  }
-});
 
+
+const faceImageStorage = multer.memoryStorage();
 const faceImageUpload = multer({ storage: faceImageStorage }).single('faceImage');
 
-// Create storage engine for GridFS
-const storage = new GridFsStorage({
-  url: process.env.MONGODB_URI,
-  options: { useNewUrlParser: true, useUnifiedTopology: true },
-  file: (req, file) => {
-    return new Promise((resolve, reject) => {
-      crypto.randomBytes(16, (err, buf) => {
-        if (err) {
-          return reject(err);
-        }
-        const filename = buf.toString('hex') + path.extname(file.originalname);
-        const fileInfo = {
-          filename: filename,
-          bucketName: 'uploads'
-        };
-        resolve(fileInfo);
-      });
-    });
-  }
-});
-
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
-// Debugging helper function
-function debugFileObject(file) {
-  console.log('File object:', file);
-  if (file) {
-    console.log('File object keys:', Object.keys(file));
-    console.log('File object _id:', file._id);
-  }
-}
-
-
 
 const router = express.Router();
 
@@ -160,32 +128,75 @@ router.post('/generate-email-auth-token', async (req, res) => {
   }
 });
 
-//visitor register
+// Route to retrieve images
+app.get('/images/:id', async (req, res) => {
+  try {
+    const fileId = new mongoose.Types.ObjectId(req.params.id);
+    const downloadStream = gridfsBucket.openDownloadStream(fileId);
+
+    downloadStream.on('data', (chunk) => {
+      res.write(chunk);
+    });
+
+    downloadStream.on('error', (err) => {
+      console.error('Error during download stream:', err);
+      res.sendStatus(404);
+    });
+
+    downloadStream.on('end', () => {
+      res.end();
+    });
+  } catch (error) {
+    console.error('Error retrieving image:', error);
+    res.status(500).send('Error retrieving image');
+  }
+});
+
+// Route to register a client
 app.post('/register', faceImageUpload, async (req, res) => {
   const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
+
   if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
-      return res.status(400).json({ error: 'All fields are required.' });
+    return res.status(400).json({ error: 'All fields are required.' });
   }
 
   try {
-      const newClient = new Client({
-          name,
-          phone,
-          email,
-          companyName,
-          personToMeet,
-          personReferred,
-          syndicate_name: syndicate_name.trim(),
-          faceImage: req.file ? req.file.filename : ''
+    const newClient = new Client({
+      name,
+      phone,
+      email,
+      companyName,
+      personToMeet,
+      personReferred,
+      syndicate_name: syndicate_name.trim(),
+    });
+
+    if (req.file) {
+      const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
+      const uploadStream = gridfsBucket.openUploadStream(filename);
+
+      uploadStream.end(req.file.buffer);
+
+      uploadStream.on('finish', async () => {
+        newClient.faceImage = uploadStream.id; // Store the file ID in the database
+        await newClient.save();
+        res.status(201).json({ message: 'Registration successful!' });
       });
 
+      uploadStream.on('error', (error) => {
+        console.error('Error during file upload:', error);
+        res.status(500).json({ error: 'Error during file upload' });
+      });
+    } else {
       await newClient.save();
       res.status(201).json({ message: 'Registration successful!' });
+    }
   } catch (error) {
-      console.error('Error saving client:', error);
-      res.status(500).json({ error: 'Error during registration. Please try again later.' });
+    console.error('Error saving client:', error);
+    res.status(500).json({ error: 'Error during registration. Please try again later.' });
   }
 });
+
 
 // Login route
 app.post('/login', async (req, res) => {
@@ -554,25 +565,30 @@ router.get('/api/clients', authenticateToken, async (req, res) => {
 
 
 
+// Route handler for updating general client data
 router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
-  let clientData = req.body;
+  const clientData = req.body;
 
   try {
-      const client = await Client.findById(clientId);
-      if (!client) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
-      const updatedClient = await Client.findByIdAndUpdate(clientId, { $set: clientData }, { new: true, runValidators: true });
-      if (!updatedClient) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
+    let client = await Client.findById(clientId);
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
 
-      console.log('Client data updated successfully:', updatedClient);
-      res.status(200).json({ message: 'Client data updated successfully', data: updatedClient });
+    // Merge new data with existing data
+    client = { ...client.toObject(), ...clientData };
+
+    const updatedClient = await Client.findByIdAndUpdate(
+      clientId,
+      client,
+      { new: true, runValidators: true }
+    );
+
+    res.status(200).json({ message: 'Client data updated successfully', data: updatedClient });
   } catch (error) {
-      console.error('Error updating client data:', error);
-      res.status(500).json({ error: 'Error updating client data' });
+    console.error('Error updating client data:', error);
+    res.status(500).json({ error: 'Error updating client data' });
   }
 });
 
@@ -583,28 +599,107 @@ router.patch('/api/investor/:id', authenticateToken, async (req, res) => {
   const investorData = req.body;
 
   try {
+    const client = await Client.findById(clientId);
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    // Merge existing investor data with new data
+    client.investor = { ...client.investor.toObject(), ...investorData };
+
+    const updatedClient = await client.save();
+    res.status(200).json({ message: 'Investor data updated successfully', data: updatedClient });
+  } catch (error) {
+    console.error('Error updating investor data:', error);
+    res.status(500).json({ error: 'Error updating investor data' });
+  }
+});
+
+
+
+
+
+// Route for updating manufacturer data
+app.patch('/api/manufacture/:id/data', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+  const manufacturerData = req.body;
+
+  try {
       const client = await Client.findById(clientId);
       if (!client) {
           return res.status(404).json({ error: 'Client not found' });
       }
 
-      // Update the investor data in the client document
-      client.investor = investorData;
+      // Ensure fields are correctly updated
+      if (!client.manufacturer) {
+          client.manufacturer = {};
+      }
+        
+    // Merge existing manufacturer data with new data
+    client.manufacturer = { ...client.manufacturer.toObject(), ...manufacturerData };
 
       const updatedClient = await client.save();
-
-      console.log('Investor data updated successfully:', updatedClient);
-      res.status(200).json({ message: 'Investor data updated successfully', data: updatedClient });
+      res.status(200).json({ message: 'Manufacturer data updated successfully', data: updatedClient });
   } catch (error) {
-      console.error('Error updating investor data:', error);
-      res.status(500).json({ error: 'Error updating investor data' });
+      console.error('Error updating manufacturer data:', error);
+      res.status(500).json({ error: 'Error updating manufacturer data' });
   }
 });
 
 
-app.patch('/api/manufacture/:id', authenticateToken, upload.single('facilityInventory'), async (req, res) => {
+// Route for uploading facility inventory file
+app.patch('/api/manufacture/:id/file', upload.single('facilityInventory'), async (req, res) => {
   const clientId = req.params.id;
-  let manufacturerData = req.body;
+
+  try {
+      const client = await Client.findById(clientId);
+      if (!client) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+
+      if (req.file) {
+          const db = mongoose.connection.db;
+          const bucket = new GridFSBucket(db, { bucketName: 'uploads' });
+          const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
+          const uploadStream = bucket.openUploadStream(filename);
+
+          uploadStream.end(req.file.buffer);
+
+          uploadStream.on('finish', async () => {
+              const fileId = uploadStream.id;
+
+              if (client.manufacturer && client.manufacturer.facilityInventory) {
+                  try {
+                      await bucket.delete(client.manufacturer.facilityInventory);
+                      console.log('Old file deleted:', client.manufacturer.facilityInventory);
+                  } catch (err) {
+                      console.error('Error deleting old file:', err);
+                  }
+              }
+
+              client.manufacturer.facilityInventory = fileId;
+              const updatedClient = await client.save();
+              res.status(200).json({ message: 'File uploaded and manufacturer data updated successfully', data: updatedClient });
+          });
+
+          uploadStream.on('error', (error) => {
+              console.error('Error during file upload:', error);
+              res.status(500).json({ error: 'Error during file upload' });
+          });
+      } else {
+          res.status(400).json({ error: 'No file uploaded' });
+      }
+  } catch (error) {
+      console.error('Error uploading file:', error);
+      res.status(500).json({ error: 'Error uploading file' });
+  }
+});
+
+
+// Route handler for updating domain expert data
+router.patch('/api/domain/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+  const domainExpertData = req.body.domainExpert;
 
   try {
     const client = await Client.findById(clientId);
@@ -612,72 +707,17 @@ app.patch('/api/manufacture/:id', authenticateToken, upload.single('facilityInve
       return res.status(404).json({ error: 'Client not found' });
     }
 
-    if (req.file) {
-      // Log the file object for debugging
-      console.log('Received file:', req.file);
-
-      const oldFileId = client.manufacturer.facilityInventory; // Old file ID
-      if (oldFileId) {
-        gfs.remove({ _id: oldFileId, root: 'uploads' }, (err) => {
-          if (err) {
-            console.error('Error deleting old file:', err);
-          } else {
-            console.log('Old file deleted:', oldFileId);
-          }
-        });
-      }
-
-      // Ensure the file has an _id property
-      if (!req.file.id) {
-        console.error('Uploaded file is missing _id');
-        return res.status(500).json({ error: 'Uploaded file is missing _id' });
-      }
-
-      manufacturerData['facilityInventory'] = req.file.id; // Store the new file ID
-    }
-
-    const parsedManufacturerData = {};
-    for (const key in manufacturerData) {
-      if (key.startsWith('manufacturer.')) {
-        const actualKey = key.split('.')[1];
-        parsedManufacturerData[actualKey] = manufacturerData[key];
-      }
-    }
-
-    client.manufacturer = { ...client.manufacturer.toObject(), ...parsedManufacturerData };
+    // Merge existing domain expert data with new data
+    client.domainExpert = { ...client.domainExpert.toObject(), ...domainExpertData };
 
     const updatedClient = await client.save();
-
-    console.log('Manufacturer data updated successfully:', updatedClient);
-    res.status(200).json({ message: 'Manufacturer data updated successfully', data: updatedClient });
+    res.status(200).json({ message: 'Domain expert data updated successfully', data: updatedClient });
   } catch (error) {
-    console.error('Error updating manufacturer data:', error);
-    res.status(500).json({ error: 'Error updating manufacturer data' });
+    console.error('Error updating domain expert data:', error);
+    res.status(500).json({ error: 'Error updating domain expert data' });
   }
 });
-// Route handler for updating domain expert data
-router.patch('/api/domain/:id', authenticateToken, async (req, res) => {
-  const clientId = req.params.id;
-  const domainExpertData = req.body.domainExpert;
 
-  try {
-      const client = await Client.findById(clientId);
-      if (!client) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
-
-      // Update the domain expert data in the client document
-      client.domainExpert = domainExpertData;
-
-      const updatedClient = await client.save();
-
-      console.log('Domain expert data updated successfully:', updatedClient);
-      res.status(200).json({ message: 'Domain expert data updated successfully', data: updatedClient });
-  } catch (error) {
-      console.error('Error updating domain expert data:', error);
-      res.status(500).json({ error: 'Error updating domain expert data' });
-  }
-});
 
 
 // Route handler for updating business proposal data
@@ -686,23 +726,41 @@ router.patch('/api/proposals/:id', authenticateToken, async (req, res) => {
   const businessProposalData = req.body.businessProposal;
 
   try {
+    const client = await Client.findById(clientId);
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    // Merge existing business proposal data with new data
+    client.businessProposal = { ...client.businessProposal.toObject(), ...businessProposalData };
+
+    const updatedClient = await client.save();
+    res.status(200).json({ message: 'Business proposal data updated successfully', data: updatedClient });
+  } catch (error) {
+    console.error('Error updating business proposal data:', error);
+    res.status(500).json({ error: 'Error updating business proposal data' });
+  }
+});
+
+
+// customer view / fetch 
+
+// Route to fetch client data by ID
+router.get('/api/customer/clients/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+
+  try {
       const client = await Client.findById(clientId);
       if (!client) {
           return res.status(404).json({ error: 'Client not found' });
       }
-
-      // Update the business proposal data in the client document
-      client.businessProposal = businessProposalData;
-
-      const updatedClient = await client.save();
-
-      console.log('Business proposal data updated successfully:', updatedClient);
-      res.status(200).json({ message: 'Business proposal data updated successfully', data: updatedClient });
+      res.status(200).json(client);
   } catch (error) {
-      console.error('Error updating business proposal data:', error);
-      res.status(500).json({ error: 'Error updating business proposal data' });
+      console.error('Error fetching client data:', error);
+      res.status(500).json({ error: 'Error fetching client data' });
   }
 });
+
 
 app.use('/', router); // Mount the router
 

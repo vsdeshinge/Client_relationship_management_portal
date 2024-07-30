@@ -9,7 +9,7 @@ const clientSchema = new mongoose.Schema({
   personToMeet: { type: String },
   syndicate_name: { type: String },
   personReferred: { type: String },
-  faceImage: { type: String },
+  faceImage: { type: mongoose.Schema.Types.ObjectId },
   status: { type: String, default: 'New' },
   buisnessproposalstatus: { type: String, default: 'New' },
   leadTime: {
@@ -93,10 +93,12 @@ const clientSchema = new mongoose.Schema({
     productLine: { type: String },
     assemblyLine: { type: String },
     equipments: { type: String },
+    certifications: { type: String },
     locations: { type: String },
     machineDetails: { type: String },
-    facilityInventory: { type: mongoose.Schema.Types.ObjectId, ref: 'uploads' }
+    facilityInventory: { type: mongoose.Schema.Types.ObjectId, ref: 'uploads.files' }
 },
+
   channelPartner: {
       title: { type: String },
       salesCoverage: { type: String },
