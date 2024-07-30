@@ -766,7 +766,7 @@ function populateBusinessProposalTable() {
                     </select>
                 </td>
                 <td class="p-2">
-                    <button class="save-button " data-proposal-id="${proposal._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+                    <button class="save-button " data-proposal-id="${proposal._id}" >Save</button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -837,6 +837,11 @@ function fetchBusinessProposalCounts() {
         createCircleChart('inProgressClients', counts['In Progress'], '#7221FD');
         createCircleChart('inDiscussionClients', counts['In Discussion'], '#7221FD');
         createCircleChart('OfferedClients', counts['Offered'], '#7221FD');
+          // Update the donut chart series
+          if (typeof ApexCharts !== 'undefined' && document.getElementById("donut-chart")) {
+            const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions(counts));
+            chart.render();
+        }
     })
     .catch(error => {
         console.error('Error fetching counts:', error);
