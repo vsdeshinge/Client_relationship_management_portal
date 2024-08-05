@@ -6,14 +6,15 @@ Copybody {
     background: linear-gradient(90deg, rgba(255,0,132,1) 0%, rgba(255,0,255,1) 100%);
 }
 
+
 .grid-container {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     gap:4%;
 }
 
-   
-.circle-chart {
+  
+.circle-chart {   
     width: 100%;
     max-width: 150px;
     margin: 0 auto;
@@ -31,6 +32,7 @@ Copybody {
     border-radius: 0.5rem;
     color: white !important;
 }
+
 
 .chart-item {
     display: flex;
