@@ -120,3 +120,23 @@ Copybody {
     border: none !important;
     border:0 px !important;
 }
+/* Custom styling for the modal */
+#searchModal .modal-content {
+  max-width: 500px;
+  margin: auto;
+}
+
+#searchModal .flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#searchModal .flex-wrap div {
+  flex: 1 1 45%; /* Adjust the width of each checkbox container */
+}
+
+#searchModal label {
+  margin-left: 5px;
+  color: black;
+}

@@ -5,7 +5,7 @@ document.getElementById('adminForm').addEventListener('submit', async (e) => {
 
     console.log(`Attempting login with username: ${username}`);
     try {
-        const response = await fetch('https://client-relationship-management-portal.onrender.com/admin/login', {
+        const response = await fetch('/admin/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -29,3 +29,4 @@ document.getElementById('adminForm').addEventListener('submit', async (e) => {
         alert('Invalid username or password. Please try again.');
     }
 });
+// https://client-relationship-management-portal.onrender.com

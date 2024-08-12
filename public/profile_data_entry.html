@@ -219,11 +219,11 @@ function addMoreSolutionFields() {
                     <div class="project-item mb-4">
                         <div class="mb-4">
                             <label class="block font-bold text-white">Title:</label>
-                            <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                            <input type="text" class="bg-gray-800 text-white p-2 rounded w-full" required>
                         </div>
                         <div class="mb-4">
                             <label class="block font-bold text-white">Description:</label>
-                            <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                            <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -239,7 +239,7 @@ function addMoreSolutionFields() {
 
                 <!-- Looking for -->
                 <h4 class="text-lg font-bold white mb-3">Looking for:</h4>
-                <div class="container p-4 bg-gray-800 rounded-lg" id="service-looking-for">
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-looking-for" required>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <div class="options grid grid-cols-2 gap-2">
@@ -254,7 +254,7 @@ function addMoreSolutionFields() {
 
                 <!-- Design -->
                 <h4 class="text-lg font-bold mb-3">Design:</h4>
-                <div class="container p-4 bg-gray-800 rounded-lg" id="service-design">
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-design" required>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <div class="options grid grid-cols-2 gap-2">
@@ -273,7 +273,7 @@ function addMoreSolutionFields() {
                 </div>
                 <br>
                 <div id="design-others-description"class="mb-4">
-                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32" placeholder="Specify if others"></textarea>
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32" placeholder="Specify if others" required ></textarea>
                 </div>
                 <!-- IT Services -->
                 <h4 class="text-lg mt-5 font-bold mb-3">IT Services:</h4>
@@ -307,7 +307,7 @@ function addMoreSolutionFields() {
                 </div>
                 <br>
                 <div id="architecture-others-description"class="mb-4">
-                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32" placeholder="Specify if others"></textarea>
+                    <textarea class="bg-gray-800 text-gray-400 p-2 rounded w-full h-32" placeholder="Specify if others" required></textarea>
                 </div>
                 <br>
 
@@ -493,11 +493,11 @@ function addMoreSolutionFields() {
                 <h4 class="text-lg font-bold mb-3">Product:</h4>
                 <div class="mb-4">
                     <label class="block font-bold text-white">Title:</label>
-                    <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                    <input type="text" class="bg-gray-800 text-white p-2 rounded w-full" required>
                 </div>
                 <div class="mb-4">
                     <label class="block font-bold text-white">Description:</label>
-                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" required></textarea>
                 </div>
                 
                 <h4 class="text-lg font-bold mb-3" >Type of Product:</h4>            
@@ -540,7 +540,7 @@ function addMoreSolutionFields() {
                 <h4 class="text-lg font-bold mb-3" >Product Description:</h4>
                 <div class="mb-4" id ="Product-Description">
                     <label class="block font-bold text-white"></label>
-                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                    <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" required></textarea>
                 </div>
                 <br>
                 
@@ -611,11 +611,11 @@ function addMoreSolutionFields() {
                         <h4 class="text-lg font-bold mb-3">Solution:</h4>
                         <div class="mb-4" id="solution-title">
                             <label class="block font-bold text-white">Title:</label>
-                            <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                            <input type="text" class="bg-gray-800 text-white p-2 rounded w-full" required>
                         </div>
                         <div class="mb-4" id="solution-description">
                             <label class="block font-bold text-white">Description:</label>
-                            <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                            <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -633,11 +633,11 @@ function addMoreSolutionFields() {
             <h4 class="text-lg font-bold mb-3">Domain Expert:</h4>
             <div class="mb-4">
                 <label class="block font-bold text-white">Title:</label>
-                <input type="text" class="bg-gray-800 text-white p-2 rounded w-full">
+                <input type="text" class="bg-gray-800 text-white p-2 rounded w-full" required>
             </div>
             <div class="mb-4">
                 <label class="block font-bold text-white">Description:</label>
-                <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32"></textarea>
+                <textarea class="bg-gray-800 text-white p-2 rounded w-full h-32" required ></textarea>
             </div>
         </div>
     </div>
@@ -741,11 +741,11 @@ function addMoreSolutionFields() {
                     <div>
                         <div class="mb-4">
                             <label for="manufacturedomain" class="block font-bold text-white">Domain:</label>
-                            <input id="manufacturedomain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                            <input id="manufacturedomain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" required />
                         </div>
                         <div class="mb-4">
                             <label for="establishedyear" class="block font-bold text-white">Established Year:</label>
-                            <input id="establishedyear" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                            <input id="establishedyear" type="text" class="w-full p-2 bg-gray-800 text-white rounded" required />
                         </div>
                         <div class="mb-4">
                             <label for="facility" class="block font-bold text-white">Facility:</label>
@@ -816,7 +816,7 @@ function addMoreSolutionFields() {
         <div>
             <div class="mb-4">
                 <label for="title_market_access" class="block font-bold text-white">Title:</label>
-                <select id="title_market_access" class="w-full p-2 bg-gray-800 font-bold text-white rounded">
+                <select id="title_market_access" class="w-full p-2 bg-gray-800 font-bold text-white rounded" required>
                     <option value="">Select</option>
                     <option value="Distribution Provider">Distribution Provider</option>
                     <option value="Retailer">Retailer</option>
@@ -835,7 +835,7 @@ function addMoreSolutionFields() {
         <div>
             <div class="mb-4">
                 <label for="domain" class="block font-bold text-white">Domain:</label>
-                <input id="channeldomain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                <input id="channeldomain" type="text" class="w-full p-2 bg-gray-800 text-white rounded" required/>
             </div>
             <div class="mb-4">
                 <label for="turn-over" class="block font-bold text-white">Turn Over:</label>
@@ -929,7 +929,7 @@ function addMoreSolutionFields() {
         <div>
             <div id="investor-content-title" class="mb-4">
                 <label class="block font-bold text-white">Title :</label>
-                <select class="w-full p-2 bg-gray-800 text-white rounded" id="investor-title">
+                <select class="w-full p-2 bg-gray-800 text-white rounded" id="investor-title" required>
                     <option value="">Select</option>
                     <option value="ventureCapital">Venture Capital</option>
                     <option value="angleInvestor">Angel Investor</option>
@@ -939,18 +939,18 @@ function addMoreSolutionFields() {
             </div>
             <div id="investor-content-companyname" class="mb-4">
                 <label class="block font-bold text-white">Company Name:</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-companyName" />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-companyName" required/>
             </div>
         </div>
         <!-- Right Column -->
         <div>
             <div id="investor-content-domain" class="mb-4">
                 <label class="block font-bold text-white">Domain:</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-domain" />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-domain" required/>
             </div>
             <div id="investor-content-networth" class="mb-4">
                 <label class="block font-bold text-white">Networth :</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-networth" />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" id="investor-networth" required/>
             </div>
         </div>
     </div>
@@ -993,7 +993,7 @@ function addMoreSolutionFields() {
         <div>
             <div id="domain-expert-role" class="mb-4">
                 <label class="block font-bold text-white">Title:</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded"  required />
             </div>
             
         </div>
@@ -1001,37 +1001,37 @@ function addMoreSolutionFields() {
         <div>
             <div id="domain-expert-domain" class="mb-4">
                 <label class="block font-bold text-white">Domain:</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" required />
             </div>
         </div>
     </div>
     <div id="domain-expert-academics" class="mb-4">
         <label class="block font-bold text-white">Academics:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div id="domain-expert-field" class="mb-4">
         <label class="block font-bold text-white">Field:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div id="domain-expert-experience" class="mb-4">
         <label class="block font-bold text-white">Experience:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div id="domain-expert-recognition" class="mb-4">
         <label class="block font-bold text-white">Recognition:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div id="domain-expert-patents" class="mb-4">
         <label class="block font-bold text-white">Patents/Inventions:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div id="domain-expert-network" class="mb-4">
         <label class="block font-bold text-white">Network:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div id="domain-expert-keynotes" class="mb-4">
         <label class="block font-bold text-white">Keynotes:</label>
-        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32"></textarea>
+        <textarea class="w-full p-2 bg-gray-800 text-white rounded h-32" required></textarea>
     </div>
     <div class="mt-4">
         <button type="submit" id="domain-expert-submit" class="px-4 py-2 bg-blue-500 text-white rounded">Submit</button>

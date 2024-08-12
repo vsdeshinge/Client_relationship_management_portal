@@ -6,7 +6,8 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - MONGODB_URI=mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority
+      - MONGODB_URI=mongodb+srv://db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com
+
     depends_on:
       - mongo
 

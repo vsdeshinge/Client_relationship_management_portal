@@ -206,6 +206,45 @@ document.addEventListener('click', function(event) {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
+    async function fetchClientCounts() {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch('/api/client-counts', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const counts = await response.json();
+                createCharts(counts);
+            } else {
+                console.error('Error fetching client counts');
+            }
+        } catch (error) {
+            console.error('Error fetching client counts:', error);
+        }
+    }
+
+    function createCharts(counts) {
+        const categories = [
+            { id: 'customers', label: 'Customers', value: counts.customers, color: '#7221FD' },
+            { id: 'manufacturers', label: 'Manufacturers', value: counts.manufacturers, color: '#7221FD' },
+            { id: 'serviceProviders', label: 'Service Providers', value: counts.serviceProviders, color: '#7221FD' },
+            { id: 'channelPartners', label: 'Channel Partners', value: counts.channelPartners, color: '#7221FD' },
+            { id: 'investors', label: 'Investors', value: counts.investors, color: '#7221FD' },
+            { id: 'domainExperts', label: 'Domain Experts', value: counts.domainExperts, color: '#7221FD' },
+        ];
+
+        categories.forEach(category => {
+            createCircleChart(category.id, category.value, category.color);
+        });
+    }
+    fetchClientCounts();
+    
+    
+    
     // Initialize qualified lead page
     function initQualifiedLeadPage(status) {
         showContent('content-qualified-lead');
@@ -384,71 +423,6 @@ document.querySelectorAll('nav li').forEach(el => {
         }
     });
 });
-
-// // Business Proposal data
-// const businessProposalData = [
-//     { name: 'John Doe', date: '15/07', company: 'ABC Corp', phone: '1234567890', email: 'john@example.com', status: 'Accepted' },
-//     { name: 'Jane Smith', date: '16/07', company: 'XYZ Ltd', phone: '9876543210', email: 'jane@example.com', status: 'In Progress' },
-//     { name: 'Bob Johnson', date: '17/07', company: '123 Inc', phone: '5555555555', email: 'bob@example.com', status: 'In Discussion' },
-//     { name: 'Alice Brown', date: '18/07', company: 'Tech Co', phone: '1112223333', email: 'alice@example.com', status: 'Offered' },
-//     { name: 'Charlie Davis', date: '19/07', company: 'Innovate Inc', phone: '4445556666', email: 'charlie@example.com', status: 'Accepted' },
-// ];
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     // Populate business proposal table
-//     function populateBusinessProposalTable() {
-//         const tableBody = document.getElementById('businessProposalTableBody');
-//         if (!tableBody) return;
-//         tableBody.innerHTML = '';
-//         businessProposalData.forEach(proposal => {
-//             const row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td class="p-2">${proposal.name}</td>
-//                 <td class="p-2">${proposal.date}</td>
-//                 <td class="p-2">${proposal.company}</td>
-//                 <td class="p-2">${proposal.phone}</td>
-//                 <td class="p-2">${proposal.email}</td>
-//                 <td class="p-2"><button class="text-blue-400 hover:text-blue-300">View Details</button></td>
-//                 <td class="p-2 ${getStatusColor(proposal.status)}">${proposal.status}</td>
-//             `;
-//             tableBody.appendChild(row);
-//         });
-//         console.log('Business proposal table populated'); // Add this line
-//     }
-
-//     // Initialize business proposal page
-//     function initBusinessProposalPage() {
-//         showContent('content-business-proposal');
-//         createBusinessProposalCharts();
-//         populateBusinessProposalTable();
-//     }
-
-   
-// });
-
-//     // Helper function to get status color
-//     function getStatusColor(status) {
-//         switch (status) {
-//             case 'Accepted':
-//                 return 'text-green-400';
-//             case 'In Progress':
-//                 return 'text-yellow-400';
-//             case 'In Discussion':
-//                 return 'text-blue-400';
-//             case 'Offered':
-//                 return 'text-purple-400';
-//             default:
-//                 return 'text-gray-400';
-//         }
-//     }
-
-//     // Create circle charts for business proposal
-//     function createBusinessProposalCharts() {
-//         createCircleChart('acceptedClients', 60, '#7221FD');
-//         createCircleChart('inProgressClients', 5, '#7221FD');
-//         createCircleChart('inDiscussionClients', 15, '#7221FD');
-//         createCircleChart('OfferedClients', 40, '#7221FD');
-//     }
 
     function createCircleChart(id, value, color) {
         const canvas = document.getElementById(id);
@@ -695,20 +669,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
 });
 
-// Dummy data for categories
-const categories = [
-    { id: 'customers', label: 'Customers', value: 100, color: '#7221FD' },
-    { id: 'manufacturers', label: 'Manufacturers', value: 50, color: '#7221FD' },
-    { id: 'serviceProviders', label: 'Service Providers', value: 75, color: '#7221FD' },
-    { id: 'channelPartners', label: 'Channel Partners', value: 30, color: '#7221FD' },
-    { id: 'investors', label: 'Investors', value: 20, color: '#7221FD' },
-    { id: 'domainExperts', label: 'Domain Experts', value: 10, color: '#7221FD' },
-];
 
-// Create charts for each category
-categories.forEach(category => {
-    createCircleChart(category.id, category.value, category.color);
-});
 
 
 // create circle charts
@@ -1010,3 +971,169 @@ function initCustomerPage() {
 document.getElementById('nav-customer').addEventListener('click', function() {
     initCustomerPage();
 });
+
+// advanced search filter 
+document.addEventListener('DOMContentLoaded', () => {
+    const advancedSearchButton = document.getElementById('advancedSearchButton');
+    const searchModal = document.getElementById('searchModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const advancedSearchForm = document.getElementById('advancedSearchForm');
+
+    advancedSearchButton.addEventListener('click', () => {
+        searchModal.classList.remove('hidden');
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        searchModal.classList.add('hidden');
+    });
+
+    advancedSearchForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const searchFields = {};
+
+        // Example: Construct the `customer` search object
+        const customerProjectTitles = document.getElementById('customerProjectTitles').value;
+        const customerServiceLookingFor = document.getElementById('customerServiceLookingFor').value;
+        const customerProductTitle = document.getElementById('customerProductTitle').value;
+        const customerSolutionTitles = document.getElementById('customerSolutionTitles').value;
+        const customerOthersTitles = document.getElementById('customerOthersTitles').value;
+
+        if (customerProjectTitles || customerServiceLookingFor || customerProductTitle || customerSolutionTitles || customerOthersTitles) {
+            searchFields.customer = {
+                project: { titles: customerProjectTitles },
+                service: { lookingFor: customerServiceLookingFor },
+                product: { title: customerProductTitle },
+                solution: { titles: customerSolutionTitles },
+                others: { titles: customerOthersTitles }
+            };
+        }
+
+        // Repeat similar construction for `serviceProvider`, `manufacturer`, `channelPartner`, etc.
+
+        if (Object.keys(searchFields).length === 0) {
+            alert('Please provide at least one search criteria.');
+            return;
+        }
+
+        await performAdvancedSearch(searchFields);
+        searchModal.classList.add('hidden');
+    });
+
+    async function performAdvancedSearch(searchFields) {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`/advanced-search`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ searchFields })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                updateTableWithSearchResults(result);
+            } else {
+                console.error('Error performing advanced search:', result.error);
+            }
+        } catch (error) {
+            console.error('Error performing advanced search:', error);
+        }
+    }
+
+    function updateTableWithSearchResults(data) {
+        const visitorsTableBody = document.getElementById('visitorsTableBody');
+        visitorsTableBody.innerHTML = ''; // Clear existing table rows
+
+        if (data.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="7" class="p-2 text-center">No clients available</td>
+            `;
+            visitorsTableBody.appendChild(row);
+        } else {
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="p-2">${item.name || ''}</td>
+                    <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
+                    <td class="p-2">${item.companyName || ''}</td>
+                    <td class="p-2">${item.phone || ''}</td>
+                    <td class="p-2">${item.email || ''}</td>
+                    <td class="p-2">${item.action || ''}</td>
+                    <td class="p-2">${item.status || ''}</td>
+                `;
+                visitorsTableBody.appendChild(row);
+            });
+        }
+    }
+});
+
+
+
+// Basic Search Logic
+document.getElementById('basicSearchInput').addEventListener('input', function() {
+    let searchTerm = this.value.toLowerCase();
+
+    // Filter each table separately
+    filterTable('customerTableBody', searchTerm);
+    filterTable('businessProposalTableBody', searchTerm);
+    filterTable('qualifiedLeadTableBody', searchTerm);
+    filterTable('visitorsTableBody', searchTerm);
+});
+
+function filterTable(tableId, searchTerm) {
+    let tableBody = document.getElementById(tableId);
+    let rows = tableBody.getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        let row = rows[i];
+        let nameCell = row.cells[0]?.textContent.toLowerCase() || '';
+        let emailCell = row.cells[4]?.textContent.toLowerCase() || '';
+
+        if (nameCell.includes(searchTerm) || emailCell.includes(searchTerm)) {
+            row.style.display = '';  // Show the row
+        } else {
+            row.style.display = 'none';  // Hide the row
+        }
+    }
+}
+
+
+// // Pagination function
+// function createPagination(tableId, rowsPerPage) {
+//   const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+//   const rows = table.getElementsByTagName("tr");
+//   const totalPages = Math.ceil(rows.length / rowsPerPage);
+//   const paginationContainer = document.getElementById(`${tableId}-pagination`);
+
+//   let currentPage = 1;
+
+//   function displayRows(page) {
+//     let start = (page - 1) * rowsPerPage;
+//     let end = start + rowsPerPage;
+
+//     for (let i = 0; i < rows.length; i++) {
+//       rows[i].style.display = (i >= start && i < end) ? "" : "none";
+//     }
+//   }
+
+//   function createPaginationButtons() {
+//     paginationContainer.innerHTML = "";
+
+//     for (let i = 1; i <= totalPages; i++) {
+//       let button = document.createElement("button");
+//       button.innerText = i;
+//       button.className = `mx-1 px-3 py-1 border rounded ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`;
+//       button.addEventListener("click", function() {
+//         currentPage = i;
+//         displayRows(currentPage);
+//         createPaginationButtons();
+//       });
+//       paginationContainer.appendChild(button);
+//     }
+//   }
+
+//   displayRows(currentPage);
+//   createPaginationButtons();
+// }

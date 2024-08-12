@@ -25,13 +25,14 @@ const methodOverride = require('method-override');
 const fs = require('fs');
 const crypto = require('crypto'); 
 const { GridFSBucket } = require('mongodb');
+const { deepMerge } = require('./public/js/utils.js');
 
 
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 const Client = require('./models/client.js');
 const Syndicate = require('./models/syndicate.js');
@@ -71,7 +72,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/facility', express.static(path.join(__dirname, 'facility')));
 
 // Temporary workaround to ensure MONGODB_URI is defined
-process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
+process.env.MONGODB_URI = 'mongodb+srv://db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com';
 
 
 
@@ -454,6 +455,8 @@ router.get('/api/clients/counts', async (req, res) => {
       res.status(500).send('Server error');
   }
 });
+
+
 // buisness proposal count 
 router.get('/api/clients/status-counts', async (req, res) => {
   try {
@@ -564,11 +567,39 @@ router.get('/api/clients', authenticateToken, async (req, res) => {
 });
 
 
+// Endpoint to get client counts for each category
+app.get('/api/client-counts', async (req, res) => {
+  try {
+      const customerCount = await Client.countDocuments({ 'customer': { $exists: true, $not: { $size: 0 } } });
+      const manufacturerCount = await Client.countDocuments({ 'manufacturer': { $exists: true, $not: { $size: 0 } } });
+      const serviceProviderCount = await Client.countDocuments({ 'serviceProvider': { $exists: true, $not: { $size: 0 } } });
+      const channelPartnerCount = await Client.countDocuments({ 'channelPartner': { $exists: true, $not: { $size: 0 } } });
+      const investorCount = await Client.countDocuments({ 'investor': { $exists: true, $not: { $size: 0 } } });
+      const domainExpertCount = await Client.countDocuments({ 'domainExpert': { $exists: true, $not: { $size: 0 } } });
 
-// Route handler for updating general client data
+      res.json({
+          customers: customerCount,
+          manufacturers: manufacturerCount,
+          serviceProviders: serviceProviderCount,
+          channelPartners: channelPartnerCount,
+          investors: investorCount,
+          domainExperts: domainExpertCount
+      });
+  } catch (error) {
+      console.error('Error fetching client counts:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+// profile data entery api's
 router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
   const clientData = req.body;
+
+  console.log("Received clientData:", clientData); // Log incoming data
 
   try {
     let client = await Client.findById(clientId);
@@ -576,21 +607,22 @@ router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Client not found' });
     }
 
-    // Merge new data with existing data
-    client = { ...client.toObject(), ...clientData };
+    console.log("Existing client data before merge:", client); // Log existing data
 
-    const updatedClient = await Client.findByIdAndUpdate(
-      clientId,
-      client,
-      { new: true, runValidators: true }
-    );
+    // Deep merge the client data
+    deepMerge(client, clientData);
 
+    console.log("Merged client data:", client); // Log merged data
+
+    const updatedClient = await client.save();
     res.status(200).json({ message: 'Client data updated successfully', data: updatedClient });
   } catch (error) {
     console.error('Error updating client data:', error);
     res.status(500).json({ error: 'Error updating client data' });
   }
 });
+
+
 
 
 // Route handler for updating investor data
@@ -760,6 +792,56 @@ router.get('/api/customer/clients/:id', authenticateToken, async (req, res) => {
       res.status(500).json({ error: 'Error fetching client data' });
   }
 });
+
+// advanced search filter api 
+app.post('/advanced-search', async (req, res) => {
+  const { searchFields } = req.body;
+
+  try {
+    let clients;
+
+    // Log the incoming searchFields to ensure they're being received correctly
+    console.log(`Search fields: ${searchFields}`);
+
+    const searchCriteria = searchFields.map(field => {
+      if (field === 'customer') {
+        return {
+          $or: [
+            { 'customer.project.titles': { $exists: true, $not: { $size: 0 } } },
+            { 'customer.service.lookingFor': { $exists: true, $not: { $size: 0 } } },
+            { 'customer.product.title': { $exists: true, $ne: "" } },
+            { 'customer.solution.titles': { $exists: true, $not: { $size: 0 } } },
+            { 'customer.others.titles': { $exists: true, $not: { $size: 0 } } }
+          ]
+        };
+      } else if (field === 'serviceProvider') {
+        return { 'serviceProvider.services': { $exists: true, $not: { $size: 0 } } };
+      } else if (field === 'manufacturer') {
+        return { 'manufacturer.manufacturerdomain': { $exists: true, $ne: "" } };
+      } else if (field === 'channelPartner') {
+        return { 'channelPartner. title': { $exists: true, $ne: "" } };
+      } else if (field === 'investor') {
+        return { 'investor.title': { $exists: true, $ne: "" } };
+      } else if (field === 'domainExpert') {
+        return { 'domainExpert.domaintitle': { $exists: true, $ne: "" } };
+      }
+    });
+
+    // Log the search criteria
+    console.log(`Search criteria: ${JSON.stringify(searchCriteria)}`);
+
+    clients = await Client.find({ $or: searchCriteria });
+
+    // Log the clients found
+    console.log(`Clients found: ${clients.length}`);
+
+    res.status(200).json(clients);
+  } catch (error) {
+    console.error('Error performing advanced search:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 app.use('/', router); // Mount the router
