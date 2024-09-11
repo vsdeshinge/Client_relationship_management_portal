@@ -307,6 +307,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
                     ` : ''}
                     <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+                     <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
                 </td>
             `;
             tableBody.appendChild(row);
@@ -321,6 +322,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     
+        // Add event listeners to "Go to MoM" buttons
+document.querySelectorAll('.go-to-mom-button').forEach(button => {
+    button.addEventListener('click', function(event) {
+        const leadId = event.target.dataset.leadId;
+        localStorage.setItem('leadId', leadId);
+        window.location.href = `/mom.html?leadId=${leadId}`;
+    });
+});
+
     
 
         // Add event listeners to save buttons
@@ -971,7 +981,6 @@ function initCustomerPage() {
 document.getElementById('nav-customer').addEventListener('click', function() {
     initCustomerPage();
 });
-
 // advanced search filter 
 document.addEventListener('DOMContentLoaded', () => {
     const advancedSearchButton = document.getElementById('advancedSearchButton');
@@ -989,34 +998,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     advancedSearchForm.addEventListener('submit', async (event) => {
         event.preventDefault();
-        const searchFields = {};
-
-        // Example: Construct the `customer` search object
-        const customerProjectTitles = document.getElementById('customerProjectTitles').value;
-        const customerServiceLookingFor = document.getElementById('customerServiceLookingFor').value;
-        const customerProductTitle = document.getElementById('customerProductTitle').value;
-        const customerSolutionTitles = document.getElementById('customerSolutionTitles').value;
-        const customerOthersTitles = document.getElementById('customerOthersTitles').value;
-
-        if (customerProjectTitles || customerServiceLookingFor || customerProductTitle || customerSolutionTitles || customerOthersTitles) {
-            searchFields.customer = {
-                project: { titles: customerProjectTitles },
-                service: { lookingFor: customerServiceLookingFor },
-                product: { title: customerProductTitle },
-                solution: { titles: customerSolutionTitles },
-                others: { titles: customerOthersTitles }
-            };
-        }
-
-        // Repeat similar construction for `serviceProvider`, `manufacturer`, `channelPartner`, etc.
-
-        if (Object.keys(searchFields).length === 0) {
-            alert('Please provide at least one search criteria.');
+        const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
+            .filter(input => input.checked)
+            .map(input => input.value);
+        
+        if (searchFields.length === 0) {
+            alert('Please select at least one search criteria.');
             return;
         }
 
         await performAdvancedSearch(searchFields);
-        searchModal.classList.add('hidden');
+        searchModal.classList.add('hidden'); // Close modal after search
     });
 
     async function performAdvancedSearch(searchFields) {
@@ -1066,10 +1058,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 visitorsTableBody.appendChild(row);
             });
         }
-    }
-
-
-    
+    }   
 });
 
 

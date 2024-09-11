@@ -1,24 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const leadId = localStorage.getItem('leadId');
-    if (leadId) {
-        fetchVisitorDetails(leadId);
+    const urlParams = new URLSearchParams(window.location.search);
+    const leadId = urlParams.get('leadId');
+    const adminToken = localStorage.getItem('adminToken');
+
+    if (!adminToken) {
+        console.error('Admin token not found in localStorage');
+    }
+
+    if (leadId && adminToken) {
+        // Ensure the function is called with proper parameters
+        console.log('Fetching visitor details for lead ID:', leadId);
+        fetchVisitorDetails(leadId, adminToken); 
     } else {
-        console.error('Lead ID not found in local storage.');
+        console.error('Lead ID or admin token is missing.');
     }
 
     const submitButton = document.getElementById('submit-button');
     if (submitButton) {
         submitButton.addEventListener('click', submitForm);
     }
+
     const serviceProviderSubmitButton = document.getElementById('service-provider-submit-button');
     if (serviceProviderSubmitButton) {
         serviceProviderSubmitButton.addEventListener('click', submitServiceProviderForm);
     }
+
     const manufacturerSubmitButton = document.getElementById('manufacture-submit-button');
     if (manufacturerSubmitButton) {
         manufacturerSubmitButton.addEventListener('click', submitManufacturerForm);
     }
-  
 
     const channelPartnerSubmitButton = document.getElementById('channel-submit-button');
     if (channelPartnerSubmitButton) {
@@ -34,51 +44,77 @@ document.addEventListener('DOMContentLoaded', () => {
     if (domainExpertSubmitButton) {
         domainExpertSubmitButton.addEventListener('click', submitDomainExpertForm);
     }
-});
 
-async function fetchVisitorDetails(leadId) {
-    const token = localStorage.getItem('adminToken');
-    try {
-        const response = await fetch(`/api/visitors/${leadId}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
+    async function fetchVisitorDetails(id, token) {
+        console.log("Token being used:", token);
+        try {
+            const response = await fetch(`/api/visitors/${id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const visitor = await response.json();
+                console.log('Visitor details fetched:', visitor);
+                displayVisitorDetails(visitor);
+            } else {
+                console.error('Error fetching visitor details:', await response.text());
             }
-        });
-        if (response.ok) {
-            const visitor = await response.json();
-            console.log('Visitor details fetched:', visitor);
-            displayVisitorDetails(visitor);
-        } else {
-            console.error('Error fetching visitor details:', await response.text());
+        } catch (error) {
+            console.error('Error fetching visitor details:', error);
         }
-    } catch (error) {
-        console.error('Error fetching visitor details:', error);
     }
-}
 
-function displayVisitorDetails(visitor) {
-    console.log('Displaying visitor details:', visitor);
-    const visitorDetails = document.querySelector('.container2');
-    if (visitorDetails) {
-        const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
-        visitorDetails.innerHTML = `
-            <div class="rounded-card">
-                <div class="flex items-center">
-                    <img src="${faceImageUrl}" alt="Profile" class="profile-img">
-                    <div>
-                        <p class="text-lg font-bold">Name: ${visitor.name}</p>
-                        <p class="text-sm">Company: ${visitor.companyName}</p>
-                        <p class="text-sm">Domain: ${visitor.domain}</p>
-                        <p class="text-sm">Email: ${visitor.email}</p>
-                        <p class="text-sm">Phone no.: ${visitor.phone}</p>
+    function displayVisitorDetails(visitor) {
+        console.log('Displaying visitor details:', visitor);
+        const visitorDetails = document.querySelector('.container2');
+        if (visitorDetails) {
+            const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
+            visitorDetails.innerHTML = `
+                <div class="rounded-card">
+                    <div class="flex items-center">
+                        <img src="${faceImageUrl}" alt="Profile" class="profile-img">
+                        <div>
+                            <p class="text-lg font-bold">Name: ${visitor.name}</p>
+                            <p class="text-sm">Company: ${visitor.companyName}</p>
+                            <p class="text-sm">Domain: ${visitor.domain}</p>
+                            <p class="text-sm">Email: ${visitor.email}</p>
+                            <p class="text-sm">Phone no.: ${visitor.phone}</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
-    } else {
-        console.error('Element for visitor details not found.');
+            `;
+        } else {
+            console.error('Element for visitor details not found.');
+        }
     }
+
+
+
+
+function cusformData() {
+    const requiredFields = [
+        // customer
+        '#project-content input[type="text"]',
+        '#solution-fields [type="text"]',
+    ];
+
+    let isValid = true;
+
+    requiredFields.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            if (element.value.trim() === '' && (element.tagName !== 'SELECT' || element.selectedIndex === -1)) {
+                element.classList.add('highlight-error');
+                isValid = false;
+            } else {
+                element.classList.remove('highlight-error');
+            }
+        });
+    });
+
+    return isValid;
 }
 
 
@@ -89,6 +125,12 @@ function submitForm(event) {
     const leadId = localStorage.getItem('leadId');
     const token = localStorage.getItem('adminToken');
 
+    
+    if (!cusformData()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+ 
     const projectTitles = Array.from(document.querySelectorAll('#project-content input[type="text"]')).map(input => input.value.trim());
     const projectDescriptions = Array.from(document.querySelectorAll('#project-content textarea')).map(textarea => textarea.value.trim());
 
@@ -190,12 +232,123 @@ function submitForm(event) {
     });
 }
 
+// Function to validate investor data
+function investorvalidatedata() {
+    const requiredFields = [
+        '#investor-domain',
+    ];
+
+    let isValid = true;
+
+    requiredFields.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            if (element.value.trim() === '' && (element.tagName !== 'SELECT' || element.selectedIndex === -1)) {
+                element.classList.add('highlight-error');
+                isValid = false;
+            } else {
+                element.classList.remove('highlight-error');
+            }
+        });
+    });
+
+    return isValid;
+}
+
+// Function to handle form submission
+function submitInvestorForm(event) {
+    event.preventDefault();
+
+    if (!investorvalidatedata()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
+    const leadId = localStorage.getItem('leadId');
+    const token = localStorage.getItem('adminToken');
+
+
+    const title = document.getElementById('investor-title').value;
+    const companyName = document.getElementById('investor-companyName').value;
+    const domain = document.getElementById('investor-domain').value;
+    const networth = document.getElementById('investor-networth').value;
+    const previousInvestments = document.getElementById('investor-previousInvestments').value;
+    const keyNotes = document.getElementById('investor-keyNotes').value;
+
+    // Get all selected checkboxes
+    const investmentPortfolio = Array.from(document.querySelectorAll('input[name="investmentPortfolio"]:checked')).map(cb => cb.value);
+
+    const investorData = {
+        title,
+        companyName,
+        investordomain: domain,
+        networth,
+        investmentPortfolio,
+        previousInvestments,
+        keyNotes
+    };
+
+    // Send data to the backend
+    fetch(`/api/investor/${leadId}`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Include token for authentication
+        },
+        body: JSON.stringify(investorData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Success:', data);
+        alert('Investor data submitted successfully!');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error submitting investor data');
+    });
+}
+
+
+
+
+
+function validateServiceProviderData() {
+    const requiredFields = [
+        // service
+        '#service-provider-domain input[type="text"]',
+    ];
+
+    let isValid = true;
+
+    requiredFields.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            if (element.value.trim() === '' && (element.tagName !== 'SELECT' || element.selectedIndex === -1)) {
+                element.classList.add('highlight-error');
+                isValid = false;
+            } else {
+                element.classList.remove('highlight-error');
+            }
+        });
+    });
+
+    return isValid;
+}
 
 
 function submitServiceProviderForm(event) {
     event.preventDefault();
     const leadId = localStorage.getItem('leadId');
     const token = localStorage.getItem('adminToken');
+
+    if (!validateServiceProviderData()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
 
 const serviceProviderData = {
     services: Array.from(document.querySelectorAll('#service-provider-services input[type="text"]')).map(input => input.value.trim()).filter(value => value !== ''),
@@ -242,8 +395,38 @@ fetch(`/api/clients/${leadId}`, {
 });
 }
 
+
+function validateManufacturerData() {
+    const requiredFields = [
+         // manu
+         '#manufacturedomain',
+    ];
+
+    let isValid = true;
+
+    requiredFields.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            if (element.value.trim() === '' && (element.tagName !== 'SELECT' || element.selectedIndex === -1)) {
+                element.classList.add('highlight-error');
+                isValid = false;
+            } else {
+                element.classList.remove('highlight-error');
+            }
+        });
+    });
+
+    return isValid;
+}
+
+
 function submitManufacturerForm(event) {
     event.preventDefault();
+
+    if (!validateManufacturerData()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
 
     const leadId = localStorage.getItem('leadId');
     const token = localStorage.getItem('adminToken');
@@ -319,11 +502,46 @@ function submitManufacturerForm(event) {
     });
 }
 
+
+
+function marketData() {
+    const requiredFields = [
+     // channel 
+     '#channeldomain',
+    ];
+
+    let isValid = true;
+
+    requiredFields.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            if (element.value.trim() === '' && (element.tagName !== 'SELECT' || element.selectedIndex === -1)) {
+                element.classList.add('highlight-error');
+                isValid = false;
+            } else {
+                element.classList.remove('highlight-error');
+            }
+        });
+    });
+
+    return isValid;
+}
+
+
+
 function submitMarketAccessForm(event) {
     event.preventDefault();
 
+
+
     const leadId = localStorage.getItem('leadId');
     const token = localStorage.getItem('adminToken');
+
+
+    if (!marketData()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
 
     const marketAccessData = {
         title: getValue('#title_market_access'),
@@ -373,61 +591,41 @@ function submitMarketAccessForm(event) {
 }
 
 
-function submitInvestorForm(event) {
-    event.preventDefault();
 
-    const leadId = localStorage.getItem('leadId');
-    const token = localStorage.getItem('adminToken');
+function domainData() {
+    const requiredFields = [
+      // domain expert
+        '#domain-expert-role input[type="text"]'
+    ];
 
-    const title = document.getElementById('investor-title').value;
-    const companyName = document.getElementById('investor-companyName').value;
-    const domain = document.getElementById('investor-domain').value;
-    const networth = document.getElementById('investor-networth').value;
-    const previousInvestments = document.getElementById('investor-previousInvestments').value;
-    const keyNotes = document.getElementById('investor-keyNotes').value;
+    let isValid = true;
 
-    // Get all selected checkboxes
-    const investmentPortfolio = Array.from(document.querySelectorAll('input[name="investmentPortfolio"]:checked')).map(cb => cb.value);
-
-    const investorData = {
-        title,
-        companyName,
-        investordomain: domain,
-        networth,
-        investmentPortfolio,
-        previousInvestments,
-        keyNotes
-    };
-
-    // Send data to the backend
-    fetch(`/api/investor/${leadId}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Include token for authentication
-        },
-        body: JSON.stringify(investorData)
-    }).then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    }).then(data => {
-        console.log('Success:', data);
-        alert('Investor data submitted successfully!');
-    }).catch(error => {
-        console.error('Error:', error);
-        alert('Error submitting investor data');
+    requiredFields.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(element => {
+            if (element.value.trim() === '' && (element.tagName !== 'SELECT' || element.selectedIndex === -1)) {
+                element.classList.add('highlight-error');
+                isValid = false;
+            } else {
+                element.classList.remove('highlight-error');
+            }
+        });
     });
+
+    return isValid;
 }
-
-
 function submitDomainExpertForm(event) {
     event.preventDefault();
 
     const leadId = localStorage.getItem('leadId');
     const token = localStorage.getItem('adminToken');
 
+
+
+    if (!domainData()) {
+        alert('Please fill in all required fields.');
+        return;
+    }
     const domainExpertData = {
         domaintitle: getValue('#domain-expert-role input[type="text"]'),
         expertdomain: getValue('#domain-expert-domain input[type="text"]'),
@@ -490,3 +688,4 @@ function getValue(selector) {
     const element = document.querySelector(selector);
     return element ? element.value : '';
 }
+});

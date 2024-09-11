@@ -1,1 +1,40 @@
 mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority
+
+
+
+
+username = doadmin
+password = 0w5Bh26oH43E7cX1
+host = mongodb+srv://db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com
+database = admin
+
+
+
+mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin
+mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-0f8f9f61.mongo.ondigitalocean.com:27017/,fb.?retryWrites=true&w=majority
+
+mongorestore --uri="mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin
+" --drop
+
+scp D:\github\Client_relationship_management_portal\db  crmadmin@139.59.73.56:posspole
+
+docker run -d -p 3001:3000 --name client_management_container client_management_app
+
+
+mongorestore --uri="mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin" /home/crmadmin/posspole/db/test
+mongosh "mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin"
+
+sudo certbot --apache -d your_domain.com -d www.your_domain.comcurl https://api.dnsexit.com/dns/ud/?apikey=API-Key -d host=hostname1,hostname2
+sudo certbot --nginx -d your_domain.com -d http://www.posspole.work.gd
+sudo certbot certonly --manual -d posspole.run.place. -d www.posspole.run.place. --preferred-challenges dns
+
+
+docker build -t client_app .
+docker save -o client.tar client_app
+docker load -i client_relationship_management_portal.tar
+
+
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+docker rmi $(docker images -q)
+

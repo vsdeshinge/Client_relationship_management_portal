@@ -26,13 +26,13 @@ const fs = require('fs');
 const crypto = require('crypto'); 
 const { GridFSBucket } = require('mongodb');
 const { deepMerge } = require('./public/js/utils.js');
-
+const MoM = require('./models/mom.js');
 
 
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 const Client = require('./models/client.js');
 const Syndicate = require('./models/syndicate.js');
@@ -72,7 +72,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/facility', express.static(path.join(__dirname, 'facility')));
 
 // Temporary workaround to ensure MONGODB_URI is defined
-process.env.MONGODB_URI = 'mongodb+srv://db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com';
+process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
 
 
 
@@ -527,7 +527,7 @@ app.get('/visitor-details', authenticateToken, async (req, res) => {
   }
 });
 
-
+// get visitor basic details
 router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
   console.log('Received request for visitor ID:', req.params.id);
   try {
@@ -593,8 +593,7 @@ app.get('/api/client-counts', async (req, res) => {
 
 
 
-
-// profile data entery api's
+// profile data entry API
 router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
   const clientData = req.body;
@@ -609,8 +608,8 @@ router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
 
     console.log("Existing client data before merge:", client); // Log existing data
 
-    // Deep merge the client data
-    deepMerge(client, clientData);
+    // Perform a shallow merge of the client data
+    Object.assign(client, clientData);
 
     console.log("Merged client data:", client); // Log merged data
 
@@ -815,13 +814,13 @@ app.post('/advanced-search', async (req, res) => {
           ]
         };
       } else if (field === 'serviceProvider') {
-        return { 'serviceProvider.services': { $exists: true, $not: { $size: 0 } } };
+        return { 'serviceProvider.domain': { $exists: true, $not: { $size: 0 } } };
       } else if (field === 'manufacturer') {
         return { 'manufacturer.manufacturerdomain': { $exists: true, $ne: "" } };
       } else if (field === 'channelPartner') {
-        return { 'channelPartner. title': { $exists: true, $ne: "" } };
+        return { 'channelPartner.channeldomain': { $exists: true, $ne: "" } };
       } else if (field === 'investor') {
-        return { 'investor.title': { $exists: true, $ne: "" } };
+        return { 'investor.domain': { $exists: true, $ne: "" } };
       } else if (field === 'domainExpert') {
         return { 'domainExpert.domaintitle': { $exists: true, $ne: "" } };
       }
@@ -842,7 +841,59 @@ app.post('/advanced-search', async (req, res) => {
   }
 });
 
+// Endpoint to create a new MoM
+router.post('/api/mom', async (req, res) => {
+  const { clientId, heading, summary, dateTime } = req.body;
 
+  if (!clientId || !heading || !summary || !dateTime) {
+    return res.status(400).json({ error: 'All fields are required.' });
+  }
+
+  try {
+    const newMoM = new MoM({
+      clientId,
+      heading,
+      summary,
+      dateTime
+    });
+
+    await newMoM.save();
+    res.status(201).json({ message: 'MoM created successfully', mom: newMoM });
+  } catch (error) {
+    console.error('Error creating MoM:', error);
+    res.status(500).json({ error: 'Error creating MoM' });
+  }
+});
+
+// Endpoint to fetch MoMs for a specific client
+router.get('/api/mom/:clientId', async (req, res) => {
+  try {
+    const clientId = req.params.clientId;
+    const moms = await MoM.find({ clientId }).sort({ createdAt: -1 });
+    res.status(200).json(moms);
+  } catch (error) {
+    console.error('Error fetching MoMs:', error);
+    res.status(500).json({ error: 'Error fetching MoMs' });
+  }
+});
+
+
+// Endpoint to view a specific MoM
+router.get('/api/mom/view/:momId', async (req, res) => {
+  try {
+    const momId = req.params.momId;
+    const mom = await MoM.findById(momId);
+
+    if (!mom) {
+      return res.status(404).json({ error: 'MoM not found' });
+    }
+
+    res.status(200).json(mom);
+  } catch (error) {
+    console.error('Error fetching MoM:', error);
+    res.status(500).json({ error: 'Error fetching MoM' });
+  }
+});
 
 app.use('/', router); // Mount the router
 

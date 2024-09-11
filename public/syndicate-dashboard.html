@@ -4,12 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Syndicate Dashboard</title>
+    <link rel="stylesheet" href="./css/profile_data_entry.css">
     <link rel="stylesheet" href="./css/syndicate_dashboard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
 </head>
-<body>
-    <h1>Syndicate Dashboard</h1>
-    <button id="logoutBtn">Logout</button> <!-- Logout button -->
-    <div id="syndicateData"></div>
-    <script type="module" src="./js/syndicate_dashboard.js"></script>
+
+<body class="bg-gray-900 text-white">
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="bg-gray-800 p-4 flex justify-between items-center shadow-md">
+            <div class="flex items-center space-x-4">
+                <a href="high.html">
+                    <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="h-8 w-auto">
+                </a>
+            </div>
+            <div class="relative">
+                <button id="notificationButton" class="text-lg focus:outline-none">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                </button>
+                <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-gray-700 rounded-md shadow-lg hidden">
+                    <div class="p-4">
+                        <h3 class="text-sm font-semibold mb-2">Recent Notifications</h3>
+                        <ul class="space-y-2">
+                            <li class="text-sm">New message from John</li>
+                            <li class="text-sm">Meeting reminder: 2 PM</li>
+                            <li class="text-sm">Task completed: Project X</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main content -->
+        <div class="flex flex-1">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-gray-800 p-5 shadow-lg">
+                <nav>
+                    <div class="bg-gray-800 p-6 rounded-lg mb-8 shadow-md">
+                        <h1 class="text-3xl font-bold mb-2">Hi User!</h1>
+                        <p class="text-xl">Welcome to Posspole</p>
+                    </div>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-user mr-2"></i>My Profile</a></li>
+                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-calendar-alt mr-2"></i>Schedule</a></li>
+                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-tasks mr-2"></i>Track Progress</a></li>
+                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-ticket-alt mr-2"></i>Raise a Ticket</a></li>
+                    </ul>
+                </nav>
+            </aside>
+
+            <!-- Main content area -->
+            <main class="flex-1 p-8">
+                
+                <div class="flex space-x-4">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg hover:bg-blue-700 transition duration-300 shadow-md">Fill Details</button>
+                    <button class="bg-green-600 text-white px-6 py-3 rounded-md text-lg hover:bg-green-700 transition duration-300 shadow-md">View Details</button>
+                </div>
+
+                <div id="main-content" class="flex-1 p-10">
+                    <!-- Content will be dynamically loaded here -->
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('notificationButton').addEventListener('click', function() {
+            var dropdown = document.getElementById('notificationDropdown');
+            dropdown.classList.toggle('hidden');
+        });
+
+        function loadContent(url) {
+        fetch(url)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('main-content').innerHTML = data;
+            })
+            .catch(error => console.error('Error loading content:', error));
+    }
+
+    document.querySelector('.bg-blue-600').addEventListener('click', function() {
+        const userType = localStorage.getItem('userType');
+        
+        if (userType === 'admin') {
+            const leadId = localStorage.getItem('leadId');
+            if (leadId) {
+                window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
+            } else {
+                console.error('Lead ID not found in local storage.');
+                alert('Error: Lead ID not found. Please try again.');
+            }
+        } else if (userType === 'syndicate') {
+            const syndicateToken = localStorage.getItem('syndicateToken');
+            if (syndicateToken) {
+                window.location.href = `/profile_data_entry.html?syndicateToken=${syndicateToken}`;
+            } else {
+                console.error('Syndicate token not found in local storage.');
+                alert('Error: Syndicate token not found. Please try again.');
+            }
+        } else {
+            console.error('User type not recognized.');
+        }
+    });
+    
+    document.querySelector('.bg-green-600').addEventListener('click', function() {
+        loadContent('/customer_view.html');
+    });
+    </script>
+
+<!-- <script src="./js/profile_data_entry.js"></script>
+<script src="./js/utils.js"></script> -->
+<!-- <script type="module" src="./js/syndicate_dashboard.js"></script> -->
+
 </body>
+
 </html>

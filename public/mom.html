@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minutes of Meeting</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-800 text-white">
+    <div class="container mx-auto p-8">
+        <!-- User Info Card -->
+        <div class="bg-gray-900 p-4 rounded-md mb-6">
+            <div class="flex items-center">
+                <div class="bg-gray-600 w-16 h-16 rounded-full"></div>
+                <div class="ml-4">
+                    <p>Name: Krishna Murthy M</p>
+                    <p>Email: krishna@gmail.com</p>
+                    <p>Domain: Fintech</p>
+                    <p>Phone: 7760698948</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create MoM Button -->
+        <button id="createMoMButton" class="bg-gray-500 text-white py-2 px-4 rounded-md mb-4">Create a MoM</button>
+
+        <!-- Modal for Creating MoM -->
+        <div id="createMoMModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-gray-900 p-8 rounded-lg">
+                <h2 class="text-lg font-bold mb-4">Create Minutes of Meeting</h2>
+                <form id="momForm">
+                    <div class="mb-4">
+                        <label class="block">Heading:</label>
+                        <input type="text" id="heading" class="w-full p-2 rounded-md bg-gray-700">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block">Summary:</label>
+                        <textarea id="summary" class="w-full p-2 rounded-md bg-gray-700"></textarea>
+                    </div>
+                   
+                    <div class="mb-4">
+                        <label class="block">Date and Time:</label>
+                        <input type="datetime-local" id="dateTime" class="w-full p-2 rounded-md bg-gray-700">
+                    </div>
+            
+                    <div class="flex justify-between">
+                        <button type="button" id="cancelButton" class="bg-red-500 py-2 px-4 rounded-md">Cancel</button>
+                        <button type="submit" class="bg-blue-500 py-2 px-4 rounded-md">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal for Viewing MoM -->
+        <div id="viewMoMModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <!-- Content for viewing MoM will be populated dynamically -->
+        </div>
+
+        <!-- Last 3 MoMs -->
+        <div id="last3MoMs" class="grid grid-cols-3 gap-4 mb-6">
+            <!-- MoMs will be populated here -->
+        </div>
+
+        <!-- Table of MoMs -->
+        <div class="bg-gray-700 p-4 rounded-md">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th class="text-left">Sl No.</th>
+                        <th class="text-left">Heading</th>
+                        <th class="text-left">Date and Time</th>
+                        <th class="text-left">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="momTable">
+                    <!-- Rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="./js/mom.js"></script>
+</body>
+</html>

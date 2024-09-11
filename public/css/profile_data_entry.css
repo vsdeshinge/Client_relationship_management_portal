@@ -1,4 +1,4 @@
-body {
+/* body {
     font-family: 'Montserrat', sans-serif;
     background-color: #1a1a1a;
     color: #fff;
@@ -126,4 +126,7 @@ footer {
     text-align: center;
     margin-top: 20px;
 }
-
+ */
+ .highlight-error {
+    border: 2px solid red;
+}

@@ -12,10 +12,7 @@ const clientSchema = new mongoose.Schema({
   faceImage: { type: mongoose.Schema.Types.ObjectId },
   status: { type: String, default: 'New' },
   buisnessproposalstatus: { type: String, default: 'New' },
-  leadTime: {
-      value: { type: String },
-      unit: { type: String }
-  },
+
   customer: {
       project: {
           titles: [{ type: String }],

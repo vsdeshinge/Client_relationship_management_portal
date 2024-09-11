@@ -4,19 +4,18 @@ services:
   app:
     build: .
     ports:
-      - "3001:3000"
+      - "3001:3000"  # Exposing port 3001 on the host to port 3000 in the container
     environment:
-      - MONGODB_URI=mongodb+srv://db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com
-
+      - MONGODB_URI=mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin
     depends_on:
-      - mongo
+      - mongo  # The app service will wait for mongo to be ready before starting
 
   mongo:
-    image: mongo
+    image: mongo:latest
     ports:
-      - "27017:27017"
+      - "27017:27017"  # Exposing port 27017 on the host
     volumes:
-      - mongo-data:/data/db
+      - mongo-data:/data/db  # Persistent storage for MongoDB
 
 volumes:
-  mongo-data:
+  mongo-data:  # Named volume to persist MongoDB data
