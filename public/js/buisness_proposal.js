@@ -72,22 +72,21 @@ function displayProposalDetails(proposal) {
         console.error('Element for proposal details not found.');
     }
 }
-
 async function submitBusinessProposalForm(event) {
     event.preventDefault();
     const proposalId = localStorage.getItem('proposalId');
     const token = localStorage.getItem('adminToken');
 
     const businessProposalData = {
-        typeOfRegistration: document.getElementById('typeOfRegistration').value,
-        gstNo: document.getElementById('gstNo').value,
-        panNo: document.getElementById('panNo').value,
-        annualTurnover: document.getElementById('annualTurnover').value,
-        decisionMakers: document.getElementById('decisionMakers').value
+        typeOfRegistration: document.getElementById('typeOfRegistration').value || '',
+        gstNo: document.getElementById('gstNo').value || '',
+        panNo: document.getElementById('panNo').value || '',
+        annualTurnover: document.getElementById('annualTurnover').value || '',
+        decisionMakers: document.getElementById('decisionMakers').value || ''
     };
 
     try {
-        const response = await fetch(`/api/proposals/${proposalId}`, {
+        const response = await fetch(`/api/business-proposals/${proposalId}`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',

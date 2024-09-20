@@ -510,50 +510,101 @@ document.addEventListener('click', function(event) {
     }
 });
 
+document.addEventListener('DOMContentLoaded', async function () {
+    const token = localStorage.getItem('adminToken');
 
-// Projects Chart
-document.addEventListener('DOMContentLoaded', function () {
-       // Data for the horizontal bar chart
-       const data = [
-        { label: "Customers", value: 5, max: 25 },
-        { label: "Service Providers", value: 5, max: 25 },
-        { label: "Manufacturers", value: 15, max: 25 },
-        { label: "Channel Providers", value: 20, max: 25 },
-        { label: "Investors", value: 20, max: 25 },
-        { label: "Domain Expert", value: 20, max: 25 },
-    ];
-    
-    const container = document.getElementById('barGraph');
-    
-    data.forEach(item => {
-        const percentage = (item.value / item.max) * 100;
-        const barElement = `
-            <div class="mb-4 custom_size">
-                <div class="flex justify-between mb-2">
-                    <span class="text-white">${item.label}</span>
-                    <span class="text-white">${item.value}</span>
+    // Function to fetch client counts from the backend
+    async function fetchClientCounts() {
+        try {
+            const response = await fetch('/api/client-counts', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const counts = await response.json();
+                createCharts(counts);
+                createBarGraph(counts);
+            } else {
+                console.error('Error fetching client counts');
+            }
+        } catch (error) {
+            console.error('Error fetching client counts:', error);
+        }
+    }
+
+    // Function to create the bar graph
+    function createBarGraph(counts) {
+        const data = [
+            { label: "Customers", value: counts.customers, max: Math.max(counts.customers, 25) },
+            { label: "Service Providers", value: counts.serviceProviders, max: Math.max(counts.serviceProviders, 25) },
+            { label: "Manufacturers", value: counts.manufacturers, max: Math.max(counts.manufacturers, 25) },
+            { label: "Channel Partners", value: counts.channelPartners, max: Math.max(counts.channelPartners, 25) },
+            { label: "Investors", value: counts.investors, max: Math.max(counts.investors, 25) },
+            { label: "Domain Experts", value: counts.domainExperts, max: Math.max(counts.domainExperts, 25) },
+        ];
+
+        const container = document.getElementById('barGraph');
+        container.innerHTML = ''; // Clear the existing content
+
+        data.forEach(item => {
+            const percentage = (item.value / item.max) * 100;
+            const barElement = `
+                <div class="mb-4 custom_size">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-white">${item.label}</span>
+                        <span class="text-white">${item.value}</span>
+                    </div>
+                    <div class="w-full bg-white rounded-full" style="height: 5px;">
+                        <div class="bg-purple-500 rounded-full" style="height: 5px; width: ${percentage}%;"></div>
+                    </div>
                 </div>
-                <div class="w-full bg-white rounded-full " style="height: 5px;"> <!-- Decrease the height here -->
-                    <div class="bg-purple-500 rounded-full" style="height: 5px; width: ${percentage}%;"></div> <!-- Decrease the height here -->
-                </div>
-            </div>
-        `;
-        container.innerHTML += barElement;
-    });
-    
-    // circle - pie chart
-    const getChartOptions = () => {
+            `;
+            container.innerHTML += barElement;
+        });
+    }
+
+    // Function to create and update the donut chart
+    function createCharts(counts) {
+        const chartOptions = getChartOptions();
+
+        // Update the series and labels to include all categories
+        chartOptions.series = [
+            counts.customers || 0,
+            counts.serviceProviders || 0,
+            counts.manufacturers || 0,
+            counts.channelPartners || 0,
+            counts.investors || 0,
+            counts.domainExperts || 0
+        ];
+
+        chartOptions.labels = [
+            "Customers", "Service Providers", "Manufacturers", "Channel Partners", "Investors", "Domain Experts"
+        ];
+
+        const chartElement = document.querySelector("#pieChart");
+        const chart = new ApexCharts(chartElement, chartOptions);
+        chart.render();
+
+        // Handle checkbox updates for the donut chart
+        handleCheckboxUpdates(chart);
+    }
+
+    // Function to get chart options
+    function getChartOptions() {
         return {
-            series: [5.1, 4.5, 4.4, 5.4 ],
-            colors: ["#369FFF", "#2D246B", "#51546F", "#4154FF" ],
+            series: [],
+            colors: ["#369FFF", "#2D246B", "#51546F", "#4154FF", "#FF5733", "#FFBD33"], // Add more colors for additional series
             chart: {
                 height: 320,
                 width: "100%",
                 type: "donut",
             },
             stroke: {
-                colors: ['#1F2937'],  // Set the stroke color to match your background color
-                width: 4 // Set the stroke width to create the spacing effect
+                colors: ['#1F2937'],
+                width: 4
             },
             plotOptions: {
                 pie: {
@@ -576,10 +627,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 fontWeight: "bold",
                                 color: "white",
                                 formatter: function (w) {
-                                    const sum = w.globals.seriesTotals.reduce((a, b) => {
-                                        return a + b
-                                    }, 0)
-                                    return sum + ' visitors'
+                                    const sum = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                                    return sum + ' visitors';
                                 },
                             },
                             value: {
@@ -587,7 +636,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 fontFamily: "Poppins, sans-serif",
                                 offsetY: -0,
                                 formatter: function (value) {
-                                    return value + " " + "visitors"
+                                    return value + " visitors";
                                 },
                             },
                         },
@@ -600,11 +649,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     top: -2,
                 }
             },
-            labels: ["Discussion",
-                "Offered",
-                "Rejected",
-                "Accepted",
-            ],
+            labels: [],
             dataLabels: {
                 enabled: false,
                 color: "white"
@@ -620,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     fontWeight: "bold",
                     color: "white",
                     formatter: function (value) {
-                        return value + " " + "visitors"
+                        return value + " visitors";
                     },
                 },
             },
@@ -628,7 +673,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 labels: {
                     color: "white",
                     formatter: function (value) {
-                        return value + " " + "visitors"
+                        return value + " visitors";
                     },
                 },
                 axisTicks: {
@@ -638,49 +683,44 @@ document.addEventListener('DOMContentLoaded', function () {
                     show: false,
                 },
             },
-        }
+        };
     }
-    
-    if (document.getElementById("donut-chart") && typeof ApexCharts !== 'undefined') {
-        const chart = new ApexCharts(document.getElementById("donut-chart"), getChartOptions());
-        chart.render();
-    
+
+    // Function to handle checkbox updates for the donut chart
+    function handleCheckboxUpdates(chart) {
         // Get all the checkboxes by their class name
         const checkboxes = document.querySelectorAll('#devices input[type="checkbox"]');
-    
+
         // Function to handle the checkbox change event
-        function handleCheckboxChange(event, chart) {
+        function handleCheckboxChange(event) {
             const checkbox = event.target;
             if (checkbox.checked) {
                 switch (checkbox.value) {
                     case 'desktop':
-                        chart.updateSeries([15.1, 22.5, 4.4, 8.4]);
+                        chart.updateSeries([15.1, 22.5, 4.4, 8.4, 5.1, 3.3]); // Update series to match all categories
                         break;
                     case 'tablet':
-                        chart.updateSeries([25.1, 26.5, 1.4, 3.4]);
+                        chart.updateSeries([25.1, 26.5, 1.4, 3.4, 2.0, 4.0]);
                         break;
                     case 'mobile':
-                        chart.updateSeries([45.1, 27.5, 8.4, 2.4]);
+                        chart.updateSeries([45.1, 27.5, 8.4, 2.4, 3.1, 1.8]);
                         break;
                     default:
-                        chart.updateSeries([55.1, 28.5, 1.4, 5.4]);
+                        chart.updateSeries([55.1, 28.5, 1.4, 5.4, 4.5, 2.2]);
                 }
-    
             } else {
-                chart.updateSeries([35.1, 23.5, 2.4, 5.4]);
+                chart.updateSeries([35.1, 23.5, 2.4, 5.4, 1.9, 3.2]);
             }
         }
-    
+
         // Attach the event listener to each checkbox
         checkboxes.forEach((checkbox) => {
-            checkbox.addEventListener('change', (event) => handleCheckboxChange(event, chart));
+            checkbox.addEventListener('change', handleCheckboxChange);
         });
     }
-    
+
+    await fetchClientCounts();
 });
-
-
-
 
 // create circle charts
 function setProgress(element, percent) {
@@ -692,10 +732,6 @@ function setProgress(element, percent) {
     progressText.textContent = percent.toString().padStart(2, '0');
 }
 
-// document.querySelectorAll('.circle-chart').forEach(chart => {
-//     const value = parseInt(chart.querySelector('.progressText').textContent);
-//     setProgress(chart, value);
-// });
 
 
 // Populate business proposal table

@@ -1,75 +1,75 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const leadId = localStorage.getItem('leadId');
-    const clientId = localStorage.getItem('clientId');
-    if (leadId) {
-        fetchVisitorDetails(leadId);
-    } else {
-        console.error('Lead ID not found in local storage.');
-    }
+    const clientId = localStorage.getItem('clientId'); // Get clientId from localStorage for syndicate module
+    const syndicateToken = localStorage.getItem('syndicateToken'); // Get syndicateToken from localStorage
 
-    if (clientId) {
-        fetchClientData(clientId);
+    if (clientId && syndicateToken) {
+        fetchSyndicateClientDetails(clientId, syndicateToken); // Fetch client details for displayClientDetails
+        fetchSyndicateClientData(clientId, syndicateToken); // Fetch client data for displayClientData
     } else {
-        console.error('Client ID not found in local storage.');
+        console.error('Client ID or syndicate token not found in local storage.');
     }
 });
-async function fetchVisitorDetails(leadId) {
-    const token = localStorage.getItem('adminToken');
+
+// Fetch client details (for profile display) for syndicate module
+async function fetchSyndicateClientDetails(clientId, token) {
     try {
-        const response = await fetch(`/api/visitors/${leadId}`, {
+        const response = await fetch(`/api/syndicateclient/${clientId}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}` // Pass syndicateToken for authorization
             }
         });
+
         if (response.ok) {
-            const visitor = await response.json();
-            console.log('Visitor details fetched:', visitor);
-            displayVisitorDetails(visitor);
+            const client = await response.json();
+            console.log('Client details fetched:', client);
+            displayClientDetails(client);
         } else {
-            console.error('Error fetching visitor details:', await response.text());
+            console.error('Error fetching client details:', await response.text());
         }
     } catch (error) {
-        console.error('Error fetching visitor details:', error);
+        console.error('Error fetching client details:', error);
     }
 }
 
-function displayVisitorDetails(visitor) {
-    console.log('Displaying visitor details:', visitor);
-    const visitorDetails = document.querySelector('.container2');
-    if (visitorDetails) {
-        const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
-        visitorDetails.innerHTML = `
+// Display client profile details in the syndicate module
+function displayClientDetails(client) {
+    console.log('Displaying client details:', client);
+    const clientDetails = document.querySelector('.container2');
+    if (clientDetails) {
+        const faceImageUrl = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
+        clientDetails.innerHTML = `
             <div class="rounded-card">
                 <div class="flex items-center">
                     <img src="${faceImageUrl}" alt="Profile" class="profile-img">
                     <div>
-                        <p class="text-lg font-bold">Name: ${visitor.name}</p>
-                        <p class="text-sm">Company: ${visitor.companyName}</p>
-                        <p class="text-sm">Domain: ${visitor.domain}</p>
-                        <p class="text-sm">Email: ${visitor.email}</p>
-                        <p class="text-sm">Phone no.: ${visitor.phone}</p>
+                        <p class="text-lg font-bold">Name: ${client.name}</p>
+                        <p class="text-sm">Company: ${client.companyName}</p>
+                        <p class="text-sm">Domain: ${client.domain || 'N/A'}</p>
+                        <p class="text-sm">Email: ${client.email}</p>
+                        <p class="text-sm">Phone no.: ${client.phone}</p>
                     </div>
                 </div>
             </div>
         `;
     } else {
-        console.error('Element for visitor details not found.');
+        console.error('Element for client details not found.');
     }
 }
 
-async function fetchClientData(clientId) {
-    const token = localStorage.getItem('adminToken');
+// Fetch all client data for syndicate module (for detailed sections)
+async function fetchSyndicateClientData(clientId, token) {
     try {
         const response = await fetch(`/api/customer/clients/${clientId}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}` // Pass the syndicate token in the header
             }
         });
+
         if (response.ok) {
             const clientData = await response.json();
-            displayClientData(clientData);
+            displaySyndicateClientData(clientData); // Call the function to display the client data
         } else {
             console.error('Error fetching client data:', await response.text());
         }
@@ -78,6 +78,7 @@ async function fetchClientData(clientId) {
     }
 }
 
+// Render individual field in the client data
 function renderField(key, value) {
     return `<div class="field-container">
         <span class="field-label"><strong>${key}:</strong></span>
@@ -87,6 +88,7 @@ function renderField(key, value) {
     </div>`;
 }
 
+// Render sections such as customer, service, etc.
 function renderSection(title, data) {
     let html = `<div class="section-container">
         <h2 class="section-title"><strong>${title.toUpperCase()}</strong></h2>`;
@@ -96,24 +98,23 @@ function renderSection(title, data) {
         if (Array.isArray(titles) && Array.isArray(descriptions)) {
             for (let i = 0; i < titles.length; i++) {
                 html += `<div class="field-container">
-                    <span class="field-label"><strong>title:</strong></span>
+                    <span class="field-label"><strong>Title:</strong></span>
                     <div class="field-value-container">
                         <textarea class="field-value" readonly>${titles[i]}</textarea>
                     </div>
                 </div>`;
                 html += `<div class="field-container">
-                    <span class="field-label"><strong>description:</strong></span>
+                    <span class="field-label"><strong>Description:</strong></span>
                     <div class="field-value-container">
                         <textarea class="field-value" readonly>${descriptions[i]}</textarea>
                     </div>
                 </div>`;
             }
         }
-
     } else {
         for (const [key, value] of Object.entries(data)) {
             if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                html += renderSection(key, value);
+                html += renderSection(key, value); // Recursively render nested objects
             } else if (Array.isArray(value)) {
                 if (title === 'project' && (key === 'titles' || key === 'descriptions')) {
                     continue; // Skip rendering here, handled above
@@ -132,7 +133,7 @@ function renderSection(title, data) {
                     </div>
                 </div>`;
             } else {
-                html += renderField(key, value);
+                html += renderField(key, value); // Render simple fields
             }
         }
     }
@@ -141,18 +142,20 @@ function renderSection(title, data) {
     return html;
 }
 
-function displayClientData(clientData) {
+// Display the fetched client data in sections
+function displaySyndicateClientData(clientData) {
     const container = document.getElementById('clientData');
     container.innerHTML = '';  // Clear existing content
 
-    // Define the sections to be displayed
+    // Define the sections relevant to the syndicate module
     const sectionsToDisplay = [
-        'customer', 
-        'serviceProvider', 
-        'channelPartner', 
-        'investor', 
-        'manufacturer', 
-        'domainExpert'
+        'customer',  
+        'serviceProvider',  
+        'project',  
+        'domainExpert', 
+        'manufacturer',  
+        'investor',  
+        'channelPartner' 
     ];
 
     // Display only the specified sections

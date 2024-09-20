@@ -105,7 +105,7 @@ h1 {
     text-align: center;
 }
 
-input {
+input, #syndicate_name , option {
     background-color: #eee;
     border: none;
     border-radius: 10px;
@@ -178,7 +178,7 @@ button:focus {
         max-width: 150px;
     }
 
-    input {
+    input , #syndicate_name option, #syndicate_name:focus , option{
         padding: 8px;
         margin: 8px;
         width: calc(100% - 20px);
@@ -195,7 +195,7 @@ button:focus {
         max-width: 100px;
     }
 
-    input {
+    input , #syndicate_name option ,#syndicate_name:focus , option{
         padding: 6px;
         margin: 6px;
     }
@@ -203,4 +203,16 @@ button:focus {
     button {
         padding: 8px 20px;
     }
+}
+
+/*  */
+
+#syndicate_name option {
+    color: #333;
+    padding: 10px;
+}
+
+#syndicate_name:focus {
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
 }

@@ -6,6 +6,7 @@
     <title>POSSPOLE Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="./css/profile_data_entry.css">
+    <link rel="stylesheet" href="./css/profile_data_entry_animation.css">
     <script>
         let currentSubMenu = 0;
         const subMenus = ["project", "service", "product", "solution", "others-sub"];
@@ -419,7 +420,7 @@ function addMoreSolutionFields() {
 
                 <!-- Is Workstation   -->
                 <h4 class="text-lg mt-5 font-bold mb-3">Is Workstation  :</h4>
-                <div class="container p-4 bg-gray-800 rounded-lg" id="service-workstation">
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-workstation- ">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <div class="options grid grid-cols-2 gap-2">
@@ -434,7 +435,7 @@ function addMoreSolutionFields() {
 
                 <!-- Is Product Display   -->
                 <h4 class="text-lg mt-5 font-bold mb-3">Is Product Display  :</h4>
-                <div class="container p-4 bg-gray-800 rounded-lg" id="service-product-display">
+                <div class="container p-4 bg-gray-800 rounded-lg" id="service-product-display- ">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <div class="options grid grid-cols-2 gap-2">
@@ -687,11 +688,11 @@ function addMoreSolutionFields() {
                             <label for="branches" class="block font-bold text-white">Branches:</label>
                             <input id="branches" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
                         </div>
-                        <div class="mb-4" id="service-provider-expertise">
+                        <div class="mb-4" id="service-provider-experties">
                             <label for="expertise" class="block font-bold text-white">Expertise:</label>
                             <input id="expertise" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
                         </div>
-                        <div class="mb-4" id="service-provider-existing">
+                        <div class="mb-4" id="service-provider-exsisting">
                             <label for="existing-clients" class="block font-bold text-white">Existing Clients:</label>
                             <input id="existing-clients" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
                         </div>
@@ -712,7 +713,7 @@ function addMoreSolutionFields() {
                                 <option value="Pvt-Ltd">Pvt-Ltd</option>
                             </select>
                         </div>
-                        <div class="mb-4" id="service-provider-experience">
+                        <div class="mb-4" id="service-provider-experiences">
                             <label for="experience" class="block font-bold text-white">Experience:</label>
                             <input id="experience" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
                         </div>
@@ -832,8 +833,8 @@ function addMoreSolutionFields() {
                 </select>
             </div>
             <div class="mb-4">
-                <label for="sales-coverages" class="block font-bold text-white">Sales Coverage:</label>
-                <input id="sales-coverages" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
+                <label for="sales-coverage" class="block font-bold text-white">Sales Coverage:</label>
+                <input id="sales-coverage" type="text" class="w-full p-2 bg-gray-800 text-white rounded" />
             </div>
         </div>
         <!-- Right Column -->
@@ -998,8 +999,7 @@ function addMoreSolutionFields() {
         <div>
             <div id="domain-expert-role" class="mb-4">
                 <label class="block font-bold text-white">Title:</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded" 
-                placeholder="Required"    />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded"    />
             </div>
             
         </div>
@@ -1007,7 +1007,7 @@ function addMoreSolutionFields() {
         <div>
             <div id="domain-expert-domain" class="mb-4">
                 <label class="block font-bold text-white">Domain:</label>
-                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded"  />
+                <input type="text" class="w-full p-2 bg-gray-800 text-white rounded"  placeholder="Required" />
             </div>
         </div>
     </div>
@@ -1047,6 +1047,7 @@ function addMoreSolutionFields() {
 
     </div>
     </main>
-    <script src="./js/profile_data_entry.js"></script>
+    <script src="./js/syndicate_client_data_entry.js"></script>
+   
 </body>
 </html>

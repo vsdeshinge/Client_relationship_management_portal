@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/signup.css">
+    <title>Connect Form</title>
+</head>
+<body>
+    <div class="container">
+        <div class="overlay-container" id="overlayContainer">
+            <div class="overlay-panel overlay-left">
+                <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
+                <h1>Namaste!</h1>
+                <p>Welcome to POSSPOLE!</p>
+            </div>
+        </div>
+        <div class="form-container">
+            <form id="connectForm">
+                <h1>My Details</h1>
+                <!-- Your input fields -->
+                <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
+                <input type="text" id="name" placeholder="Name" required />
+                <input type="tel" id="phone" placeholder="Phone Number" required />
+                <input type="email" id="email" placeholder="Email" />
+                <select id="syndicate_name" required>
+                    <option value="" disabled selected>Select Strategy Partner Name</option>
+                </select>
+                
+                <input type="text" id="companyName" placeholder="Company Name" />
+                
+                <!-- Button for capturing face image -->
+                <button id="captureFace">Capture Face Image</button>
+
+                <!-- Placeholder for displaying captured image -->
+                <div id="capturedImages">
+                    <h2>Captured Image:</h2>
+                    <div id="faceImageDisplay"></div>
+                </div>
+
+                <button type="submit">Let's Connect</button>
+            </form>
+            <div class="thank-you-container" id="thankYouContainer" style="display:none;">
+                <img src="assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
+                <h1>Thank you for filling out the form!</h1>
+                <p>The request has been sent to the person who you wanted to meet.</p>
+            </div>
+        </div>
+    </div>
+    <div id="message"></div>
+
+    <script type="module" src="./js/syndicate_client_side_visitor.js"></script>
+
+</body>
+</html>

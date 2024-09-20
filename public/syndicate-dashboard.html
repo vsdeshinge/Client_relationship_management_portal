@@ -3,123 +3,299 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syndicate Dashboard</title>
-    <link rel="stylesheet" href="./css/profile_data_entry.css">
-    <link rel="stylesheet" href="./css/syndicate_dashboard.css">
+    <title>Lead Details Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-
+   
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 600px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover, .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .rounded-card {
+            margin: 20px;
+            padding: 20px;
+            border: 2px solid white;
+            background-color: rgba(27, 27, 27, 0.9);
+            border-radius: 12px;
+        }
+        .profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 20px;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #1f2937;
+            height: 100vh;
+            padding: 20px;
+        }
+        .sidebar a {
+            display: block;
+            padding: 10px;
+            color: white;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #4b5563;
+        }
+        .header {
+            background-color: #1f2937;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+        .header-right {
+            display: flex;
+            align-items:right;
+        }
+        .header-right button {
+            margin-left: 15px;
+            background-color: #4b5563;
+            border: none;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+        }
+        body { font-family: "Montserrat", sans-serif; }
+    </style>
 </head>
+<body class="bg-gray-900 text-white flex">
 
-<body class="bg-gray-900 text-white">
-    <div class="flex flex-col h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 h-screen p-4 flex flex-col justify-between">
+        <div>
+            <a href="syndicate-dashboard.html">
+                <img src="./assets/posspole_logo.png" alt="POSSPOLE_logo" class="h-16 mx-auto mb-4">
+            </a>
+            
+            <nav>
+                <ul>
+                    <li><a href="syndicate-dashboard.html" class="block py-2 px-4 hover:bg-gray-700 rounded">Clients</a></li>
+                    <li>
+                        <a href="#" class="block py-2 px-4 hover:bg-gray-700 rounded" id="settingsButton">Settings</a>
+                      </li>
+                      <div id="logoutButton" style="display:none;" class="py-2 px-4 mt-2 bg-red-500 text-white rounded">
+                        <a href="index.html" class="block">Logout</a>
+                      </div>
+                </ul>
+            </nav>
+        </div>
+        <footer class="text-center text-sm">
+            &copy; POSSPOLE 2024
+        </footer>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1">
+
         <!-- Header -->
-        <header class="bg-gray-800 p-4 flex justify-between items-center shadow-md">
-            <div class="flex items-center space-x-4">
-                <a href="high.html">
-                    <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="h-8 w-auto">
-                </a>
+        <header class="header">
+            <div class="header-logo">
+                
             </div>
-            <div class="relative">
-                <button id="notificationButton" class="text-lg focus:outline-none">
-                    <i class="fas fa-bell"></i>
-                    <span class="absolute top-0 right-0 -mt-1 -mr-1 bg-red-500 text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
-                </button>
-                <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-gray-700 rounded-md shadow-lg hidden">
-                    <div class="p-4">
-                        <h3 class="text-sm font-semibold mb-2">Recent Notifications</h3>
-                        <ul class="space-y-2">
-                            <li class="text-sm">New message from John</li>
-                            <li class="text-sm">Meeting reminder: 2 PM</li>
-                            <li class="text-sm">Task completed: Project X</li>
-                        </ul>
-                    </div>
+            <div class="header-right">
+                <button id="notification-btn">🔔</button>
+                <div id="notification-popup" style="display: none; position: absolute; top: 40px; right: 10px; background: white; border: 1px solid black; padding: 10px;">
+                    <p>No new notifications</p>
                 </div>
+                <button id="logout-btn">Logout</button>
             </div>
         </header>
 
-        <!-- Main content -->
-        <div class="flex flex-1">
-            <!-- Sidebar -->
-            <aside class="w-64 bg-gray-800 p-5 shadow-lg">
-                <nav>
-                    <div class="bg-gray-800 p-6 rounded-lg mb-8 shadow-md">
-                        <h1 class="text-3xl font-bold mb-2">Hi User!</h1>
-                        <p class="text-xl">Welcome to Posspole</p>
+        <div class="p-6">
+
+            <!-- User Information and Actions -->
+            <div class="flex items-center justify-between mb-8">
+                <div id="profile-card" class="rounded-card">
+                    <div class="flex items-center">
+                        <img src="https://via.placeholder.com/80" alt="Profile" class="profile-img">
+                        <div>
+                            <p class="text-lg font-bold">Strategy Partner Name: Kiran v</p>
+                            <p class="text-sm">Email id: kiranv@gmail.com</p>
+                            <p class="text-sm">Department: Business Development</p>
+                            <p class="text-sm">Phone Number: 7760698948</p>
+                        </div>
                     </div>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-user mr-2"></i>My Profile</a></li>
-                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-calendar-alt mr-2"></i>Schedule</a></li>
-                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-tasks mr-2"></i>Track Progress</a></li>
-                        <li><a href="#" class="block p-2 hover:bg-gray-700 rounded transition duration-150 ease-in-out"><i class="fas fa-ticket-alt mr-2"></i>Raise a Ticket</a></li>
-                    </ul>
-                </nav>
-            </aside>
-
-            <!-- Main content area -->
-            <main class="flex-1 p-8">
-                
-                <div class="flex space-x-4">
-                    <button class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg hover:bg-blue-700 transition duration-300 shadow-md">Fill Details</button>
-                    <button class="bg-green-600 text-white px-6 py-3 rounded-md text-lg hover:bg-green-700 transition duration-300 shadow-md">View Details</button>
                 </div>
-
-                <div id="main-content" class="flex-1 p-10">
-                    <!-- Content will be dynamically loaded here -->
+                <div>
+                    <button class="bg-blue-500 px-4 py-2 rounded" onclick="redirectToVisitorForm()">Add Visitor Details</button>
                 </div>
+            </div>
+            <!-- Table Section -->
+<div>
+    <h2 class="text-xl mb-4">Client Details</h2>
+    <table class="min-w-full bg-gray-700 text-white rounded-lg">
+        <thead class="bg-gray-800">
+            <tr>
+                <th class="text-left py-2 px-4">Client Name</th>
+                <th class="text-left py-2 px-4">Email</th>
+                <th class="text-left py-2 px-4">Phone Number</th>
+                <th class="text-left py-2 px-4">Strategy Partner</th>
+                <th class="text-left py-2 px-4">Date and Time</th>
+                <th class="text-left py-2 px-4">Actions</th>
+                <th class="text-left py-2 px-4">Add Details</th>
+            </tr>
+        </thead>
+        <tbody id="client-table-body">
+            <!-- Rows will be dynamically inserted here by JavaScript -->
+        </tbody>
+    </table>
+</div>
 
-            </main>
+           
+
         </div>
-    </div>
 
+       
+        <!-- Modal Popup for Client Details -->
+        <div id="client-modal" class="modal">
+            <div class="modal-content bg-gray-800 text-white">
+                <span class="close" onclick="hideModal()">&times;</span>
+
+                <!-- Main Popup Structure -->
+                <main class="flex-1 p-10">
+                    <!-- User Information and Buttons -->
+                    <div class="container2 mx-auto mb-10">
+                        <div class="flex items-center justify-between">
+                            <div class="rounded-card">
+                                <div class="flex items-center">
+                                    <img id="client-profile-img" src="https://via.placeholder.com/80" alt="Profile" class="profile-img">
+                                    <div>
+                                        <p id="client-name" class="text-lg font-bold">Name: Vidya</p>
+                                        <p id="client-company" class="text-sm">Company: Liv-Lif</p>
+                                        <p id="client-domain" class="text-sm">Domain: ABC</p>
+                                        <p id="client-email" class="text-sm">Email: vidya@gmail.com</p>
+                                        <p id="client-phone" class="text-sm">Phone no.: 1234567890</p>
+                                        <p id="client-location" class="text-sm">Location: <span class="font-bold">Your Location Here</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container1">
+                                <div class="flex space-x-4">
+                                    <button class="bg-blue-500 px-4 py-2 rounded no-print" onclick="showVisitingCardPopup()">Visiting Card</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visiting Card Popup -->
+                    <div id="visiting-card-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden no-print">
+                        <div class="bg-gray-800 p-5 rounded-lg text-white">
+                            <h2 class="text-xl mb-4">Visiting Card</h2>
+                            <img src="URL_TO_VISITING_CARD_IMAGE" alt="Visiting Card" class="mb-4">
+                            <button class="bg-blue-500 px-4 py-2 rounded" onclick="hideVisitingCardPopup()">Close</button>
+                        </div>
+                    </div>
+
+                    <!-- Client Data Form -->
+                    <div id="clientData" class="max-w-4xl mx-auto p-4 bg-gray-800 rounded-lg">
+                        <!-- Data will be inserted here dynamically -->
+                    </div>
+
+                    <!-- Print Button -->
+                    <div class="mt-8 no-print">
+                        <button onclick="window.print()" class="bg-green-500 px-4 py-2 rounded">Print</button>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+    </div>
     <script>
-        document.getElementById('notificationButton').addEventListener('click', function() {
-            var dropdown = document.getElementById('notificationDropdown');
-            dropdown.classList.toggle('hidden');
+        function redirectToVisitorForm() {
+            // Assuming the form is on a page named `syndicate_visitor_form.html`
+            window.location.href = './syndicate_client_side_visitorform.html';
+        }
+        
+        let timeoutID;
+
+        // Session timeout duration (1 hour = 3600 seconds)
+        const sessionTimeout = 3600 * 1000; // 1 hour in milliseconds
+
+        function resetTimer() {
+            clearTimeout(timeoutID);
+            timeoutID = setTimeout(logoutUser, sessionTimeout);
+        }
+
+        function logoutUser() {
+            alert("Session expired due to inactivity. Logging out.");
+            localStorage.clear();
+            window.location.href = "index.html"; 
+        }
+
+        // Listen for user activity to reset the timer
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.ontouchstart = resetTimer;
+
+      
+
+       document.getElementById('logout-btn').addEventListener('click', function() 
+       {
+       // Clear session or token (depending on how session is stored, e.g., localStorage or cookies)
+       localStorage.clear(); // Example if you use localStorage
+       alert("You have been logged out.");
+       window.location.href = "index.html"; // Redirect to login page or any desired location
+
+       });
+
+        document.getElementById('notification-btn').addEventListener('click', function() {
+        const popup = document.getElementById('notification-popup');
+        if (popup.style.display === 'none') {
+            popup.style.display = 'block';
+        } else {
+            popup.style.display = 'none';
+        }
         });
 
-        function loadContent(url) {
-        fetch(url)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('main-content').innerHTML = data;
-            })
-            .catch(error => console.error('Error loading content:', error));
-    }
-
-    document.querySelector('.bg-blue-600').addEventListener('click', function() {
-        const userType = localStorage.getItem('userType');
+        document.getElementById("settingsButton").addEventListener("click", function() {
+        var logoutButton = document.getElementById("logoutButton");
         
-        if (userType === 'admin') {
-            const leadId = localStorage.getItem('leadId');
-            if (leadId) {
-                window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
-            } else {
-                console.error('Lead ID not found in local storage.');
-                alert('Error: Lead ID not found. Please try again.');
-            }
-        } else if (userType === 'syndicate') {
-            const syndicateToken = localStorage.getItem('syndicateToken');
-            if (syndicateToken) {
-                window.location.href = `/profile_data_entry.html?syndicateToken=${syndicateToken}`;
-            } else {
-                console.error('Syndicate token not found in local storage.');
-                alert('Error: Syndicate token not found. Please try again.');
-            }
+        // Toggle visibility of logout button
+        if (logoutButton.style.display === "none") {
+            logoutButton.style.display = "block";
         } else {
-            console.error('User type not recognized.');
+            logoutButton.style.display = "none";
         }
-    });
-    
-    document.querySelector('.bg-green-600').addEventListener('click', function() {
-        loadContent('/customer_view.html');
-    });
+        });
+
     </script>
-
-<!-- <script src="./js/profile_data_entry.js"></script>
-<script src="./js/utils.js"></script> -->
-<!-- <script type="module" src="./js/syndicate_dashboard.js"></script> -->
-
+   
+  
+    <script  type="module" src="./js/syndicate_client_side_dashboard.js"></script>
 </body>
-
 </html>

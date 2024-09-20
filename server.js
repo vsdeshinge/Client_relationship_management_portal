@@ -25,9 +25,8 @@ const methodOverride = require('method-override');
 const fs = require('fs');
 const crypto = require('crypto'); 
 const { GridFSBucket } = require('mongodb');
-const { deepMerge } = require('./public/js/utils.js');
-const MoM = require('./models/mom.js');
 
+const MoM = require('./models/mom.js');
 
 const app = express();
 const server = http.createServer(app);
@@ -37,6 +36,15 @@ const port = process.env.PORT || 3000;
 const Client = require('./models/client.js');
 const Syndicate = require('./models/syndicate.js');
 const Admin = require('./models/admin.js');
+const Customer = require('./models/customer.js');
+const Investor = require('./models/investor.js');
+const ServiceProvider = require('./models/serviceprovider.js');
+const Manufacturer = require('./models/manufacturer.js');
+const ChannelPartner = require('./models/channelpartner.js');
+const DomainExpert = require('./models/domainexpert.js');
+const BusinessProposal = require('./models/buisnessproposal.js');
+const SyndicateClient = require('./models/syndicateclient.js');
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -69,7 +77,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/facility', express.static(path.join(__dirname, 'facility')));
+app.use('/faciliwty', express.static(path.join(__dirname, 'facility')));
 
 // Temporary workaround to ensure MONGODB_URI is defined
 process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
@@ -84,50 +92,54 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-// Middleware to verify JWT
 function authenticateToken(req, res, next) {
-  const tokenHeader = req.headers['authorization'];
-  console.log('Authorization header:', tokenHeader);
+  const tokenHeader = req.headers['authorization']; // Get the Authorization header
+
+  // Check if the Authorization header exists
   if (!tokenHeader) {
     console.error('No token provided');
-    return res.sendStatus(401);
+    return res.sendStatus(401); // Unauthorized
   }
 
-  const token = tokenHeader.split(' ')[1]; // Extract token from "Bearer <token>"
+  // Split the Bearer token and get the actual token
+  const token = tokenHeader.split(' ')[1];
+
+  // Ensure the token exists after splitting
+  if (!token) {
+    console.error('Token missing after "Bearer"');
+    return res.sendStatus(401); // Unauthorized
+  }
+
   console.log('Extracted token:', token);
 
+  // Now verify the token
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) {
       console.error('Failed to verify token:', err);
-      return res.sendStatus(403);
+      return res.sendStatus(403); // Forbidden
     }
-    console.log('Token verified, user:', user);
+
+    // Assign the user from the token to req.user
     req.user = user;
-    next();
+
+    // Check if the role is present in the token payload
+    if (!req.user.role) {
+      console.error('No role found in token');
+      return res.sendStatus(403); // Forbidden
+    }
+
+    // Check if the role is either 'admin' or 'syndicate'
+    if (req.user.role !== 'admin' && req.user.role !== 'syndicate') {
+      console.error('Unauthorized role:', req.user.role);
+      return res.sendStatus(403); // Forbidden for roles other than admin or syndicate
+    }
+
+    console.log('Token verified, user:', user);
+    next(); // Proceed to the next middleware or route handler
   });
 }
 
-function generateEmailAuthToken(email) {
-  const payload = { email };
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
-  return token;
-}
 
-router.post('/generate-email-auth-token', async (req, res) => {
-  const { email } = req.body;
-
-  if (!email) {
-    return res.status(400).json({ error: 'Email is required' });
-  }
-
-  try {
-    const token = generateEmailAuthToken(email);
-    res.status(200).json({ token });
-  } catch (error) {
-    console.error('Error generating email auth token:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 // Route to retrieve images
 app.get('/images/:id', async (req, res) => {
@@ -153,7 +165,8 @@ app.get('/images/:id', async (req, res) => {
   }
 });
 
-// Route to register a client
+
+// Admin Route - Register Client
 app.post('/register', faceImageUpload, async (req, res) => {
   const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
 
@@ -199,6 +212,7 @@ app.post('/register', faceImageUpload, async (req, res) => {
 });
 
 
+
 // Login route
 app.post('/login', async (req, res) => {
   console.log('Login Request Body:', req.body);  // Log request body
@@ -221,56 +235,34 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-app.post('/api/submit-form', authenticateToken, async (req, res) => {
-  const formData = req.body;
-  console.log('Authenticated user:', req.user);
-  console.log('Form data received:', formData);
 
+// syndicate routing 
+
+// Route to fetch syndicate user details
+app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
   try {
-      const existingClient = await Client.findOne({ email: req.user.email });
-      if (!existingClient) {
-          console.error('Client not found for email:', req.user.email);
-          return res.status(404).json({ error: 'Client not found' });
-      }
-
-      // Create an update object with only the fields that are not empty
-      const updateData = {};
-      for (const key in formData) {
-          if (formData.hasOwnProperty(key) && formData[key] !== '' && formData[key] !== null) {
-              updateData[key] = formData[key];
-          }
-      }
-
-      // Specifically handle nested objects to ensure partial updates
-      if (formData.market_access) {
-          updateData.market_access = { ...existingClient.market_access?.toObject() || {}, ...formData.market_access };
-      }
-      if (formData.expert_talent) {
-          updateData.expert_talent = { ...existingClient.expert_talent?.toObject() || {}, ...formData.expert_talent };
-      }
-      if (formData.product_creation) {
-          updateData.product_creation = { ...existingClient.product_creation?.toObject() || {}, ...formData.product_creation };
-      }
-      if (formData.manufacturing) {
-          updateData.manufacturing = { ...existingClient.manufacturing?.toObject() || {}, ...formData.manufacturing };
-      }
-      if (formData.funding) {
-          updateData.funding = { ...existingClient.funding?.toObject() || {}, ...formData.funding };
-      }
-
-      const updatedClient = await Client.findOneAndUpdate(
-          { email: req.user.email },
-          { $set: updateData },
-          { new: true }
-      );
-
-      console.log('Client updated successfully:', updatedClient);
-      res.status(201).json(updatedClient);
+    const syndicateUser = await Syndicate.findById(req.user.id); // Fetch syndicate user by ID
+    if (!syndicateUser) {
+      return res.status(404).json({ message: 'Syndicate user not found' });
+    }
+    res.json(syndicateUser);
   } catch (error) {
-      console.error('Error submitting client data:', error);
-      res.status(500).json({ error: 'Failed to submit client data' });
+    console.error('Error fetching syndicate user details:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Route to fetch all syndicate names (dropdown)
+app.get('/api/syndicate/names', async (req, res) => {
+  try {
+      const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only syndicate names
+      res.json(syndicates);
+  } catch (error) {
+      console.error('Error fetching syndicate names:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Syndicate login route
 app.post('/syndicate-login', async (req, res) => {
   let { syndicate_name, password } = req.body;
@@ -293,7 +285,13 @@ app.post('/syndicate-login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    const token = jwt.sign({ id: syndicateUser._id, syndicate_name: syndicateUser.syndicate_name }, JWT_SECRET, { expiresIn: '1h' });
+    // Create a JWT token with the user's role set to 'syndicate'
+    const token = jwt.sign(
+      { id: syndicateUser._id, syndicate_name: syndicateUser.syndicate_name, role: 'syndicate' },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
     res.json({ message: 'Syndicate login successful', token });
   } catch (error) {
     console.error('Error logging in:', error);
@@ -301,18 +299,125 @@ app.post('/syndicate-login', async (req, res) => {
   }
 });
 
+// Syndicate Route - Register Syndicate Client
+router.post('/api/syndicateclients/register', upload.single('faceImage'), async (req, res) => {
+  try {
+    const { name, phone, email, companyName, personToMeet, syndicate_name } = req.body;
+
+    // Validate required fields: name, phone, and syndicate_name
+    if (!name || !phone || !syndicate_name) {
+      return res.status(400).json({ error: 'Name, Phone, and Syndicate Name are required.' });
+    }
+
+    // Check if a client with the same email or phone already exists
+    const existingClientByEmail = await SyndicateClient.findOne({ email });
+    const existingClientByPhone = await SyndicateClient.findOne({ phone });
+
+    if (existingClientByEmail) {
+      return res.status(400).json({ error: 'Email already exists.' });
+    }
+
+    if (existingClientByPhone) {
+      return res.status(400).json({ error: 'Phone number already exists.' });
+    }
+
+    // If there is a face image, upload it to GridFS
+    let faceImageId = null;
+    if (req.file) {
+      const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
+      const uploadStream = gridfsBucket.openUploadStream(filename);
+      uploadStream.end(req.file.buffer);
+
+      await new Promise((resolve, reject) => {
+        uploadStream.on('finish', () => {
+          faceImageId = uploadStream.id; // Store file ID
+          resolve();
+        });
+        uploadStream.on('error', reject);
+      });
+    }
+
+    // Create a new syndicate client without additional collections (projects, services, etc.)
+    const syndicateClient = new SyndicateClient({
+      name,
+      phone,
+      email,
+      companyName,
+      personToMeet,
+      syndicate_name,
+      faceImage: faceImageId, // Reference the uploaded image ID
+    });
+
+    await syndicateClient.save();
+
+    res.status(201).json({ message: 'Syndicate client registered successfully' });
+
+  } catch (error) {
+    console.error('Error registering syndicate client:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
+// Route to fetch syndicate clients filtered by syndicate_name
+router.get('/api/syndicateclients', authenticateToken, async (req, res) => {
+  const syndicateName = req.user.syndicate_name; // Get syndicate name from authenticated user
 
+  try {
+    // Fetch clients associated with the syndicate name
+    const syndicateClients = await SyndicateClient.find({ syndicate_name: syndicateName });
+    res.status(200).json(syndicateClients);
+  } catch (error) {
+    console.error('Error fetching syndicate clients:', error);
+    res.status(500).json({ error: 'Error fetching syndicate clients' });
+  }
+});
 
+// Route to fetch a specific syndicate client by ID
+router.get('/api/syndicateclient/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
 
+  try {
+      const syndicateClient = await SyndicateClient.findById(clientId);
+      if (!syndicateClient) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+      res.status(200).json(syndicateClient);
+  } catch (error) {
+      console.error('Error fetching syndicate client:', error);
+      res.status(500).json({ error: 'Error fetching syndicate client' });
+  }
+});
+router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+
+  try {
+      // Populate references to other collections
+      const syndicateClient = await SyndicateClient.findById(clientId)
+        .populate('project')
+        .populate('service')
+        .populate('investor')
+        .populate('channelPartner')
+        .populate('manufacturer')
+        .populate('domainExpert');
+
+      if (!syndicateClient) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+
+      res.status(200).json(syndicateClient);
+  } catch (error) {
+      console.error('Error fetching syndicate client:', error);
+      res.status(500).json({ error: 'Error fetching syndicate client' });
+  }
+});
 
 
 
 // Admin login route
 app.post('/admin/login', async (req, res) => {
   const { username, password } = req.body;
-  console.log(`Attempting login with username: ${username} and password: ${password}`);
+  console.log(`Attempting login with username: ${username}`);
 
   try {
       const admin = await Admin.findOne({ username });
@@ -327,14 +432,17 @@ app.post('/admin/login', async (req, res) => {
           return res.status(401).json({ error: 'Invalid username or password' });
       }
 
-      const token = jwt.sign({ id: admin._id }, JWT_SECRET, { expiresIn: '1h' });
+      // Generate a JWT token with the admin's role
+      const token = jwt.sign({ id: admin._id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
       console.log('Login successful, admin ID:', admin._id);
-      res.status(200).json({ token, adminId: admin._id }); // Ensure adminId is sent back in the response
+      res.status(200).json({ token, adminId: admin._id });
   } catch (error) {
       console.error('Error during login:', error);
       res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
 
 // admin dashboard 
 router.get('/admin/:id', authenticateToken, async (req, res) => {
@@ -482,7 +590,7 @@ router.get('/api/clients/status-counts', async (req, res) => {
 });
 
 
-// Fetch visitor details endpoint
+// visitor filter (sortby) option
 app.get('/visitor-details', authenticateToken, async (req, res) => {
   const { filter } = req.query;
   let dateFilter = {};
@@ -566,80 +674,151 @@ router.get('/api/clients', authenticateToken, async (req, res) => {
   }
 });
 
-
-// Endpoint to get client counts for each category
-app.get('/api/client-counts', async (req, res) => {
+// Route to get client counts
+router.get('/api/client-counts', async (req, res) => {
   try {
-      const customerCount = await Client.countDocuments({ 'customer': { $exists: true, $not: { $size: 0 } } });
-      const manufacturerCount = await Client.countDocuments({ 'manufacturer': { $exists: true, $not: { $size: 0 } } });
-      const serviceProviderCount = await Client.countDocuments({ 'serviceProvider': { $exists: true, $not: { $size: 0 } } });
-      const channelPartnerCount = await Client.countDocuments({ 'channelPartner': { $exists: true, $not: { $size: 0 } } });
-      const investorCount = await Client.countDocuments({ 'investor': { $exists: true, $not: { $size: 0 } } });
-      const domainExpertCount = await Client.countDocuments({ 'domainExpert': { $exists: true, $not: { $size: 0 } } });
-
-      res.json({
-          customers: customerCount,
-          manufacturers: manufacturerCount,
-          serviceProviders: serviceProviderCount,
-          channelPartners: channelPartnerCount,
-          investors: investorCount,
-          domainExperts: domainExpertCount
+      // Count customers with non-empty fields
+      const customersCount = await Customer.countDocuments({
+          $or: [
+              { "project.titles": { $exists: true, $not: { $size: 0 } } },
+              { "service.lookingFor": { $exists: true, $not: { $size: 0 } } },
+              { "product.title": { $exists: true, $ne: "" } },
+              { "solution.titles": { $exists: true, $not: { $size: 0 } } },
+              { "others.titles": { $exists: true, $not: { $size: 0 } } }
+          ]
       });
+
+      // Count manufacturers with non-empty fields
+      const manufacturersCount = await Manufacturer.countDocuments({
+          $or: [
+              { "manufacturerdomain": { $exists: true, $ne: "" } },
+              { "facility": { $exists: true, $ne: "" } },
+              { "area": { $exists: true, $ne: "" } },
+              // Add other fields as needed
+          ]
+      });
+
+      // Count service providers with non-empty fields
+      const serviceProvidersCount = await ServiceProvider.countDocuments({
+          $or: [
+              { "services": { $exists: true, $not: { $size: 0 } } },
+              { "domain": { $exists: true, $ne: "" } },
+              // Add other fields as needed
+          ]
+      });
+
+      // Count channel partners with non-empty fields
+      const channelPartnersCount = await ChannelPartner.countDocuments({
+          $or: [
+              { "title": { $exists: true, $ne: "" } },
+              { "channeldomain": { $exists: true, $ne: "" } },
+              // Add other fields as needed
+          ]
+      });
+
+      // Count investors with non-empty fields
+      const investorsCount = await Investor.countDocuments({
+          $or: [
+              { "title": { $exists: true, $ne: "" } },
+              { "companyName": { $exists: true, $ne: "" } },
+              // Add other fields as needed
+          ]
+      });
+
+      // Count domain experts with non-empty fields
+      const domainExpertsCount = await DomainExpert.countDocuments({
+          $or: [
+              { "domaintitle": { $exists: true, $ne: "" } },
+              { "expertdomain": { $exists: true, $ne: "" } },
+              // Add other fields as needed
+          ]
+      });
+
+      // Send the counts to the client
+      res.json({
+          customers: customersCount,
+          manufacturers: manufacturersCount,
+          serviceProviders: serviceProvidersCount,
+          channelPartners: channelPartnersCount,
+          investors: investorsCount,
+          domainExperts: domainExpertsCount
+      });
+
   } catch (error) {
       console.error('Error fetching client counts:', error);
-      res.status(500).json({ error: 'Internal server error' });
+      res.status(500).json({ error: 'Error fetching client counts' });
   }
 });
 
 
 
-// profile data entry API
-router.patch('/api/clients/:id', authenticateToken, async (req, res) => {
+// Update profile data for a customer
+router.patch('/api/customers/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
-  const clientData = req.body;
-
-  console.log("Received clientData:", clientData); // Log incoming data
+  const { customer: customerData } = req.body; // Extract customer object from request body
 
   try {
-    let client = await Client.findById(clientId);
-    if (!client) {
-      return res.status(404).json({ error: 'Client not found' });
+    // Find the existing customer data by clientId or create a new one
+    let customer = await Customer.findOne({ clientId });
+
+    if (!customer) {
+      // Create a new customer entry if it does not exist
+      customer = new Customer({ clientId, ...customerData });
+    } else {
+      // Merge existing data with incoming data
+      Object.keys(customerData).forEach((key) => {
+        if (customerData[key] !== undefined && customerData[key] !== '') {
+          // Merge nested objects correctly
+          if (typeof customerData[key] === 'object' && !Array.isArray(customerData[key])) {
+            customer[key] = { ...customer[key].toObject(), ...customerData[key] };
+          } else {
+            customer[key] = customerData[key]; // Only update fields provided in the request
+          }
+        }
+      });
     }
 
-    console.log("Existing client data before merge:", client); // Log existing data
+    // Save the updated or new customer document
+    const updatedCustomer = await customer.save();
 
-    // Perform a shallow merge of the client data
-    Object.assign(client, clientData);
-
-    console.log("Merged client data:", client); // Log merged data
-
-    const updatedClient = await client.save();
-    res.status(200).json({ message: 'Client data updated successfully', data: updatedClient });
+    res.status(200).json({ message: 'Customer data updated successfully', data: updatedCustomer });
   } catch (error) {
-    console.error('Error updating client data:', error);
-    res.status(500).json({ error: 'Error updating client data' });
+    console.error('Error updating customer data:', error);
+    res.status(500).json({ error: 'Error updating customer data' });
   }
 });
 
 
 
 
-// Route handler for updating investor data
-router.patch('/api/investor/:id', authenticateToken, async (req, res) => {
-  const clientId = req.params.id;
-  const investorData = req.body;
+
+
+// Update investor data
+router.patch('/api/investors/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id; // Get the clientId from the URL params
+  const investorData = req.body; // Destructure the investor data from the request body
 
   try {
-    const client = await Client.findById(clientId);
-    if (!client) {
-      return res.status(404).json({ error: 'Client not found' });
+    // Find the existing investor data by clientId or create a new one
+    let investor = await Investor.findOne({ clientId });
+
+    if (!investor) {
+      // Create a new investor entry if it does not exist
+      investor = new Investor({ clientId, ...investorData });
+    } else {
+      // Merge existing data with incoming data
+      Object.keys(investorData).forEach((key) => {
+        if (investorData[key] !== undefined && investorData[key] !== '') {
+          // Only update fields provided in the request and not empty
+          investor[key] = investorData[key];
+        }
+      });
     }
 
-    // Merge existing investor data with new data
-    client.investor = { ...client.investor.toObject(), ...investorData };
+    // Save the updated or new investor document
+    const updatedInvestor = await investor.save();
 
-    const updatedClient = await client.save();
-    res.status(200).json({ message: 'Investor data updated successfully', data: updatedClient });
+    res.status(200).json({ message: 'Investor data updated successfully', data: updatedInvestor });
   } catch (error) {
     console.error('Error updating investor data:', error);
     res.status(500).json({ error: 'Error updating investor data' });
@@ -650,42 +829,48 @@ router.patch('/api/investor/:id', authenticateToken, async (req, res) => {
 
 
 
-// Route for updating manufacturer data
-app.patch('/api/manufacture/:id/data', authenticateToken, async (req, res) => {
-  const clientId = req.params.id;
-  const manufacturerData = req.body;
+
+
+// Update manufacturer data
+router.patch('/api/manufacturers/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id; // Get the clientId from the URL params
+  const manufacturerData = req.body; // Destructure the manufacturer data from the request body
 
   try {
-      const client = await Client.findById(clientId);
-      if (!client) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
+    // Find the existing manufacturer data by clientId or create a new one
+    let manufacturer = await Manufacturer.findOne({ clientId });
 
-      // Ensure fields are correctly updated
-      if (!client.manufacturer) {
-          client.manufacturer = {};
+    if (!manufacturer) {
+      // Create a new manufacturer entry if it does not exist
+      manufacturer = new Manufacturer({ clientId, ...manufacturerData });
+    } else {
+      // Update only fields that are provided and not empty in the request body
+      for (const key in manufacturerData) {
+        if (manufacturerData.hasOwnProperty(key) && manufacturerData[key] !== undefined && manufacturerData[key] !== "") {
+          manufacturer[key] = manufacturerData[key];
+        }
       }
-        
-    // Merge existing manufacturer data with new data
-    client.manufacturer = { ...client.manufacturer.toObject(), ...manufacturerData };
+    }
 
-      const updatedClient = await client.save();
-      res.status(200).json({ message: 'Manufacturer data updated successfully', data: updatedClient });
+    // Save the updated or new manufacturer document
+    const updatedManufacturer = await manufacturer.save();
+
+    res.status(200).json({ message: 'Manufacturer data updated successfully', data: updatedManufacturer });
   } catch (error) {
-      console.error('Error updating manufacturer data:', error);
-      res.status(500).json({ error: 'Error updating manufacturer data' });
+    console.error('Error updating manufacturer data:', error);
+    res.status(500).json({ error: 'Error updating manufacturer data' });
   }
 });
 
 
-// Route for uploading facility inventory file
-app.patch('/api/manufacture/:id/file', upload.single('facilityInventory'), async (req, res) => {
+// Upload facility inventory file for a manufacturer
+router.patch('/api/manufacturers/:id/file', upload.single('facilityInventory'), async (req, res) => {
   const clientId = req.params.id;
 
   try {
-      const client = await Client.findById(clientId);
-      if (!client) {
-          return res.status(404).json({ error: 'Client not found' });
+      const manufacturer = await Manufacturer.findOne({ clientId });
+      if (!manufacturer) {
+          return res.status(404).json({ error: 'Manufacturer not found' });
       }
 
       if (req.file) {
@@ -699,18 +884,19 @@ app.patch('/api/manufacture/:id/file', upload.single('facilityInventory'), async
           uploadStream.on('finish', async () => {
               const fileId = uploadStream.id;
 
-              if (client.manufacturer && client.manufacturer.facilityInventory) {
+              // Delete old file if exists
+              if (manufacturer.facilityInventory) {
                   try {
-                      await bucket.delete(client.manufacturer.facilityInventory);
-                      console.log('Old file deleted:', client.manufacturer.facilityInventory);
+                      await bucket.delete(manufacturer.facilityInventory);
+                      console.log('Old file deleted:', manufacturer.facilityInventory);
                   } catch (err) {
                       console.error('Error deleting old file:', err);
                   }
               }
 
-              client.manufacturer.facilityInventory = fileId;
-              const updatedClient = await client.save();
-              res.status(200).json({ message: 'File uploaded and manufacturer data updated successfully', data: updatedClient });
+              manufacturer.facilityInventory = fileId;
+              const updatedManufacturer = await manufacturer.save();
+              res.status(200).json({ message: 'File uploaded and manufacturer data updated successfully', data: updatedManufacturer });
           });
 
           uploadStream.on('error', (error) => {
@@ -726,23 +912,133 @@ app.patch('/api/manufacture/:id/file', upload.single('facilityInventory'), async
   }
 });
 
+// //service provider 
+// router.patch('/api/service-providers/:id', authenticateToken, async (req, res) => {
+//   const clientId = req.params.id;
 
-// Route handler for updating domain expert data
-router.patch('/api/domain/:id', authenticateToken, async (req, res) => {
+//   try {
+//     const existingServiceProvider = await ServiceProvider.findOne({ clientId: clientId });
+//     console.log('ServiceProvider found:', existingServiceProvider); // Log this to debug
+
+//     if (!existingServiceProvider) {
+//       return res.status(404).json({ error: 'Service provider not found' });
+//     }
+
+//     const updatedData = {
+//       ...existingServiceProvider.toObject(),
+//       ...req.body.serviceProvider
+//     };
+
+//     const updatedServiceProvider = await ServiceProvider.findOneAndUpdate(
+//       { clientId: clientId },
+//       { $set: updatedData },
+//       { new: true, upsert: false, runValidators: true }
+//     );
+
+//     res.status(200).json({ message: 'Service provider data updated successfully', data: updatedServiceProvider });
+//   } catch (error) {
+//     console.error('Error updating service provider data:', error);
+//     res.status(500).json({ error: 'Error updating service provider data' });
+//   }
+// });
+
+
+
+router.patch('/api/service-providers/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
-  const domainExpertData = req.body.domainExpert;
+  const { serviceProvider } = req.body;
 
   try {
-    const client = await Client.findById(clientId);
-    if (!client) {
-      return res.status(404).json({ error: 'Client not found' });
+    // Ensure clientId is converted properly into an ObjectId
+    const objectIdClientId = new mongoose.Types.ObjectId(clientId);
+
+    let existingServiceProvider = await ServiceProvider.findOne({ clientId: objectIdClientId });
+
+    if (!existingServiceProvider) {
+      // Create a new service provider document if none exists
+      existingServiceProvider = new ServiceProvider({ clientId: objectIdClientId, ...serviceProvider });
+      await existingServiceProvider.save();
+      return res.status(201).json({ message: 'Service provider created successfully', data: existingServiceProvider });
     }
 
-    // Merge existing domain expert data with new data
-    client.domainExpert = { ...client.domainExpert.toObject(), ...domainExpertData };
+    const updatedData = {
+      ...existingServiceProvider.toObject(),
+      ...serviceProvider
+    };
 
-    const updatedClient = await client.save();
-    res.status(200).json({ message: 'Domain expert data updated successfully', data: updatedClient });
+    const updatedServiceProvider = await ServiceProvider.findOneAndUpdate(
+      { clientId: objectIdClientId },
+      { $set: updatedData },
+      { new: true, upsert: false, runValidators: true }
+    );
+
+    res.status(200).json({ message: 'Service provider data updated successfully', data: updatedServiceProvider });
+  } catch (error) {
+    console.error('Error updating service provider data:', error);
+    res.status(500).json({ error: 'Error updating service provider data' });
+  }
+});
+
+
+
+// Update channel partner data
+router.patch('/api/channel-partners/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id; // Get the clientId from the URL params
+  const { channelPartner } = req.body; // Destructure the channel partner data from the request body
+
+  try {
+    // Fetch the existing channel partner data
+    let existingChannelPartner = await ChannelPartner.findOne({ clientId });
+
+    if (!existingChannelPartner) {
+      // Create a new channel partner entry if it does not exist
+      existingChannelPartner = new ChannelPartner({ clientId, ...channelPartner });
+    } else {
+      // Update only fields that are provided and not empty in the request body
+      for (const key in channelPartner) {
+        if (channelPartner.hasOwnProperty(key) && channelPartner[key] !== undefined && channelPartner[key] !== "") {
+          existingChannelPartner[key] = channelPartner[key];
+        }
+      }
+    }
+
+    // Save the updated or new channel partner document
+    const updatedChannelPartner = await existingChannelPartner.save();
+
+    res.status(200).json({ message: 'Channel partner data updated successfully', data: updatedChannelPartner });
+  } catch (error) {
+    console.error('Error updating channel partner data:', error);
+    res.status(500).json({ error: 'Error updating channel partner data' });
+  }
+});
+
+// Update domain expert data
+router.patch('/api/domain-experts/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+  const { domainExpert: domainExpertData } = req.body; // Extract the domainExpert object from req.body
+
+  console.log('Received data:', domainExpertData); // Log incoming data
+
+  try {
+    // Find the existing domain expert data by clientId or create a new one
+    let domainExpert = await DomainExpert.findOne({ clientId });
+
+    if (!domainExpert) {
+      // Create a new domain expert entry if it does not exist
+      domainExpert = new DomainExpert({ clientId, ...domainExpertData });
+    } else {
+      // Merge existing data with incoming data
+      Object.keys(domainExpertData).forEach((key) => {
+        if (domainExpertData[key] !== undefined && domainExpertData[key] !== '') {
+          domainExpert[key] = domainExpertData[key]; // Only update fields provided in the request
+        }
+      });
+    }
+
+    // Save the updated or new domain expert document
+    const updatedDomainExpert = await domainExpert.save();
+
+    res.status(200).json({ message: 'Domain expert data updated successfully', data: updatedDomainExpert });
   } catch (error) {
     console.error('Error updating domain expert data:', error);
     res.status(500).json({ error: 'Error updating domain expert data' });
@@ -751,22 +1047,32 @@ router.patch('/api/domain/:id', authenticateToken, async (req, res) => {
 
 
 
-// Route handler for updating business proposal data
-router.patch('/api/proposals/:id', authenticateToken, async (req, res) => {
+// Update business proposal data
+// Update business proposal data
+router.patch('/api/business-proposals/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
-  const businessProposalData = req.body.businessProposal;
+  const { businessProposal: businessProposalData } = req.body; // Extract businessProposal data from request body
 
   try {
-    const client = await Client.findById(clientId);
-    if (!client) {
-      return res.status(404).json({ error: 'Client not found' });
+    // Find the existing business proposal data by clientId or create a new one
+    let businessProposal = await BusinessProposal.findOne({ clientId });
+
+    if (!businessProposal) {
+      // Create a new business proposal entry if it does not exist
+      businessProposal = new BusinessProposal({ clientId, ...businessProposalData });
+    } else {
+      // Merge existing data with incoming data
+      Object.keys(businessProposalData).forEach((key) => {
+        if (businessProposalData[key] !== undefined && businessProposalData[key] !== '') {
+          businessProposal[key] = businessProposalData[key]; // Only update fields provided in the request
+        }
+      });
     }
 
-    // Merge existing business proposal data with new data
-    client.businessProposal = { ...client.businessProposal.toObject(), ...businessProposalData };
+    // Save the updated or new business proposal document
+    const updatedBusinessProposal = await businessProposal.save();
 
-    const updatedClient = await client.save();
-    res.status(200).json({ message: 'Business proposal data updated successfully', data: updatedClient });
+    res.status(200).json({ message: 'Business proposal data updated successfully', data: updatedBusinessProposal });
   } catch (error) {
     console.error('Error updating business proposal data:', error);
     res.status(500).json({ error: 'Error updating business proposal data' });
@@ -776,19 +1082,36 @@ router.patch('/api/proposals/:id', authenticateToken, async (req, res) => {
 
 // customer view / fetch 
 
+
 // Route to fetch client data by ID
 router.get('/api/customer/clients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
 
   try {
-      const client = await Client.findById(clientId);
-      if (!client) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
-      res.status(200).json(client);
+    // Fetch data from all relevant collections, excluding unwanted fields
+    const [customer, serviceProvider, channelPartner, investor, manufacturer, domainExpert] = await Promise.all([
+      Customer.findOne({ clientId }, '-createdAt -updatedAt -__v'),
+      ServiceProvider.findOne({ clientId }, '-createdAt -updatedAt -__v'),
+      ChannelPartner.findOne({ clientId }, '-createdAt -updatedAt -__v'),
+      Investor.findOne({ clientId }, '-createdAt -updatedAt -__v'),
+      Manufacturer.findOne({ clientId }, '-createdAt -updatedAt -__v'),
+      DomainExpert.findOne({ clientId }, '-createdAt -updatedAt -__v')
+    ]);
+
+    // Combine all data into a single object, excluding 'Client' data
+    const clientData = {
+      customer: customer || {},
+      serviceProvider: serviceProvider || {},
+      channelPartner: channelPartner || {},
+      investor: investor || {},
+      manufacturer: manufacturer || {},
+      domainExpert: domainExpert || {}
+    };
+
+    res.status(200).json(clientData);
   } catch (error) {
-      console.error('Error fetching client data:', error);
-      res.status(500).json({ error: 'Error fetching client data' });
+    console.error('Error fetching client data:', error);
+    res.status(500).json({ error: 'Error fetching client data' });
   }
 });
 

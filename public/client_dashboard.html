@@ -22,6 +22,32 @@
     <button id="submitBtn">Submit</button>
 
     <script type="module" src="./js/client_dashboard.js"></script>
+    <script src="/public/js/session_timeout.js"></script>
+
+    <script>
+        let timeoutID_client;
+        
+        // Session timeout duration (1 hour = 3600 seconds)
+        const sessionTimeout = 3600 * 1000; // 1 hour in milliseconds
+        
+        function resetTimer() {
+            clearTimeout(timeoutID_client);
+            timeoutID_client = setTimeout(logoutUser, sessionTimeout);
+        }
+        
+        function logoutUser() {
+            alert("Session expired due to inactivity. Logging out.");
+            localStorage.clear();
+            window.location.href = "index.html"; // Redirect to login page
+        }
+        
+        // Listen for user activity to reset the timer
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.ontouchstart = resetTimer;
+        </script>
+        
 </body>
 </html>
 

@@ -180,27 +180,26 @@
                 
                 
 
-
-                <!-- Type of Clients and Projects Chart -->
-                <div class="flex mb-10">
-                    
-                    <div class="container mx-auto mt-10">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="flex-1">
-                                <h2 class="text-xl mb-5 font-bold text-white">Business Proposal</h2>
-                                <div id="barGraph" class="bg-gray-800 p-6 rounded-lg shadow-lg mx-auto mt-10 custom-size">
-                                    <!-- Bar graph elements will be injected here by JavaScript -->
-                                </div>
-                            </div>
-                            <div class="flex-1 ">
-                               <div class="py-6 bg-gray-800 p-6 rounded-lg shadow-lg mx-auto mt-10"  id="donut-chart"></div>
-                                <br> 
-                            
-                        </div>
-                    </div>
+  <!-- Type of Clients and Projects Chart -->
+  <div class="flex mb-10">
+    <div class="container mx-auto mt-10">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="flex-1">
+                <h2 class="text-xl mb-5 font-bold text-white">Business Proposal</h2>
+                <div id="barGraph" class="bg-gray-800 p-6 rounded-lg shadow-lg mx-auto mt-10 custom-size">
+                    <!-- Bar graph elements will be injected here by JavaScript -->
                 </div>
-                 </div>
             </div>
+            <div class="flex-1">
+                <h2 class="text-xl mb-5 font-bold text-white">Proposal Status</h2>
+                <div id="pieChart" class="py-6 bg-gray-800 p-6 rounded-lg shadow-lg mx-auto mt-10">
+                    <!-- Donut chart will be rendered here by ApexCharts -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 
  
           <!-- Visitors Content -->
@@ -498,6 +497,33 @@
     </footer>
 
     <script src="./js/admin_dashboard.js"></script>
+    <script src="/public/js/session_timeout.js"></script>
+
+    
+    <script>
+        let timeoutID;
+        
+      
+        const sessionTimeout = 3600 * 1000; 
+        
+        function resetTimer() {
+            clearTimeout(timeoutID);
+            timeoutID = setTimeout(logoutUser, sessionTimeout);
+        }
+        
+        function logoutUser() {
+            alert("Session expired due to inactivity. Logging out.");
+            localStorage.clear();
+            window.location.href = "index.html"; 
+        }
+        
+        // Listen for user activity to reset the timer
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeydown = resetTimer;
+        document.ontouchstart = resetTimer;
+     </script>
+        
 </body>
 </html>
 
