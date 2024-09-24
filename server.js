@@ -32,6 +32,7 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 const port = process.env.PORT || 3000;
+const secondport = process.env.PORT || 5001;
 
 const Client = require('./models/client.js');
 const Syndicate = require('./models/syndicate.js');
@@ -139,13 +140,13 @@ function authenticateToken(req, res, next) {
   });
 }
 
-
-
-// Route to retrieve images
 app.get('/images/:id', async (req, res) => {
   try {
     const fileId = new mongoose.Types.ObjectId(req.params.id);
     const downloadStream = gridfsBucket.openDownloadStream(fileId);
+
+    // Set the content type to image (assuming the image is a JPEG or PNG)
+    res.set('Content-Type', 'image/jpeg'); // Change this based on the type of images you store
 
     downloadStream.on('data', (chunk) => {
       res.write(chunk);
@@ -458,7 +459,24 @@ router.get('/admin/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Route to fetch all clients for a specific admin
+app.get('/api/admin/:adminId/clients', authenticateToken, async (req, res) => {
+  const adminId = req.params.adminId;
 
+  try {
+      // Fetch all clients associated with the adminId
+      const clients = await Client.find(); // Modify this query to filter based on your logic, e.g., filtering by `adminId`
+      
+      if (!clients || clients.length === 0) {
+          return res.status(404).json({ message: 'No clients found' });
+      }
+
+      res.status(200).json(clients);
+  } catch (error) {
+      console.error('Error fetching client data:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 // Update visitor status route
@@ -597,43 +615,45 @@ app.get('/visitor-details', authenticateToken, async (req, res) => {
 
   const now = new Date();
   switch (filter) {
-      case 'today':
-          dateFilter = {
-              createdAt: {
-                  $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
-                  $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
-              }
-          };
-          break;
-      case 'week':
-          const startOfWeek = now.getDate() - now.getDay();
-          dateFilter = {
-              createdAt: {
-                  $gte: new Date(now.getFullYear(), now.getMonth(), startOfWeek),
-                  $lt: new Date(now.getFullYear(), now.getMonth(), startOfWeek + 7)
-              }
-          };
-          break;
-      case 'month':
-          dateFilter = {
-              createdAt: {
-                  $gte: new Date(now.getFullYear(), now.getMonth(), 1),
-                  $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
-              }
-          };
-          break;
-      default:
-          break;
+    case 'today':
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+          $lt: new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+        }
+      };
+      break;
+    case 'week':
+      const startOfWeek = now.getDate() - now.getDay();
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(now.getFullYear(), now.getMonth(), startOfWeek),
+          $lt: new Date(now.getFullYear(), now.getMonth(), startOfWeek + 7)
+        }
+      };
+      break;
+    case 'month':
+      dateFilter = {
+        createdAt: {
+          $gte: new Date(now.getFullYear(), now.getMonth(), 1),
+          $lt: new Date(now.getFullYear(), now.getMonth() + 1, 1)
+        }
+      };
+      break;
+    default:
+      break;
   }
 
   try {
-      const visitors = await Client.find(dateFilter, 'name companyName phone email status createdAt');
-      res.status(200).json(visitors);
+    // Include 'faceImage' field to fetch image IDs
+    const visitors = await Client.find(dateFilter, 'name companyName phone email status faceImage createdAt');
+    res.status(200).json(visitors);
   } catch (error) {
-      console.error('Error fetching visitor details:', error);
-      res.status(500).json({ error: 'Error fetching visitor details. Please try again later.' });
+    console.error('Error fetching visitor details:', error);
+    res.status(500).json({ error: 'Error fetching visitor details. Please try again later.' });
   }
 });
+
 
 // get visitor basic details
 router.get('/api/visitors/:id', authenticateToken, async (req, res) => {
@@ -749,6 +769,7 @@ router.get('/api/client-counts', async (req, res) => {
       res.status(500).json({ error: 'Error fetching client counts' });
   }
 });
+
 
 
 
@@ -1079,8 +1100,26 @@ router.patch('/api/business-proposals/:id', authenticateToken, async (req, res) 
   }
 });
 
+// customer view 
 
-// customer view / fetch 
+// Fetch basic client data based on client ID (admin view)
+app.get('/api/adminclient/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
+
+  try {
+    // Fetch the client data from the `Client` collection by its ID
+    const client = await Client.findById(clientId);
+
+    if (!client) {
+      return res.status(404).json({ message: 'Client not found' });
+    }
+
+    res.status(200).json(client);
+  } catch (error) {
+    console.error('Error fetching client data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 // Route to fetch client data by ID
@@ -1088,18 +1127,23 @@ router.get('/api/customer/clients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
 
   try {
-    // Fetch data from all relevant collections, excluding unwanted fields
+    // Convert clientId to ObjectId
+    const objectId = new mongoose.Types.ObjectId(clientId);
+
+    console.log(`Fetching data for Client ID: ${objectId}`);
+
+    // Use `lean()` to avoid Mongoose overhead and get plain JS objects
     const [customer, serviceProvider, channelPartner, investor, manufacturer, domainExpert] = await Promise.all([
-      Customer.findOne({ clientId }, '-createdAt -updatedAt -__v'),
-      ServiceProvider.findOne({ clientId }, '-createdAt -updatedAt -__v'),
-      ChannelPartner.findOne({ clientId }, '-createdAt -updatedAt -__v'),
-      Investor.findOne({ clientId }, '-createdAt -updatedAt -__v'),
-      Manufacturer.findOne({ clientId }, '-createdAt -updatedAt -__v'),
-      DomainExpert.findOne({ clientId }, '-createdAt -updatedAt -__v')
+      Customer.findOne({ clientId: objectId }, '-_id -clientId -createdAt -updatedAt -__v').lean(),
+      ServiceProvider.findOne({ clientId: objectId }, '-_id -clientId -createdAt -updatedAt -__v').lean(),
+      ChannelPartner.findOne({ clientId: objectId }, '-_id -clientId -createdAt -updatedAt -__v').lean(),
+      Investor.findOne({ clientId: objectId }, '-_id -clientId -createdAt -updatedAt -__v').lean(),
+      Manufacturer.findOne({ clientId: objectId }, '-_id -clientId -createdAt -updatedAt -__v').lean(),
+      DomainExpert.findOne({ clientId: objectId }, '-_id -clientId -createdAt -updatedAt -__v').lean()
     ]);
 
-    // Combine all data into a single object, excluding 'Client' data
-    const clientData = {
+    // Combine all data into a single object
+    let clientData = {
       customer: customer || {},
       serviceProvider: serviceProvider || {},
       channelPartner: channelPartner || {},
@@ -1108,12 +1152,35 @@ router.get('/api/customer/clients/:id', authenticateToken, async (req, res) => {
       domainExpert: domainExpert || {}
     };
 
+    // Remove fields that are null, undefined, or empty
+    const filterFields = (obj) => {
+      return Object.fromEntries(
+        Object.entries(obj).filter(([_, value]) => value != null && value !== '')
+      );
+    };
+
+    // Apply filtering to remove empty fields from each object
+    clientData = Object.fromEntries(
+      Object.entries(clientData)
+        .map(([key, value]) => [key, filterFields(value)])
+        .filter(([_, value]) => Object.keys(value).length > 0)
+    );
+
+    // Check if no data is available
+    if (Object.keys(clientData).length === 0) {
+      return res.status(404).json({ message: 'No client data found for this ID.' });
+    }
+
+    console.log('Filtered client data:', clientData);
+
     res.status(200).json(clientData);
   } catch (error) {
     console.error('Error fetching client data:', error);
     res.status(500).json({ error: 'Error fetching client data' });
   }
 });
+
+
 
 // advanced search filter api 
 app.post('/advanced-search', async (req, res) => {
@@ -1229,5 +1296,9 @@ app.get('/', (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+});
+
+app.listen(secondport, () => {
+  console.log(`Server running on port ${secondport}`);
 });
 

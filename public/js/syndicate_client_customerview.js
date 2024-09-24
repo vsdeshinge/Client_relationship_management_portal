@@ -77,71 +77,6 @@ async function fetchSyndicateClientData(clientId, token) {
         console.error('Error fetching client data:', error);
     }
 }
-
-// Render individual field in the client data
-function renderField(key, value) {
-    return `<div class="field-container">
-        <span class="field-label"><strong>${key}:</strong></span>
-        <div class="field-value-container">
-            <textarea class="field-value" readonly>${value}</textarea>
-        </div>
-    </div>`;
-}
-
-// Render sections such as customer, service, etc.
-function renderSection(title, data) {
-    let html = `<div class="section-container">
-        <h2 class="section-title"><strong>${title.toUpperCase()}</strong></h2>`;
-
-    if (title === 'project') {
-        const { titles, descriptions } = data;
-        if (Array.isArray(titles) && Array.isArray(descriptions)) {
-            for (let i = 0; i < titles.length; i++) {
-                html += `<div class="field-container">
-                    <span class="field-label"><strong>Title:</strong></span>
-                    <div class="field-value-container">
-                        <textarea class="field-value" readonly>${titles[i]}</textarea>
-                    </div>
-                </div>`;
-                html += `<div class="field-container">
-                    <span class="field-label"><strong>Description:</strong></span>
-                    <div class="field-value-container">
-                        <textarea class="field-value" readonly>${descriptions[i]}</textarea>
-                    </div>
-                </div>`;
-            }
-        }
-    } else {
-        for (const [key, value] of Object.entries(data)) {
-            if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                html += renderSection(key, value); // Recursively render nested objects
-            } else if (Array.isArray(value)) {
-                if (title === 'project' && (key === 'titles' || key === 'descriptions')) {
-                    continue; // Skip rendering here, handled above
-                }
-                html += `<div class="field-container">
-                    <span class="field-label"><strong>${key}:</strong></span>
-                    <div class="field-value-container">
-                        <textarea class="field-value" readonly>${value.join(', ')}</textarea>
-                    </div>
-                </div>`;
-            } else if (key.endsWith('OtherDescription')) {
-                html += `<div class="field-container">
-                    <span class="field-label"><strong>${key.replace('OtherDescription', ' (Other Description)')}:</strong></span>
-                    <div class="field-value-container">
-                        <textarea class="field-value" readonly>${value}</textarea>
-                    </div>
-                </div>`;
-            } else {
-                html += renderField(key, value); // Render simple fields
-            }
-        }
-    }
-
-    html += '</div>';
-    return html;
-}
-
 // Display the fetched client data in sections
 function displaySyndicateClientData(clientData) {
     const container = document.getElementById('clientData');
@@ -160,8 +95,52 @@ function displaySyndicateClientData(clientData) {
 
     // Display only the specified sections
     for (const section of sectionsToDisplay) {
-        if (clientData[section]) {
+        if (clientData[section] && Object.keys(clientData[section]).length > 0) {
             container.innerHTML += renderSection(section, clientData[section]);
         }
     }
+}
+
+// Render individual field in the client data
+function renderField(key, value) {
+    if (value && typeof value !== 'object') {
+        return `<div class="field-container">
+            <span class="field-label"><strong>${camelCaseToReadable(key)}:</strong></span>
+            <div class="field-value-container">
+                <textarea class="field-value" readonly>${value}</textarea>
+            </div>
+        </div>`;
+    }
+    return ''; // Skip empty or null fields
+}
+
+// Render sections such as project, service, product, etc.
+function renderSection(title, data) {
+    let html = `<div class="section-container">
+        <h2 class="section-title"><strong>${camelCaseToReadable(title)}</strong></h2>`;
+
+    for (const [key, value] of Object.entries(data)) {
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            html += renderSection(camelCaseToReadable(key), value); // Recursively render nested objects
+        } else if (Array.isArray(value) && value.length > 0) {
+            html += `<div class="field-container">
+                <span class="field-label"><strong>${camelCaseToReadable(key)}:</strong></span>
+                <div class="field-value-container">
+                    <textarea class="field-value" readonly>${value.join(', ')}</textarea>
+                </div>
+            </div>`;
+        } else if (value) {
+            html += renderField(key, value); // Render simple fields with value
+        }
+    }
+
+    html += '</div>';
+    return html;
+}
+
+// Helper function to convert camelCase to human-readable format
+function camelCaseToReadable(str) {
+    return str
+        .replace(/([A-Z])/g, ' $1')  // Insert space before each uppercase letter
+        .replace(/^./, function(str) { return str.toUpperCase(); });  // Capitalize first letter
 }

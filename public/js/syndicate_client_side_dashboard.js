@@ -71,10 +71,17 @@ function populateTable(clients) {
   tableBody.innerHTML = ''; // Clear existing table rows
 
   clients.forEach((client) => {
+      // Use the client.faceImage or a placeholder if it doesn't exist
+      const profileImage = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
+
       const row = `
           <tr>
+          <td class="py-2 px-4">
+                 <img id="profile-img" src="${profileImage}" alt="Profile" class="profile-img">
+              </td>
               <td class="py-2 px-4">${client.name || 'N/A'}</td>
               <td class="py-2 px-4">${client.email || 'N/A'}</td>
+              
               <td class="py-2 px-4">${client.phone || 'N/A'}</td>
               <td class="py-2 px-4">${client.syndicate_name || 'N/A'}</td>
               <td class="py-2 px-4">${new Date(client.createdAt).toLocaleString()}</td>
@@ -89,6 +96,7 @@ function populateTable(clients) {
       tableBody.insertAdjacentHTML('beforeend', row);
   });
 }
+
 
 // Assign handleViewClient to window object to ensure it is globally accessible
 window.handleViewClient = function (clientId) {

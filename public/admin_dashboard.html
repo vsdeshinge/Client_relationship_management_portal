@@ -243,6 +243,7 @@
         <table class="w-full">
             <thead>
                 <tr class="bg-gray-800">
+                    <th class="p-2 text-left">Photos</th>
                     <th class="p-2 text-left">Name</th>
                     <th class="p-2 text-left">DD/MM</th>
                     <th class="p-2 text-left">Company Name</th>
@@ -256,26 +257,6 @@
                 <!-- Table rows will be dynamically added here -->
             </tbody>
         </table>
-
-<!-- 
-        <div id="paginationVisitors" class="mt-4 flex justify-center"> -->
-            <!-- Pagination controls will be generated here -->
-            <!-- <div class="flex"> -->
-                <!-- Previous Button -->
-                <!-- <a href="#" class="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                    <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
-                    </svg>
-                    Previous
-                </a>
-                <a href="#" class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                    Next
-                    <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                    </svg>
-                </a>
-            </div>
-        </div> -->
 
     </div>
 </div>
@@ -326,6 +307,7 @@
                     <table class="w-full">
                         <thead>
                             <tr class="bg-gray-800">
+                                <th class="p-2 text-left">Photos</th>
                                 <th class="p-2 text-left">Name</th>
                                 <th class="p-2 text-left">DD/MM</th>
                                 <th class="p-2 text-left">Company Name</th>
@@ -392,6 +374,7 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-gray-800">
+                        <th class="p-2 text-left">Photos</th>
                         <th class="p-2 text-left">Name</th>
                     <th class="p-2 text-left">DD/MM</th>
                     <th class="p-2 text-left">Company Name</th>
@@ -457,6 +440,7 @@
             <table class="w-full">
                 <thead>
                     <tr class="bg-gray-800">
+                        <th class="p-2 text-left">Photos</th>
                         <th class="p-2 text-left">Name</th>
                         <th class="p-2 text-left">DD/MM</th>
                         <th class="p-2 text-left">Company Name</th>
@@ -495,34 +479,11 @@
     <footer class="bg-gray-800 text-center p-4">
         <p>&copy; Copyright @ POSSPOLE. All rights reserved.</p>
     </footer>
-
+    <script src="./js/session_timeout.js"></script>
     <script src="./js/admin_dashboard.js"></script>
-    <script src="/public/js/session_timeout.js"></script>
+    
 
     
-    <script>
-        let timeoutID;
-        
-      
-        const sessionTimeout = 3600 * 1000; 
-        
-        function resetTimer() {
-            clearTimeout(timeoutID);
-            timeoutID = setTimeout(logoutUser, sessionTimeout);
-        }
-        
-        function logoutUser() {
-            alert("Session expired due to inactivity. Logging out.");
-            localStorage.clear();
-            window.location.href = "index.html"; 
-        }
-        
-        // Listen for user activity to reset the timer
-        window.onload = resetTimer;
-        document.onmousemove = resetTimer;
-        document.onkeydown = resetTimer;
-        document.ontouchstart = resetTimer;
-     </script>
         
 </body>
 </html>

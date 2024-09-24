@@ -91,36 +91,44 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update circle charts with fetched data
         updateCircleCharts(countData);
     }
- // Function to fetch visitor details based on the filter
- async function fetchVisitorDetails(filter) {
-    const token = localStorage.getItem('adminToken');
-    try {
-        const response = await fetch(`/visitor-details?filter=${filter}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (response.ok) {
-            const visitorDetails = await response.json();
-            renderVisitorDetails(visitorDetails);
-        } else {
-            console.error('Error fetching visitor details');
-        }
-    } catch (error) {
-        console.error('Error fetching visitor details:', error);
-    }
-}
 
-// Function to render visitor details in the table
+    
+    async function fetchVisitorDetails(filter) {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`/visitor-details?filter=${filter}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                const visitorDetails = await response.json();
+                console.log('Visitor Details:', visitorDetails); // Log visitor details to verify faceImage
+                renderVisitorDetails(visitorDetails);
+            } else {
+                console.error('Error fetching visitor details');
+            }
+        } catch (error) {
+            console.error('Error fetching visitor details:', error);
+        }
+    }
+   // Function to render visitor details in the table
 function renderVisitorDetails(visitorDetails) {
     const tableBody = document.getElementById('visitorsTableBody');
     tableBody.innerHTML = ''; // Clear existing rows
     visitorDetails.forEach((visitor, index) => {
         const createdAt = new Date(visitor.createdAt);
         const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
+
+        // Use visitor's faceImage if available, otherwise use a placeholder image
+        const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
+
         const row = document.createElement('tr');
         row.innerHTML = `
+            <td class="py-2 px-4">
+                <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+            </td>
             <td class="p-2">${visitor.name}</td>
             <td class="p-2">${formattedDate}</td>
             <td class="p-2">${visitor.companyName || 'N/A'}</td>
@@ -134,17 +142,17 @@ function renderVisitorDetails(visitorDetails) {
                 </select>
             </td>
             <td class="p-2">
-                <button class="save-button" data-visitor-id="${visitor._id}"  style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+                <button class="save-button" data-visitor-id="${visitor._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
             </td>
         `;
         tableBody.appendChild(row);
     });
 
+
     // Add event listeners to save buttons
     document.querySelectorAll('.save-button').forEach(button => {
         button.addEventListener('click', async (event) => {
             const visitorId = event.target.dataset.visitorId;
-            // Find the select element by its unique ID
             const selectElement = document.querySelector(`select[data-visitor-id="${visitorId}"]`);
             if (!selectElement) {
                 console.error('Select element not found for visitorId:', visitorId);
@@ -197,10 +205,11 @@ document.addEventListener('click', function(event) {
     }
 });
 
-
+fetchAdminDetails(); 
+fetchVisitorDetails('all'); 
     fetchAdminDetails();
     fetchClientCount();
-    fetchVisitorDetails('total'); 
+    // fetchVisitorDetails('total'); 
  
     
 });
@@ -280,16 +289,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     function renderQualifiedLeads(qualifiedLeads) {
         const tableBody = document.getElementById('qualifiedLeadTableBody');
         tableBody.innerHTML = ''; // Clear existing rows
         qualifiedLeads.forEach((lead, index) => {
             const createdAt = new Date(lead.createdAt);
             const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
-            const row = document.createElement('tr');
+    
+            // Use lead's faceImage if available, otherwise use a placeholder image
+            const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
             
+            const row = document.createElement('tr');
             row.innerHTML = `
+                <td class="py-2 px-4">
+                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+                </td>
                 <td class="p-2">${lead.name}</td>
                 <td class="p-2">${formattedDate}</td>
                 <td class="p-2">${lead.companyName || 'N/A'}</td>
@@ -307,11 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
                     ` : ''}
                     <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-                     <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
+                    <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
+    
     
         // Add event listeners to "Add Fields" buttons
         document.querySelectorAll('.add-fields-button').forEach(button => {
@@ -733,7 +748,6 @@ function setProgress(element, percent) {
 }
 
 
-
 // Populate business proposal table
 function populateBusinessProposalTable() {
     const tableBody = document.getElementById('businessProposalTableBody');
@@ -754,14 +768,20 @@ function populateBusinessProposalTable() {
     .then(data => {
         tableBody.innerHTML = ''; // Clear existing rows
         data.forEach((proposal, index) => {
+            // Use proposal's faceImage if available, otherwise use a placeholder image
+            const faceImageUrl = proposal.faceImage ? `/images/${proposal.faceImage}` : 'https://via.placeholder.com/80';
+            
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td class="py-2 px-4">
+                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+                </td>
                 <td class="p-2">${proposal.name}</td>
                 <td class="p-2">${formatDate(proposal.createdAt)}</td>
                 <td class="p-2">${proposal.companyName}</td>
                 <td class="p-2">${proposal.phone}</td>
                 <td class="p-2">${proposal.email}</td>
-                 <td class="p-2">
+                <td class="p-2">
                     <button class="make-proposal-button text-blue-400 hover:text-blue-300" data-proposal-id="${proposal._id}">Make Proposal</button>
                 </td>
                 <td class="p-2 ${getStatusColor(proposal.buisnessproposalstatus)}">
@@ -778,6 +798,7 @@ function populateBusinessProposalTable() {
             `;
             tableBody.appendChild(row);
         });
+
            // Add event listener to all Make Proposal buttons
            document.querySelectorAll('.make-proposal-button').forEach(button => {
             button.addEventListener('click', (event) => {
@@ -957,7 +978,6 @@ function fetchCustomerCounts() {
         console.error('Error fetching counts:', error);
     });
 }
-
 // Populate customer table
 function populateCustomerTable() {
     const tableBody = document.getElementById('customerTableBody');
@@ -977,9 +997,15 @@ function populateCustomerTable() {
     })
     .then(data => {
         tableBody.innerHTML = ''; // Clear existing rows
-        data.forEach((client, index) => {
+        data.forEach((client) => {
+            // Use client's faceImage if available, otherwise use a placeholder image
+            const faceImageUrl = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
+
             const row = document.createElement('tr');
             row.innerHTML = `
+                <td class="py-2 px-4">
+                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+                </td>
                 <td class="p-2">${client.name}</td>
                 <td class="p-2">${new Date(client.createdAt).toLocaleDateString()}</td>
                 <td class="p-2">${client.companyName}</td>
@@ -988,17 +1014,18 @@ function populateCustomerTable() {
                 <td class="p-2">
                     <button class="view-profile-button text-blue-400 hover:text-blue-300" data-client-id="${client._id}">View Profile</button>
                 </td>
-               
             `;
             tableBody.appendChild(row);
         });
+        
+ 
 
-         // Add event listener to all View Profile buttons
-         document.querySelectorAll('.view-profile-button').forEach(button => {
+        // Add event listener to all View Profile buttons
+        document.querySelectorAll('.view-profile-button').forEach(button => {
             button.addEventListener('click', (event) => {
                 const clientId = event.target.getAttribute('data-client-id');
-                localStorage.setItem('clientId', clientId);
-                window.location.href = 'customer_view.html';
+                localStorage.setItem('clientId', clientId); // Store clientId in localStorage
+                window.location.href = 'customer_view.html'; // Redirect to customerview.html
             });
         });
     })
