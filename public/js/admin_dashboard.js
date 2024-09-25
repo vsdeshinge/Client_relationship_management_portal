@@ -1044,6 +1044,9 @@ function initCustomerPage() {
 document.getElementById('nav-customer').addEventListener('click', function() {
     initCustomerPage();
 });
+
+
+
 // advanced search filter 
 document.addEventListener('DOMContentLoaded', () => {
     const advancedSearchButton = document.getElementById('advancedSearchButton');
@@ -1125,7 +1128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-
 // Basic Search Logic
 document.getElementById('basicSearchInput').addEventListener('input', function() {
     let searchTerm = this.value.toLowerCase();
@@ -1144,9 +1146,11 @@ function filterTable(tableId, searchTerm) {
     for (let i = 0; i < rows.length; i++) {
         let row = rows[i];
         let nameCell = row.cells[0]?.textContent.toLowerCase() || '';
+        let phoneCell = row.cells[3]?.textContent.toLowerCase() || '';
         let emailCell = row.cells[4]?.textContent.toLowerCase() || '';
 
-        if (nameCell.includes(searchTerm) || emailCell.includes(searchTerm)) {
+        // Check if search term is found in any of these fields
+        if (nameCell.includes(searchTerm) || phoneCell.includes(searchTerm) || emailCell.includes(searchTerm)) {
             row.style.display = '';  // Show the row
         } else {
             row.style.display = 'none';  // Hide the row
@@ -1154,41 +1158,3 @@ function filterTable(tableId, searchTerm) {
     }
 }
 
-
-// // Pagination function
-// function createPagination(tableId, rowsPerPage) {
-//   const table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
-//   const rows = table.getElementsByTagName("tr");
-//   const totalPages = Math.ceil(rows.length / rowsPerPage);
-//   const paginationContainer = document.getElementById(`${tableId}-pagination`);
-
-//   let currentPage = 1;
-
-//   function displayRows(page) {
-//     let start = (page - 1) * rowsPerPage;
-//     let end = start + rowsPerPage;
-
-//     for (let i = 0; i < rows.length; i++) {
-//       rows[i].style.display = (i >= start && i < end) ? "" : "none";
-//     }
-//   }
-
-//   function createPaginationButtons() {
-//     paginationContainer.innerHTML = "";
-
-//     for (let i = 1; i <= totalPages; i++) {
-//       let button = document.createElement("button");
-//       button.innerText = i;
-//       button.className = `mx-1 px-3 py-1 border rounded ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'}`;
-//       button.addEventListener("click", function() {
-//         currentPage = i;
-//         displayRows(currentPage);
-//         createPaginationButtons();
-//       });
-//       paginationContainer.appendChild(button);
-//     }
-//   }
-
-//   displayRows(currentPage);
-//   createPaginationButtons();
-// }

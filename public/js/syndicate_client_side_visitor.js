@@ -125,7 +125,18 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault(); // Prevent form submission
         openCameraForImageCapture();
     });
+       // Handle image upload
+       document.getElementById('uploadImageButton').addEventListener('click', function() {
+        document.getElementById('uploadImage').click(); // Trigger the hidden file input
+    });
 
+    document.getElementById('uploadImage').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            faceImageFile = file; // Set faceImageFile to uploaded file
+            showImagePreview('faceImageDisplay', file); // Show preview of uploaded file
+        }
+    });
 
     setTimeout(() => {
         overlayContainer.classList.add('transition-left');
@@ -189,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('message').textContent = 'Registration successful! Thank you.';
                     setTimeout(() => {
                         location.href = 'syndicate-dashboard.html';
-                    }, 2000);
+                    }, 1000);
                 } else {
                     document.getElementById('message').textContent = `Error: ${result.error}`;
                 }

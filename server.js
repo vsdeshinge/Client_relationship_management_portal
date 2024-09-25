@@ -1285,6 +1285,35 @@ router.get('/api/mom/view/:momId', async (req, res) => {
   }
 });
 
+// set priority in snydicate dashboard 
+// Route to update the priority of a client
+app.put('/api/syndicateclients/:id/priority', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const { priority } = req.body;
+
+  if (!['low', 'medium', 'high'].includes(priority)) {
+      return res.status(400).json({ message: 'Invalid priority value. Must be one of "low", "medium", or "high".' });
+  }
+
+  try {
+      const updatedClient = await SyndicateClient.findByIdAndUpdate(
+          id, 
+          { priority }, // Update the priority field
+          { new: true } // Return the updated document
+      );
+
+      if (!updatedClient) {
+          return res.status(404).json({ message: 'Client not found' });
+      }
+
+      res.status(200).json({ message: 'Priority updated successfully', client: updatedClient });
+  } catch (error) {
+      console.error('Error updating priority:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
 app.use('/', router); // Mount the router
 
 

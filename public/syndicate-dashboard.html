@@ -89,6 +89,69 @@
             color: white;
             border-radius: 5px;
         }
+
+        /* Styling for the priority select dropdown */
+.priority-select {
+    padding: 8px;
+    border-radius: 6px;
+    border: 2px solid #ccc;
+    background-color: #f7f7f7;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    width: 100%;
+    transition: border-color 0.3s ease;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Change border color on focus */
+.priority-select:focus {
+    border-color: #888;
+    outline: none;
+}
+
+/* Priority select dropdown options */
+.priority-select option {
+    font-size: 14px;
+    padding: 10px;
+}
+
+        /* Style based on priority selected */
+        /* Low Priority (Green) */
+        .low-priority {
+            background-color: #28a745;
+            color: white;
+        }
+
+        /* Medium Priority (Yellow) */
+        .medium-priority {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        /* High Priority (Red) */
+        .high-priority {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        /* Additional button styling for Save button */
+        button {
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* On hover, make buttons darker */
+        button:hover {
+            background-color: #555;
+        }
+
+
         body { font-family: "Montserrat", sans-serif; }
     </style>
 </head>
@@ -98,8 +161,8 @@
     <aside class="w-64 bg-gray-800 h-screen p-4 flex flex-col justify-between">
         <div>
             <a href="syndicate-dashboard.html">
-                <img src="./assets/posspole_logo.png" alt="POSSPOLE_logo" class="h-16 mx-auto mb-4">
-            </a>
+                <img src="./assets/logo (1).png" alt="POSSPOLE_logo" class="h-10 w-auto mx-auto mb-4">
+            </a>
             
             <nav>
                 <ul>
@@ -145,7 +208,7 @@
                         <div>
                             <p class="text-lg font-bold">Strategy Partner Name: Kiran v</p>
                             <p class="text-sm">Email id: kiranv@gmail.com</p>
-                            <p class="text-sm">Department: Business Development</p>
+                            <p class="text-sm">Role: Business Development</p>
                             <p class="text-sm">Phone Number: 7760698948</p>
                         </div>
                     </div>
@@ -167,7 +230,11 @@
                 <th class="text-left py-2 px-4">Strategy Partner</th>
                 <th class="text-left py-2 px-4">Date and Time</th>
                 <th class="text-left py-2 px-4">Actions</th>
-                <th class="text-left py-2 px-4">Add Details</th>
+                <th class="text-left py-2 px-4">Details</th>
+                <th class="text-left py-2 px-4">MoM</th>
+                <th class="text-left py-2 px-4">Prority</th>
+                <th class="text-left py-2 px-4">Update</th>
+
             </tr>
         </thead>
         <tbody id="client-table-body">
@@ -176,6 +243,17 @@
     </table>
 </div>
 
+
+
+
+<!-- Popup Modal for Image -->
+<div id="imagePopup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-4 rounded-lg shadow-lg relative">
+        <button id="closePopup" class="absolute top-2 right-2 text-3xl font-bold text-white bg-red-600 rounded-full w-10 h-10 flex items-center justify-center hover:bg-red-800">&times;</button>
+
+        <img id="popupImage" src="" alt="Client Photo" class="max-w-full max-h-[80vh] object-contain">
+    </div>
+</div>
            
 
         </div>
@@ -233,6 +311,9 @@
                 </main>
             </div>
         </div>
+        
+
+       
 
     </div>
     <script>
@@ -293,6 +374,8 @@
             logoutButton.style.display = "none";
         }
         });
+
+        
 
     </script>
    

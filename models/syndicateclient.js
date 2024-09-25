@@ -7,8 +7,8 @@ const syndicateClientSchema = new mongoose.Schema({
     companyName: { type: String },
     personToMeet: { type: String },
     syndicate_name: { type: String, required: true },
-    faceImage: { type: mongoose.Schema.Types.ObjectId }, // Optional image field
-    // No references to other collections during the initial creation
+    faceImage: { type: mongoose.Schema.Types.ObjectId },
+    priority: { type: String, enum: ['low', 'medium', 'high'], default: 'low' }, // Add priority field
 }, { timestamps: true });
 
 module.exports = mongoose.model('SyndicateClient', syndicateClientSchema);

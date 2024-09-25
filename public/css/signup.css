@@ -216,3 +216,13 @@ button:focus {
     border-color: #66afe9;
     box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
 }
+
+/* Style the image container */
+
+
+/* Ensure the image fits inside the container */
+#faceImageDisplay img {
+    width: 80%;
+    height: 80%;
+    object-fit: cover; /* Ensures the image covers the box while maintaining aspect ratio */
+}

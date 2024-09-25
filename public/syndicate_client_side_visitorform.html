@@ -17,8 +17,8 @@
         </div>
         <div class="form-container">
             <form id="connectForm">
-                <h1>My Details</h1>
-                <!-- Your input fields -->
+                <h1>Fill Details</h1>
+                <!-- Input fields -->
                 <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
                 <input type="text" id="name" placeholder="Name" required />
                 <input type="tel" id="phone" placeholder="Phone Number" required />
@@ -28,28 +28,58 @@
                 </select>
                 
                 <input type="text" id="companyName" placeholder="Company Name" />
-                
-                <!-- Button for capturing face image -->
-                <button id="captureFace">Capture Face Image</button>
 
-                <!-- Placeholder for displaying captured image -->
+                <!-- Button for capturing face image -->
+                <button type="button" id="captureFace">Capture Face Image</button>
+
+                <!-- New input for uploading an image from the device -->
+                <input type="file" id="uploadImage" accept="image/*" style="display:none;" />
+                <button type="button" id="uploadImageButton">Upload Image</button>
+
+                <!-- Placeholder for displaying captured/uploaded image -->
                 <div id="capturedImages">
-                    <h2>Captured Image:</h2>
+                    <h2>Captured/Uploaded Image:</h2>
                     <div id="faceImageDisplay"></div>
                 </div>
+                 
+
 
                 <button type="submit">Let's Connect</button>
             </form>
             <div class="thank-you-container" id="thankYouContainer" style="display:none;">
                 <img src="assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
                 <h1>Thank you for filling out the form!</h1>
-                <p>The request has been sent to the person who you wanted to meet.</p>
+                <p>You will be redirected to the main dashboard in 3 seconds</p>
             </div>
         </div>
     </div>
     <div id="message"></div>
 
     <script type="module" src="./js/syndicate_client_side_visitor.js"></script>
+   <script>
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Trigger the hidden file input when the "Upload Image" button is clicked
+        document.getElementById('uploadImageButton').addEventListener('click', function() {
+            document.getElementById('uploadImage').click(); // Trigger the hidden file input
+        });
 
+        // Event listener for when a file is selected
+        document.getElementById('uploadImage').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Display the uploaded image in the image container
+                    const imageDisplay = document.getElementById('faceImageDisplay');
+                    imageDisplay.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                    imageDisplay.style.display = 'flex'; 
+                };
+                reader.readAsDataURL(file); // Read the file as a Data URL for preview
+            }
+        });
+    });
+
+   </script>
 </body>
 </html>
