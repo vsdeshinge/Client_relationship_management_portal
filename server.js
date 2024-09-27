@@ -25,6 +25,9 @@ const methodOverride = require('method-override');
 const fs = require('fs');
 const crypto = require('crypto'); 
 const { GridFSBucket } = require('mongodb');
+const nodemailer = require('nodemailer');
+const QRCode = require('qrcode');
+
 
 const MoM = require('./models/mom.js');
 
@@ -167,51 +170,106 @@ app.get('/images/:id', async (req, res) => {
 });
 
 
+// Add your Nodemailer transporter setup here
+const transporter = nodemailer.createTransport({
+  service: 'gmail', // You can use other email services if needed
+  auth: {
+      user: 'shakthi.amarnath@gmail.com', // Replace with your email
+      pass: 'leot sigm nvur fgou' // Replace with your email password
+  }
+});
+
+
 // Admin Route - Register Client
 app.post('/register', faceImageUpload, async (req, res) => {
   const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
 
   if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
-    return res.status(400).json({ error: 'All fields are required.' });
+      return res.status(400).json({ error: 'All fields are required.' });
   }
 
   try {
-    const newClient = new Client({
-      name,
-      phone,
-      email,
-      companyName,
-      personToMeet,
-      personReferred,
-      syndicate_name: syndicate_name.trim(),
-    });
-
-    if (req.file) {
-      const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
-      const uploadStream = gridfsBucket.openUploadStream(filename);
-
-      uploadStream.end(req.file.buffer);
-
-      uploadStream.on('finish', async () => {
-        newClient.faceImage = uploadStream.id; // Store the file ID in the database
-        await newClient.save();
-        res.status(201).json({ message: 'Registration successful!' });
+      // Create a new client
+      const newClient = new Client({
+          name,
+          phone,
+          email,
+          companyName,
+          personToMeet,
+          personReferred,
+          syndicate_name: syndicate_name.trim(),
       });
 
-      uploadStream.on('error', (error) => {
-        console.error('Error during file upload:', error);
-        res.status(500).json({ error: 'Error during file upload' });
-      });
-    } else {
-      await newClient.save();
-      res.status(201).json({ message: 'Registration successful!' });
-    }
+      if (req.file) {
+          const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
+          const uploadStream = gridfsBucket.openUploadStream(filename);
+
+          uploadStream.end(req.file.buffer);
+
+          uploadStream.on('finish', async () => {
+              newClient.faceImage = uploadStream.id; // Store the file ID in the database
+              
+              // Save the new client to the database
+              await newClient.save();
+
+              // Generate the QR code and send the email
+              await generateAndSendQRCode(newClient); 
+
+              res.status(201).json({ message: 'Registration successful! QR code sent to email.' });
+          });
+
+          uploadStream.on('error', (error) => {
+              console.error('Error during file upload:', error);
+              res.status(500).json({ error: 'Error during file upload' });
+          });
+      } else {
+          // Save the new client to the database
+          await newClient.save();
+
+          // Generate the QR code and send the email
+          await generateAndSendQRCode(newClient);
+
+          res.status(201).json({ message: 'Registration successful! QR code sent to email.' });
+      }
   } catch (error) {
-    console.error('Error saving client:', error);
-    res.status(500).json({ error: 'Error during registration. Please try again later.' });
+      console.error('Error saving client:', error);
+      res.status(500).json({ error: 'Error during registration. Please try again later.' });
   }
 });
 
+async function generateAndSendQRCode(client) {
+  try {
+      // Use the unique client ID to create the QR code URL
+      const qrData = `https://www.posspole.line.pm/visitor.html?client_id=${client._id}`;
+
+      // Generate the QR code with specific options
+      const qrCodeUrl = await QRCode.toDataURL(qrData, {
+          errorCorrectionLevel: 'M', // Set error correction level to medium
+          width: 300, // Set width to 300px for a smaller QR code
+          margin: 2 // Adjust margin size
+      });
+
+      // Send email with QR code
+      const mailOptions = {
+          from: 'shakthi.amarnath@gmail.com',
+          to: client.email,
+          subject: 'Thank You for Registering!',
+          html: `
+              <h3>Thank you for registering!</h3>
+              <p>Name: ${client.name}</p>
+              <p>Phone No: ${client.phone}</p>
+              <p>Email ID: ${client.email}</p>
+              <p>Scan the QR code below when you visit:</p>
+              <img src="${qrCodeUrl}" alt="QR Code" width="200" height="200" />
+          `
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log('QR code email sent successfully');
+  } catch (error) {
+      console.error('Error generating QR code or sending email:', error);
+  }
+}
 
 
 // Login route
