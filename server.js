@@ -27,6 +27,7 @@ const crypto = require('crypto');
 const { GridFSBucket } = require('mongodb');
 const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
+const cron = require('node-cron');
 
 
 const MoM = require('./models/mom.js');
@@ -48,7 +49,7 @@ const ChannelPartner = require('./models/channelpartner.js');
 const DomainExpert = require('./models/domainexpert.js');
 const BusinessProposal = require('./models/buisnessproposal.js');
 const SyndicateClient = require('./models/syndicateclient.js');
-
+const Visit = require('./models/visitor_logs.js');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -237,35 +238,70 @@ app.post('/register', faceImageUpload, async (req, res) => {
   }
 });
 
-async function generateAndSendQRCode(client) {
-  try {
-      // Use the unique client ID to create the QR code URL
-      const qrData = `https://www.posspole.line.pm/visitor.html?client_id=${client._id}`;
 
-      // Generate the QR code with specific options
-      const qrCodeUrl = await QRCode.toDataURL(qrData, {
-          errorCorrectionLevel: 'M', // Set error correction level to medium
-          width: 300, // Set width to 300px for a smaller QR code
-          margin: 2 // Adjust margin size
+// Function to generate a QR code, save it, and send it as an inline image in the email
+async function generateAndSendQRCode(client, isSyndicateClient = false) {
+  try {
+      // Determine the URL based on whether the client is a syndicate client
+      const pageUrl = isSyndicateClient 
+          ? `https://www.posspole.line.pm/syndicate_client_side_visitorform.html`
+          : `https://www.posspole.line.pm/visitor.html`;
+
+      // Use the unique client ID to create the QR code URL
+      const qrData = `${pageUrl}?client_id=${client._id}`;
+
+      // Define the file path to save the QR code
+      const qrCodeFilePath = path.join(__dirname, `${client._id}-qrcode.png`);
+
+      // Generate the QR code and save it to the specified file path
+      await QRCode.toFile(qrCodeFilePath, qrData, {
+          errorCorrectionLevel: 'M',
+          width: 300,
+          margin: 2
       });
 
-      // Send email with QR code
+      // Set up the email with the QR code as an inline image
       const mailOptions = {
-          from: 'shakthi.amarnath@gmail.com',
+          from: 'your-email@gmail.com',
           to: client.email,
           subject: 'Thank You for Registering!',
           html: `
-              <h3>Thank you for registering!</h3>
-              <p>Name: ${client.name}</p>
-              <p>Phone No: ${client.phone}</p>
-              <p>Email ID: ${client.email}</p>
-              <p>Scan the QR code below when you visit:</p>
-              <img src="${qrCodeUrl}" alt="QR Code" width="200" height="200" />
-          `
+              <!DOCTYPE html>
+              <html>
+              <head>
+                  <style>
+                      body {
+                          font-family: Arial, sans-serif;
+                          color: #333;
+                          line-height: 1.5;
+                      }
+                  </style>
+              </head>
+              <body>
+                  <h3>Thank you for registering!</h3>
+                  <p><strong>Name:</strong> ${client.name}</p>
+                  <p><strong>Phone No:</strong> ${client.phone}</p>
+                  <p><strong>Email ID:</strong> ${client.email}</p>
+                  <p>Scan the QR code below when you visit:</p>
+                  <img src="cid:qrcode" alt="QR Code" style="width: 300px; height: 300px;"/>
+              </body>
+              </html>
+          `,
+          attachments: [
+              {
+                  filename: `${client._id}-qrcode.png`,
+                  path: qrCodeFilePath,
+                  cid: 'qrcode' // Same as the 'cid' in the <img> tag
+              }
+          ]
       };
 
+      // Send the email
       await transporter.sendMail(mailOptions);
       console.log('QR code email sent successfully');
+
+      // Clean up the QR code file from the server after sending the email
+      fs.unlinkSync(qrCodeFilePath);
   } catch (error) {
       console.error('Error generating QR code or sending email:', error);
   }
@@ -358,6 +394,7 @@ app.post('/syndicate-login', async (req, res) => {
   }
 });
 
+
 // Syndicate Route - Register Syndicate Client
 router.post('/api/syndicateclients/register', upload.single('faceImage'), async (req, res) => {
   try {
@@ -396,7 +433,7 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       });
     }
 
-    // Create a new syndicate client without additional collections (projects, services, etc.)
+    // Create a new syndicate client
     const syndicateClient = new SyndicateClient({
       name,
       phone,
@@ -409,7 +446,10 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
 
     await syndicateClient.save();
 
-    res.status(201).json({ message: 'Syndicate client registered successfully' });
+    // Generate the QR code and send the email
+    await generateAndSendQRCode(syndicateClient);
+
+    res.status(201).json({ message: 'Syndicate client registered successfully. QR code sent to email.' });
 
   } catch (error) {
     console.error('Error registering syndicate client:', error);
@@ -1370,6 +1410,157 @@ app.put('/api/syndicateclients/:id/priority', authenticateToken, async (req, res
       res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+// visitor pass apis
+
+
+
+// Fetch and display the client data
+app.get('/api/client/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Try to find the client in the Client collection
+    let client = await Client.findById(id);
+    
+    if (client) {
+      return res.json({ success: true, client, collection: 'Client' });
+    }
+
+    // If not found, try to find the client in the SyndicateClient collection
+    client = await SyndicateClient.findById(id);
+    
+    if (client) {
+      return res.json({ success: true, client, collection: 'SyndicateClient' });
+    }
+
+    // If not found in either collection, return a not found message
+    return res.json({ success: false, message: 'Client not found' });
+  } catch (error) {
+    console.error('Error fetching client:', error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+app.post('/api/client/:id/checkin', async (req, res) => {
+  try {
+      // Try to find the client in the Client collection
+      let client = await Client.findById(req.params.id);
+      let collectionType = 'Client';
+
+      // If not found in Client, try to find in SyndicateClient
+      if (!client) {
+          client = await SyndicateClient.findById(req.params.id);
+          collectionType = 'SyndicateClient';
+      }
+
+      if (client) {
+          // Create a new visit entry with collectionType
+          const newVisit = new Visit({
+              clientId: client._id,
+              collectionType: collectionType,
+              checkInTime: new Date()
+          });
+          await newVisit.save();
+
+          res.json({ success: true, message: 'Check-in successful', collectionType });
+      } else {
+          res.json({ success: false, message: 'Client not found' });
+      }
+  } catch (error) {
+      console.error('Error during check-in:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+// Check-out
+app.post('/api/client/:id/checkout', async (req, res) => {
+  try {
+      // Try to find the client in the Client collection
+      let client = await Client.findById(req.params.id);
+      let collectionType = 'Client';
+
+      // If not found in Client, try to find in SyndicateClient
+      if (!client) {
+          client = await SyndicateClient.findById(req.params.id);
+          collectionType = 'SyndicateClient';
+      }
+
+      if (client) {
+          // Find the latest visit where checkOutTime is not set
+          const latestVisit = await Visit.findOne({ clientId: client._id, checkOutTime: null }).sort({ checkInTime: -1 });
+
+          if (latestVisit) {
+              latestVisit.checkOutTime = new Date();
+              await latestVisit.save();
+
+              res.json({ success: true, message: 'Check-out successful', collectionType });
+          } else {
+              res.json({ success: false, message: 'No active check-in found to check out.' });
+          }
+      } else {
+          res.json({ success: false, message: 'Client not found' });
+      }
+  } catch (error) {
+      console.error('Error during check-out:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+
+//auto checkout code 
+
+// Auto-checkout cron job
+cron.schedule('0 18 * * *', async () => {
+  try {
+      // Find all visits where checkOutTime is null
+      const pendingCheckouts = await Visit.find({ checkOutTime: null });
+
+      // Iterate through each pending checkout
+      for (const visit of pendingCheckouts) {
+          // Calculate the checkout time as 6 hours after check-in
+          const checkOutTime = new Date(visit.checkInTime);
+          checkOutTime.setHours(checkOutTime.getHours() + 6);
+
+          // Update the checkout time in the visit document
+          await Visit.updateOne({ _id: visit._id }, { $set: { checkOutTime: checkOutTime } });
+      }
+
+      console.log('Automatic check-out completed for all pending check-ins.');
+  } catch (error) {
+      console.error('Error during automatic check-out:', error);
+  }
+});
+
+
+router.get('/api/visit-history', async (req, res) => {
+  try {
+    // Fetch all visits
+    const visits = await Visit.find().sort({ checkInTime: -1 });
+
+    // Fetch client data based on collectionType
+    const populatedVisits = await Promise.all(
+      visits.map(async (visit) => {
+        if (visit.collectionType === 'Client') {
+          const client = await Client.findById(visit.clientId);
+          return { ...visit.toObject(), clientId: client };
+        } else if (visit.collectionType === 'SyndicateClient') {
+          const client = await SyndicateClient.findById(visit.clientId);
+          return { ...visit.toObject(), clientId: client };
+        }
+      })
+    );
+
+    res.status(200).json({ success: true, visits: populatedVisits });
+  } catch (error) {
+    console.error('Error fetching visit history:', error);
+    res.status(500).json({ success: false, error: 'Failed to fetch visit history.' });
+  }
+});
+
 
 
 app.use('/', router); // Mount the router

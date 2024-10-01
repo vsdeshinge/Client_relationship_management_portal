@@ -1128,33 +1128,4 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// Basic Search Logic
-document.getElementById('basicSearchInput').addEventListener('input', function() {
-    let searchTerm = this.value.toLowerCase();
-
-    // Filter each table separately
-    filterTable('customerTableBody', searchTerm);
-    filterTable('businessProposalTableBody', searchTerm);
-    filterTable('qualifiedLeadTableBody', searchTerm);
-    filterTable('visitorsTableBody', searchTerm);
-});
-
-function filterTable(tableId, searchTerm) {
-    let tableBody = document.getElementById(tableId);
-    let rows = tableBody.getElementsByTagName('tr');
-    
-    for (let i = 0; i < rows.length; i++) {
-        let row = rows[i];
-        let nameCell = row.cells[0]?.textContent.toLowerCase() || '';
-        let phoneCell = row.cells[3]?.textContent.toLowerCase() || '';
-        let emailCell = row.cells[4]?.textContent.toLowerCase() || '';
-
-        // Check if search term is found in any of these fields
-        if (nameCell.includes(searchTerm) || phoneCell.includes(searchTerm) || emailCell.includes(searchTerm)) {
-            row.style.display = '';  // Show the row
-        } else {
-            row.style.display = 'none';  // Hide the row
-        }
-    }
-}
 

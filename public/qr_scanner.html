@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Scanner</title>
+    <!-- Load the html5-qrcode library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <!-- Include Tailwind CSS for styling -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .hidden-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navigation Bar -->
+    <nav class="bg-blue-600 p-4 text-white flex justify-between">
+        <h1 id="qr-tab" class="cursor-pointer">QR Scanner</h1>
+        <h1 id="history-tab" class="cursor-pointer">History</h1>
+    </nav>
+
+    <!-- Container for QR Scanner -->
+    <div id="scanner-section" class="p-4">
+        <h1 class="text-2xl mb-4">QR Code Scanner</h1>
+        <!-- QR Scanner area -->
+        <div id="qr-reader" class="mb-4" style="width: 300px;"></div>
+        <!-- Toggle Camera Button -->
+        <button id="flip-camera-btn" class="bg-blue-600 text-white p-2 rounded mb-4">Flip Camera</button>
+
+        <!-- Client Details -->
+        <div id="client-details" class="bg-white p-4 rounded shadow-md">
+            <h3 id="client-name" class="text-xl"></h3>
+            <p id="client-phone"></p>
+            <p id="client-email"></p>
+            <p id="client-company"></p>
+            <img id="client-photo" alt="Client Photo" class="w-24 h-24 rounded mt-4" style="display: none;" />
+        </div>
+
+        <!-- Check In and Check Out Buttons -->
+        <div class="mt-4">
+            <button id="check-in-btn" class="bg-green-600 text-white p-2 rounded mr-2" style="display: none;">Check In</button>
+            <button id="check-out-btn" class="bg-red-600 text-white p-2 rounded" style="display: none;">Check Out</button>
+        </div>
+    </div>
+
+    <!-- Container for History -->
+    <div id="history-section" class="hidden-section p-4">
+        <h1 class="text-2xl mb-4">Client Visit History</h1>
+        <div id="history-list" class="bg-white p-4 rounded shadow-md">
+            <!-- History items will be populated here -->
+        </div>
+    </div>
+
+    <!-- Link to the external JavaScript file -->
+    <script src="./js/qr_scanner.js"></script>
+</body>
+</html>
