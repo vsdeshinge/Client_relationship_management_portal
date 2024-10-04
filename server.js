@@ -1443,7 +1443,7 @@ app.get('/api/client/:id', async (req, res) => {
   }
 });
 
-
+// Check-in
 app.post('/api/client/:id/checkin', async (req, res) => {
   try {
       // Try to find the client in the Client collection
@@ -1457,7 +1457,21 @@ app.post('/api/client/:id/checkin', async (req, res) => {
       }
 
       if (client) {
-          // Create a new visit entry with collectionType
+          // Check if the client has already checked in today
+          const startOfDay = new Date();
+          startOfDay.setHours(0, 0, 0, 0); // Set time to the start of the day
+
+          const existingVisit = await Visit.findOne({
+              clientId: client._id,
+              collectionType: collectionType,
+              checkInTime: { $gte: startOfDay }
+          });
+
+          if (existingVisit) {
+              return res.json({ success: false, message: 'Client has already checked in today.' });
+          }
+
+          // Create a new visit entry if not already checked in today
           const newVisit = new Visit({
               clientId: client._id,
               collectionType: collectionType,
@@ -1474,8 +1488,6 @@ app.post('/api/client/:id/checkin', async (req, res) => {
       res.status(500).json({ success: false, message: 'Server error' });
   }
 });
-
-
 // Check-out
 app.post('/api/client/:id/checkout', async (req, res) => {
   try {
@@ -1490,16 +1502,24 @@ app.post('/api/client/:id/checkout', async (req, res) => {
       }
 
       if (client) {
-          // Find the latest visit where checkOutTime is not set
-          const latestVisit = await Visit.findOne({ clientId: client._id, checkOutTime: null }).sort({ checkInTime: -1 });
+          // Find the latest visit for today, regardless of whether checkOutTime is set
+          const startOfDay = new Date();
+          startOfDay.setHours(0, 0, 0, 0); // Start of the day
+          
+          const latestVisit = await Visit.findOne({
+              clientId: client._id,
+              collectionType: collectionType,
+              checkInTime: { $gte: startOfDay }
+          }).sort({ checkInTime: -1 });
 
           if (latestVisit) {
+              // Update the checkOutTime even if it was previously set (auto-checkout)
               latestVisit.checkOutTime = new Date();
               await latestVisit.save();
 
               res.json({ success: true, message: 'Check-out successful', collectionType });
           } else {
-              res.json({ success: false, message: 'No active check-in found to check out.' });
+              res.json({ success: false, message: 'No active check-in found for today.' });
           }
       } else {
           res.json({ success: false, message: 'Client not found' });
@@ -1513,11 +1533,15 @@ app.post('/api/client/:id/checkout', async (req, res) => {
 
 //auto checkout code 
 
+
 // Auto-checkout cron job
 cron.schedule('0 18 * * *', async () => {
   try {
-      // Find all visits where checkOutTime is null
-      const pendingCheckouts = await Visit.find({ checkOutTime: null });
+      // Find all visits where checkOutTime is null and it's been more than 6 hours since check-in
+      const pendingCheckouts = await Visit.find({
+          checkOutTime: null,
+          checkInTime: { $lte: new Date(new Date() - 6 * 60 * 60 * 1000) } // 6 hours ago
+      });
 
       // Iterate through each pending checkout
       for (const visit of pendingCheckouts) {
@@ -1534,6 +1558,7 @@ cron.schedule('0 18 * * *', async () => {
       console.error('Error during automatic check-out:', error);
   }
 });
+
 
 
 router.get('/api/visit-history', async (req, res) => {

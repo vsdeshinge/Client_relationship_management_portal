@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.success) {
                     alert(`${action === 'checkin' ? 'Check In' : 'Check Out'} successful!`);
                 } else {
-                    alert('Failed to log action!');
+                    alert(data.message); // Display the message from the server
                 }
             })
             .catch(error => {
@@ -222,4 +222,5 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     }
+    
 });
