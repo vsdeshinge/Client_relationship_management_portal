@@ -5,7 +5,7 @@ const Admin = require('./models/admin.js'); // Adjust path as necessary
 async function main() {
   try {
     // Connect to MongoDB
-    const uri = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority&appName=shakthi';
+    const uri = 'mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin';
     await mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true
