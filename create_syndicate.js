@@ -40,7 +40,7 @@ async function main() {
 
     const usersToCreate = [
       // { user_id: '100', syndicateName: 'shakthi', password: 'shakthi', department: 'SOFTWARE' },
-      { user_id: '101', syndicateName: 'kiran', password: 'kiran', department: 'sales' }
+      { user_id: '101', syndicateName: 'kiran', password: 'kiran', department: 'software' }
 
     ];
     

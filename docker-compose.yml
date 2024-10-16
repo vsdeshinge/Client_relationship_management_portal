@@ -4,18 +4,32 @@ services:
   app:
     build: .
     ports:
-      - "3001:3000"  # Exposing port 3001 on the host to port 3000 in the container
+      - "3001:3000"
     environment:
       - MONGODB_URI=mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin
     depends_on:
-      - mongo  # The app service will wait for mongo to be ready before starting
+      - mongo
+    restart: always  # Add this line to always restart the container
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]  # Healthcheck for the app container
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017"  # Exposing port 27017 on the host
+      - "27017:27017"
     volumes:
-      - mongo-data:/data/db  # Persistent storage for MongoDB
+      - mongo-data:/data/db
+    restart: always  # Ensure MongoDB also restarts
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
 
 volumes:
-  mongo-data:  # Named volume to persist MongoDB data
+  mongo-data:
