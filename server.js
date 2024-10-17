@@ -178,7 +178,7 @@ app.post('/register', faceImageUpload, async (req, res) => {
       email,
       companyName,
       personToMeet,
-      personReferred,
+      personreferred,
       domain // Save domain
     });
 
