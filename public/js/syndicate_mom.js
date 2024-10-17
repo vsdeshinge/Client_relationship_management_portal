@@ -32,18 +32,21 @@ async function fetchClientDetails(clientId) {
 
 function displayClientDetails(client) {
     const userInfoCard = document.querySelector('.bg-gray-900.p-4.rounded-md.mb-6');
-    const faceImageUrl = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
+    const profileImage = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
 
     userInfoCard.innerHTML = `
-        <div class="flex items-center">
-            <img src="${faceImageUrl}" alt="Profile" class="w-16 h-16 rounded-full">
-            <div class="ml-4">
-                <p>Name: ${client.name}</p>
-                <p>Email: ${client.email}</p>
-                <p>Domain: ${client.domain || 'N/A'}</p>
-                <p>Phone: ${client.phone}</p>
+         <div class="flex items-center">
+                <img id="profile-img" src="${profileImage}" alt="Profile" class="profile-img">
+                <div>
+                    <p class="text-lg font-bold">Name: ${client.name || 'N/A'}</p>
+                    <p class="text-sm">Company: ${client.companyName || 'N/A'}</p>
+                      <p class="text-sm">Domain: ${client.domain || 'N/A'}</p> 
+                    <p class="text-sm">Person To Meet: ${client.personToMeet || 'N/A'}</p>
+                    <p class="text-sm">Referred By: ${client.personreferred || 'N/A'}</p>
+                    <p class="text-sm">Email: ${client.email || 'N/A'}</p>
+                    <p class="text-sm">Phone No.: ${client.phone || 'N/A'}</p>
+                </div>
             </div>
-        </div>
     `;
 }
 

@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('personReferred', document.getElementById('personReferred').value.trim());
-        formData.append('syndicate_name', document.getElementById('syndicate_name').value.trim());
+        formData.append('domain', document.getElementById('domains').value.trim());
 
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);

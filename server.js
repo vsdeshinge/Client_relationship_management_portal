@@ -51,7 +51,11 @@ const DomainExpert = require('./models/domainexpert.js');
 const BusinessProposal = require('./models/buisnessproposal.js');
 const SyndicateClient = require('./models/syndicateclient.js');
 const Visit = require('./models/visitor_logs.js');
+<<<<<<< Updated upstream
 const authenticateToken = require('./public/js/authenticateToken.js');
+=======
+const authenticateToken = require('./public/js/authenticationToken.js');
+>>>>>>> Stashed changes
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Connect to MongoDB
@@ -99,6 +103,7 @@ const upload = multer({ storage });
 const router = express.Router();
 
 
+<<<<<<< Updated upstream
 // Function to generate JWT token
 function generateToken(user, role) {
   const payload = { 
@@ -109,12 +114,25 @@ function generateToken(user, role) {
 
   console.log('Generating token with secret:', process.env.JWT_SECRET); // Log the secret
   
+=======
+function generateToken(user, role) {
+  const payload = { 
+    id: user._id, 
+    username: user.username, // Assuming admins have username
+    syndicate_name: user.syndicate_name, // Assuming syndicates have syndicate_name
+    role: role // 'admin' or 'syndicate'
+  };
+
+>>>>>>> Stashed changes
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
   return token;
 }
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 app.get('/images/:id', async (req, res) => {
   try {
     const fileId = new mongoose.Types.ObjectId(req.params.id);
@@ -152,62 +170,78 @@ const transporter = nodemailer.createTransport({
 });
 
 
-// Admin Route - Register Client
-app.post('/register', faceImageUpload, async (req, res) => {
-  const { name, phone, email, companyName, personToMeet, personReferred, syndicate_name } = req.body;
 
-  if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !syndicate_name) {
-      return res.status(400).json({ error: 'All fields are required.' });
+// Visitor - Register Client (Admin perspective)
+app.post('/register', faceImageUpload, async (req, res) => {
+  const { name, phone, email, companyName, personToMeet, personReferred, domain } = req.body; // Added domain
+
+  if (!name || !phone || !email || !companyName || !personToMeet || !personReferred || !domain) { // Validate domain
+    return res.status(400).json({ error: 'All fields are required.' });
   }
 
   try {
-      // Create a new client
-      const newClient = new Client({
-          name,
-          phone,
-          email,
-          companyName,
-          personToMeet,
-          personReferred,
-          syndicate_name: syndicate_name.trim(),
+    // Check if a client with the same email or phone exists in BOTH collections (Client and SyndicateClient)
+    const existingClientByEmail = await Client.findOne({ email }) || await SyndicateClient.findOne({ email });
+    const existingClientByPhone = await Client.findOne({ phone }) || await SyndicateClient.findOne({ phone });
+
+    if (existingClientByEmail) {
+      return res.status(400).json({ error: 'Email already exists.' });
+    }
+
+    if (existingClientByPhone) {
+      return res.status(400).json({ error: 'Phone number already exists.' });
+    }
+
+    // Create a new client
+    const newClient = new Client({
+      name,
+      phone,
+      email,
+      companyName,
+      personToMeet,
+      personReferred,
+      domain // Save domain
+    });
+
+    if (req.file) {
+      const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
+      const uploadStream = gridfsBucket.openUploadStream(filename);
+
+      uploadStream.end(req.file.buffer);
+
+      uploadStream.on('finish', async () => {
+        newClient.faceImage = uploadStream.id; // Store the file ID in the database
+
+        // Save the new client to the database
+        await newClient.save();
+
+        // Generate the QR code and send the email
+        await generateAndSendQRCode(newClient);
+
+        res.status(201).json({ message: 'Registration successful! QR code sent to email.' });
       });
 
-      if (req.file) {
-          const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
-          const uploadStream = gridfsBucket.openUploadStream(filename);
+      uploadStream.on('error', (error) => {
+        console.error('Error during file upload:', error);
+        res.status(500).json({ error: 'Error during file upload' });
+      });
+    } else {
+      // Save the new client to the database
+      await newClient.save();
 
-          uploadStream.end(req.file.buffer);
+      // Generate the QR code and send the email
+      await generateAndSendQRCode(newClient);
 
-          uploadStream.on('finish', async () => {
-              newClient.faceImage = uploadStream.id; // Store the file ID in the database
-              
-              // Save the new client to the database
-              await newClient.save();
-
-              // Generate the QR code and send the email
-              await generateAndSendQRCode(newClient); 
-
-              res.status(201).json({ message: 'Registration successful! QR code sent to email.' });
-          });
-
-          uploadStream.on('error', (error) => {
-              console.error('Error during file upload:', error);
-              res.status(500).json({ error: 'Error during file upload' });
-          });
-      } else {
-          // Save the new client to the database
-          await newClient.save();
-
-          // Generate the QR code and send the email
-          await generateAndSendQRCode(newClient);
-
-          res.status(201).json({ message: 'Registration successful! QR code sent to email.' });
-      }
+      res.status(201).json({ message: 'Registration successful! QR code sent to email.' });
+    }
   } catch (error) {
-      console.error('Error saving client:', error);
-      res.status(500).json({ error: 'Error during registration. Please try again later.' });
+    console.error('Error saving client:', error);
+    res.status(500).json({ error: 'Error during registration. Please try again later.' });
   }
 });
+
+
+
 
 
 // Function to generate a QR code, save it, and send it as an inline image in the email
@@ -318,6 +352,7 @@ app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
   }
 });
 
+<<<<<<< Updated upstream
 // Route to fetch all syndicate names (dropdown)
 // app.get('/api/syndicate/names', async (req, res) => {
 //   try {
@@ -329,8 +364,11 @@ app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
 //   }
 // });
 
+=======
+>>>>>>> Stashed changes
 
 // Syndicate login route
+
 app.post('/syndicate-login', async (req, res) => {
   let { syndicate_name, password } = req.body;
 
@@ -352,26 +390,45 @@ app.post('/syndicate-login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
+<<<<<<< Updated upstream
     // Generate JWT token using generateToken function
     const token = generateToken(syndicateUser, 'syndicate');
+=======
+    // Use the generateToken function to create the JWT
+    const token = generateToken(syndicateUser, 'syndicate');  // This line calls the generateToken function
+>>>>>>> Stashed changes
 
-    res.json({ message: 'Syndicate login successful', token });
+    res.json({ message: 'Strategy partner login successful', token });
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 // Syndicate Route - Register Syndicate Client
 router.post('/api/syndicateclients/register', upload.single('faceImage'), async (req, res) => {
   try {
     const token = req.headers['authorization'].split(' ')[1]; // Extract token from Bearer authorization header
+<<<<<<< Updated upstream
     const decodedToken = jwt.verify(token, 'your_secret_key'); // Replace with your secret key
     const syndicate_name = decodedToken.syndicate_name; // Extract syndicate_name from token payload
 
     const { name, phone, email, companyName, personToMeet } = req.body;
+=======
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Use the same secret key used for signing the token
+
+    if (!decodedToken || !decodedToken.syndicate_name) {
+      return res.status(403).json({ error: 'Syndicate name not found in token' });
+    }
+
+    const syndicate_name = decodedToken.syndicate_name; // Extract syndicate_name from token payload
+    const { name, phone, email, companyName, personToMeet, domain, personreferred } = req.body; // Include domain and personReferred
+>>>>>>> Stashed changes
 
     // Validate required fields: name, phone
     if (!name || !phone) {
@@ -413,7 +470,13 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       email,
       companyName,
       personToMeet,
+<<<<<<< Updated upstream
       syndicate_name, // Auto-assigned from decoded token
+=======
+      domain, // Include domain
+      personreferred, // Include personReferred
+      syndicate_name, // Assign syndicate_name from token
+>>>>>>> Stashed changes
       faceImage: faceImageId, // Reference the uploaded image ID
     });
 
@@ -429,6 +492,9 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
 
 
 // Route to fetch syndicate clients filtered by syndicate_name
@@ -460,6 +526,8 @@ router.get('/api/syndicateclient/:id', authenticateToken, async (req, res) => {
       res.status(500).json({ error: 'Error fetching syndicate client' });
   }
 });
+
+
 router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
 
@@ -484,9 +552,12 @@ router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
   }
 });
 
+<<<<<<< Updated upstream
 
 
 
+=======
+>>>>>>> Stashed changes
 // Admin login route
 app.post('/admin/login', async (req, res) => {
   const { username, password } = req.body;
@@ -505,10 +576,25 @@ app.post('/admin/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
+<<<<<<< Updated upstream
     // Generate JWT token using generateToken function
     const token = generateToken(admin, 'admin');
     console.log('Login successful, admin ID:', admin._id);
     
+=======
+    // Generate a JWT token with the admin's role
+    const token = jwt.sign(
+      {
+        id: admin._id, 
+        username: admin.username, 
+        role: 'admin' // Explicitly mention role as 'admin'
+      }, 
+      JWT_SECRET, 
+      { expiresIn: '1h' }
+    );
+
+    console.log('Login successful, admin ID:', admin._id);
+>>>>>>> Stashed changes
     res.status(200).json({ token, adminId: admin._id });
   } catch (error) {
     console.error('Error during login:', error);
@@ -516,7 +602,10 @@ app.post('/admin/login', async (req, res) => {
   }
 });
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 // admin dashboard 
 router.get('/admin/:id', authenticateToken, async (req, res) => {
   try {

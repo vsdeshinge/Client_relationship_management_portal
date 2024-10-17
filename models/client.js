@@ -6,8 +6,8 @@ const clientSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   companyName: { type: String, required: true },
   personToMeet: { type: String },
-  syndicate_name: { type: String },
   personReferred: { type: String },
+  domain: { type: String, required: true }, // New field for the domain
   faceImage: { type: mongoose.Schema.Types.ObjectId },
   status: { type: String, default: 'New' },
   businessProposalStatus: { type: String, default: 'New' },
