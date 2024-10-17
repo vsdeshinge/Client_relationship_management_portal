@@ -30,6 +30,7 @@ const QRCode = require('qrcode');
 const cron = require('node-cron');
 
 
+
 const MoM = require('./models/mom.js');
 
 const app = express();
@@ -50,7 +51,7 @@ const DomainExpert = require('./models/domainexpert.js');
 const BusinessProposal = require('./models/buisnessproposal.js');
 const SyndicateClient = require('./models/syndicateclient.js');
 const Visit = require('./models/visitor_logs.js');
-
+const authenticateToken = require('./public/js/authenticateToken.js');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Connect to MongoDB
@@ -97,52 +98,22 @@ const upload = multer({ storage });
 
 const router = express.Router();
 
-function authenticateToken(req, res, next) {
-  const tokenHeader = req.headers['authorization']; // Get the Authorization header
 
-  // Check if the Authorization header exists
-  if (!tokenHeader) {
-    console.error('No token provided');
-    return res.sendStatus(401); // Unauthorized
-  }
+// Function to generate JWT token
+function generateToken(user, role) {
+  const payload = { 
+    id: user._id, 
+    username: user.username || user.syndicate_name, // Use syndicate_name for syndicate users
+    role: role // 'admin' or 'syndicate'
+  };
 
-  // Split the Bearer token and get the actual token
-  const token = tokenHeader.split(' ')[1];
-
-  // Ensure the token exists after splitting
-  if (!token) {
-    console.error('Token missing after "Bearer"');
-    return res.sendStatus(401); // Unauthorized
-  }
-
-  console.log('Extracted token:', token);
-
-  // Now verify the token
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      console.error('Failed to verify token:', err);
-      return res.sendStatus(403); // Forbidden
-    }
-
-    // Assign the user from the token to req.user
-    req.user = user;
-
-    // Check if the role is present in the token payload
-    if (!req.user.role) {
-      console.error('No role found in token');
-      return res.sendStatus(403); // Forbidden
-    }
-
-    // Check if the role is either 'admin' or 'syndicate'
-    if (req.user.role !== 'admin' && req.user.role !== 'syndicate') {
-      console.error('Unauthorized role:', req.user.role);
-      return res.sendStatus(403); // Forbidden for roles other than admin or syndicate
-    }
-
-    console.log('Token verified, user:', user);
-    next(); // Proceed to the next middleware or route handler
-  });
+  console.log('Generating token with secret:', process.env.JWT_SECRET); // Log the secret
+  
+  const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+  return token;
 }
+
+
 
 app.get('/images/:id', async (req, res) => {
   try {
@@ -309,27 +280,27 @@ async function generateAndSendQRCode(client, isSyndicateClient = false) {
 
 
 // Login route
-app.post('/login', async (req, res) => {
-  console.log('Login Request Body:', req.body);  // Log request body
-  const { email, password } = req.body;
-  try {
-    const client = await Client.findOne({ email });
-    if (!client) {
-      console.log('User not found for email:', email);
-      return res.status(404).json({ message: 'User not found' });
-    }
-    const isPasswordMatch = await bcrypt.compare(password, client.password);
-    if (!isPasswordMatch) {
-      console.log('Invalid password for email:', email);
-      return res.status(401).json({ message: 'Invalid password' });
-    }
-    const token = jwt.sign({ id: client._id, email: client.email }, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ email: client.email, token: token, message: 'Login successful' });
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// app.post('/login', async (req, res) => {
+//   console.log('Login Request Body:', req.body);  // Log request body
+//   const { email, password } = req.body;
+//   try {
+//     const client = await Client.findOne({ email });
+//     if (!client) {
+//       console.log('User not found for email:', email);
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+//     const isPasswordMatch = await bcrypt.compare(password, client.password);
+//     if (!isPasswordMatch) {
+//       console.log('Invalid password for email:', email);
+//       return res.status(401).json({ message: 'Invalid password' });
+//     }
+//     const token = jwt.sign({ id: client._id, email: client.email }, JWT_SECRET, { expiresIn: '1h' });
+//     res.json({ email: client.email, token: token, message: 'Login successful' });
+//   } catch (error) {
+//     console.error('Error logging in:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 // syndicate routing 
 
@@ -348,15 +319,16 @@ app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
 });
 
 // Route to fetch all syndicate names (dropdown)
-app.get('/api/syndicate/names', async (req, res) => {
-  try {
-      const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only syndicate names
-      res.json(syndicates);
-  } catch (error) {
-      console.error('Error fetching syndicate names:', error);
-      res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// app.get('/api/syndicate/names', async (req, res) => {
+//   try {
+//       const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only syndicate names
+//       res.json(syndicates);
+//   } catch (error) {
+//       console.error('Error fetching syndicate names:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
+
 
 // Syndicate login route
 app.post('/syndicate-login', async (req, res) => {
@@ -380,12 +352,8 @@ app.post('/syndicate-login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // Create a JWT token with the user's role set to 'syndicate'
-    const token = jwt.sign(
-      { id: syndicateUser._id, syndicate_name: syndicateUser.syndicate_name, role: 'syndicate' },
-      JWT_SECRET,
-      { expiresIn: '1h' }
-    );
+    // Generate JWT token using generateToken function
+    const token = generateToken(syndicateUser, 'syndicate');
 
     res.json({ message: 'Syndicate login successful', token });
   } catch (error) {
@@ -395,14 +363,19 @@ app.post('/syndicate-login', async (req, res) => {
 });
 
 
+
 // Syndicate Route - Register Syndicate Client
 router.post('/api/syndicateclients/register', upload.single('faceImage'), async (req, res) => {
   try {
-    const { name, phone, email, companyName, personToMeet, syndicate_name } = req.body;
+    const token = req.headers['authorization'].split(' ')[1]; // Extract token from Bearer authorization header
+    const decodedToken = jwt.verify(token, 'your_secret_key'); // Replace with your secret key
+    const syndicate_name = decodedToken.syndicate_name; // Extract syndicate_name from token payload
 
-    // Validate required fields: name, phone, and syndicate_name
-    if (!name || !phone || !syndicate_name) {
-      return res.status(400).json({ error: 'Name, Phone, and Syndicate Name are required.' });
+    const { name, phone, email, companyName, personToMeet } = req.body;
+
+    // Validate required fields: name, phone
+    if (!name || !phone) {
+      return res.status(400).json({ error: 'Name and Phone are required.' });
     }
 
     // Check if a client with the same email or phone already exists
@@ -417,7 +390,7 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       return res.status(400).json({ error: 'Phone number already exists.' });
     }
 
-    // If there is a face image, upload it to GridFS
+    // Handle face image upload
     let faceImageId = null;
     if (req.file) {
       const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
@@ -440,7 +413,7 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       email,
       companyName,
       personToMeet,
-      syndicate_name,
+      syndicate_name, // Auto-assigned from decoded token
       faceImage: faceImageId, // Reference the uploaded image ID
     });
 
@@ -513,34 +486,35 @@ router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
 
 
 
+
 // Admin login route
 app.post('/admin/login', async (req, res) => {
   const { username, password } = req.body;
   console.log(`Attempting login with username: ${username}`);
 
   try {
-      const admin = await Admin.findOne({ username });
-      if (!admin) {
-          console.log('No admin found with that username');
-          return res.status(401).json({ error: 'Invalid username or password' });
-      }
+    const admin = await Admin.findOne({ username });
+    if (!admin) {
+      console.log('No admin found with that username');
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
 
-      const passwordMatch = await bcrypt.compare(password, admin.password);
-      if (!passwordMatch) {
-          console.log('Password does not match');
-          return res.status(401).json({ error: 'Invalid username or password' });
-      }
+    const passwordMatch = await bcrypt.compare(password, admin.password);
+    if (!passwordMatch) {
+      console.log('Password does not match');
+      return res.status(401).json({ error: 'Invalid username or password' });
+    }
 
-      // Generate a JWT token with the admin's role
-      const token = jwt.sign({ id: admin._id, username: admin.username, role: 'admin' }, JWT_SECRET, { expiresIn: '1h' });
-      console.log('Login successful, admin ID:', admin._id);
-      res.status(200).json({ token, adminId: admin._id });
+    // Generate JWT token using generateToken function
+    const token = generateToken(admin, 'admin');
+    console.log('Login successful, admin ID:', admin._id);
+    
+    res.status(200).json({ token, adminId: admin._id });
   } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error during login:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 
 // admin dashboard 

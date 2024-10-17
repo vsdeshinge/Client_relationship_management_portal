@@ -145,57 +145,60 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // fetch syndicate names (dropdown)
       // Fetch syndicate names and populate dropdown
-      async function fetchSyndicateNames() {
-        try {
-            const response = await fetch('/api/syndicate/names', {
-                method: 'GET'
-            });
+    //   async function fetchSyndicateNames() {
+    //     try {
+    //         const response = await fetch('/api/syndicate/names', {
+    //             method: 'GET'
+    //         });
 
-            if (response.ok) {
-                const syndicates = await response.json();
-                syndicates.forEach(syndicate => {
-                    const option = document.createElement('option');
-                    option.value = syndicate.syndicate_name;
-                    option.textContent = syndicate.syndicate_name;
-                    syndicateDropdown.appendChild(option);
-                });
-            } else {
-                console.error('Error fetching syndicate names:', await response.text());
-            }
-        } catch (error) {
-            console.error('Error fetching syndicate names:', error);
-        }
-    }
+    //         if (response.ok) {
+    //             const syndicates = await response.json();
+    //             syndicates.forEach(syndicate => {
+    //                 const option = document.createElement('option');
+    //                 option.value = syndicate.syndicate_name;
+    //                 option.textContent = syndicate.syndicate_name;
+    //                 syndicateDropdown.appendChild(option);
+    //             });
+    //         } else {
+    //             console.error('Error fetching syndicate names:', await response.text());
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching syndicate names:', error);
+    //     }
+    // }
 
 
-    fetchSyndicateNames(); // Call the function to populate dropdown
+    // fetchSyndicateNames(); // Call the function to populate dropdown
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         form.style.display = 'none';
         overlayContainer.style.display = 'none';
         thankYouContainer.style.display = 'block';
-
+    
         const formData = new FormData();
         formData.append('name', document.getElementById('name').value.trim());
         formData.append('phone', document.getElementById('phone').value.trim());
         formData.append('email', document.getElementById('email').value.trim());
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
-        formData.append('syndicate_name', document.getElementById('syndicate_name').value.trim());
-
+    
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
         }
-
+    
         try {
+            const syndicateToken = localStorage.getItem('syndicateToken'); // Get the token from local storage
             const response = await fetch(`/api/syndicateclients/register`, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${syndicateToken}` // Send token in Authorization header
+                },
                 body: formData
             });
-
+    
             if (response.headers.get('Content-Type')?.includes('application/json')) {
                 const result = await response.json();
-
+    
                 if (response.ok) {
                     document.getElementById('message').textContent = 'Registration successful! Thank you.';
                     setTimeout(() => {
@@ -213,5 +216,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('message').textContent = 'Error during registration. Please try again later.';
         }
     });
+    
     
 });

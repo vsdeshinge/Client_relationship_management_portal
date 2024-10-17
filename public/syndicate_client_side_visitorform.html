@@ -18,50 +18,28 @@
         <div class="form-container">
             <form id="connectForm">
                 <h1>Fill Details</h1>
-                <!-- Input fields -->
                 <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
                 <input type="text" id="name" placeholder="Name" required />
                 <input type="tel" id="phone" placeholder="Phone Number" required />
                 <input type="email" id="email" placeholder="Email" />
-                <select id="syndicate_name" required>
-                    <option value="" disabled selected>Select Strategy Partner Name</option>
-                </select>
-                
                 <input type="text" id="companyName" placeholder="Company Name" />
-
-                <select id="domains" name="domains" required>
-                    <option value="" disabled selected>Select Domain</option>
-                    <option value="fintech">Fintech</option>
-                    <option value="medtech">Medtech</option>
-                    <option value="edtech">Edtech</option>
-                    <option value="agritech">Agritech</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="ecommerce">E-commerce</option>
-                    <option value="saas">SaaS</option>
-                    <option value="ai">Artificial Intelligence</option>
-                    <option value="blockchain">Blockchain</option>
-                    <option value="logistics">Logistics</option>
-                    <option value="iot">Internet of Things (IoT)</option>
-                    <option value="biotech">Biotech</option>
-                </select>
 
                 <!-- Button for capturing face image -->
                 <button type="button" id="captureFace">Capture Face Image</button>
-
+            
                 <!-- New input for uploading an image from the device -->
                 <input type="file" id="uploadImage" accept="image/*" style="display:none;" />
                 <button type="button" id="uploadImageButton">Upload Image</button>
-
+            
                 <!-- Placeholder for displaying captured/uploaded image -->
                 <div id="capturedImages">
                     <h2>Captured/Uploaded Image:</h2>
                     <div id="faceImageDisplay"></div>
                 </div>
-                 
-
-
+            
                 <button type="submit">Let's Connect</button>
             </form>
+            
             <div class="thank-you-container" id="thankYouContainer" style="display:none;">
                 <img src="assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
                 <h1>Thank you for filling out the form!</h1>
