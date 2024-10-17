@@ -14,111 +14,59 @@
   <link rel="stylesheet" href="./css/admindash.css">
 </head>
 <header>
-    <div class="bg-gray-900 text-white shadow-md p-4 flex justify-between items-center">
-    <!-- Logo -->
-    <a href="admin_dashboard.html" class="flex items-center">
-        <img src="assets/logo (1).png" alt="POSSPOLE" class="h-10 w-60">
-    </a>
-    
+    <div class="bg-gray-900 text-white shadow-md p-4 flex justify-between items-center space-x-6">
+      <!-- Logo -->
+      <a href="admin_dashboard.html" class="flex items-center">
+        <img src="assets/logo (1).png" alt="POSSPOLE" class="h-10 w-auto">
+      </a>
   
-<!-- Search Bar and Button -->
-<div class="flex-1 mx-4 ml-5">
-    <input type="text" id="basicSearchInput" placeholder="Search..." class="w-full p-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500">
-    <button id="advancedSearchButton" class="ml-2 p-2 bg-blue-500 text-white rounded-lg">Advanced Search</button>
-</div>
-
-
-<!-- Modal Structure -->
-<div id="searchModal" class="fixed z-10 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-      <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-        <div class="sm:flex sm:items-start">
-          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Advanced Search</h3>
-            <div class="mt-2">
-              <form id="advancedSearchForm">
-                <label class="block mb-2">Search By:</label>
-                <div class="flex flex-wrap gap-4">
-                  <div>
-                    <input type="checkbox" id="customer" name="searchFields" value="customer">
-                    <label for="customer">Customer</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="manufacturer" name="searchFields" value="manufacturer">
-                    <label for="manufacturer">Manufacturer</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="serviceProvider" name="searchFields" value="serviceProvider">
-                    <label for="serviceProvider">Service Provider</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="channelPartner" name="searchFields" value="channelPartner">
-                    <label for="channelPartner">Channel Partner</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="investor" name="searchFields" value="investor">
-                    <label for="investor">Investor</label>
-                  </div>
-                  <div>
-                    <input type="checkbox" id="domainExpert" name="searchFields" value="domainExpert">
-                    <label for="domainExpert">Domain Expert</label>
-                  </div>
-                </div>
-                <button type="submit" class="w-full mt-4 p-2 bg-blue-500 text-white rounded-lg">Search</button>
-              </form>
-            </div>
+      <!-- Search Bar and Button -->
+      <div class="flex-1 mx-4">
+        <div class="flex items-center space-x-2">
+          <input type="text" id="basicSearchInput" placeholder="Search..." class="flex-grow p-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500">
+          <button id="advancedSearchButton" class="p-2 bg-blue-500 text-white rounded-lg">Advanced Search</button>
+        </div>
+      </div>
+  
+      <!-- Notifications and Profile -->
+      <div class="flex items-center space-x-6">
+        <!-- Notifications -->
+        <div class="relative">
+          <button id="notificationButton" class="focus:outline-none relative">
+            <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C8.67 6.165 7 8.388 7 11v3.159c0 .538-.214 1.055-.595 1.436L5 17h5m5 0a2 2 0 01-2 2H8a2 2 0 01-2-2m7 0H9"></path>
+            </svg>
+            <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
+          </button>
+          <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
+            <ul>
+              <li class="p-4 border-b border-gray-700 text-white">Message 1</li>
+              <li class="p-4 border-b border-gray-700 text-white">Message 2</li>
+              <li class="p-4 text-white">Message 3</li>
+            </ul>
+          </div>
+        </div>
+  
+        <!-- Profile -->
+        <div class="relative">
+          <button id="profileButton" class="flex items-center focus:outline-none space-x-1">
+            <img src="profile.jpg" alt="Profile" class="h-8 w-8 rounded-full border border-gray-700">
+            <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+          </button>
+          <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
+            <ul>
+              <li class="p-4 border-b border-gray-700 text-white cursor-pointer">Profile</li>
+              <li class="p-4 border-b border-gray-700 text-white cursor-pointer">Settings</li>
+              <li class="p-4 text-white cursor-pointer" id="logoutButton">Logout</li>
+            </ul>
           </div>
         </div>
       </div>
-      <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-        <button id="closeModalButton" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">Close</button>
-      </div>
     </div>
-  </div>
-</div>
-
-    
-    <!-- Notifications and Profile -->
-    <div class="flex items-center space-x-4">
-        <!-- Notifications -->
-        <div class="relative">
-            <button id="notificationButton" class="focus:outline-none relative">
-                <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C8.67 6.165 7 8.388 7 11v3.159c0 .538-.214 1.055-.595 1.436L5 17h5m5 0a2 2 0 01-2 2H8a2 2 0 01-2-2m7 0H9"></path>
-                </svg>
-                <span class="absolute top-0 right-0 inline-block w-2 h-2 bg-red-600 rounded-full"></span>
-            </button>
-            <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
-                <ul>
-                    <li class="p-4 border-b border-gray-700 text-white">Message 1</li>
-                    <li class="p-4 border-b border-gray-700 text-white">Message 2</li>
-                    <li class="p-4 text-white">Message 3</li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Profile -->
-        <div class="relative">
-            <button id="profileButton" class="flex items-center focus:outline-none">
-                <img src="profile.jpg" alt="Profile" class="h-8 w-8 rounded-full border border-gray-700">
-                <svg class="h-4 w-4 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
-            <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-20">
-                <ul>
-                    <li class="p-4 border-b border-gray-700 text-white cursor-pointer">Profile</li>
-                    <li class="p-4 border-b border-gray-700 text-white cursor-pointer">Settings</li>
-                    <li class="p-4 text-white cursor-pointer" id="logoutButton">Logout</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-</header>
+  </header>
+  
 <body class="bg-gray-900 text-white flex flex-col min-h-screen">
     <div class="flex flex-1">
         <!-- Sidebar -->
