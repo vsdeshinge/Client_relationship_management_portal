@@ -181,14 +181,11 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('email', document.getElementById('email').value.trim());
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
-<<<<<<< Updated upstream
-=======
         formData.append('domain', document.getElementById('domains').value.trim()); // Append domain
         formData.append('personreferred', document.getElementById('personreferred').value.trim()); 
 
     
         console.log('Submitting form data:', formData.get('domain'), formData.get('personReferred'));
->>>>>>> Stashed changes
     
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
@@ -226,8 +223,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     
-<<<<<<< Updated upstream
-=======
     
->>>>>>> Stashed changes
 });
