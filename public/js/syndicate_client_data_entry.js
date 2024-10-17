@@ -313,6 +313,8 @@ function submitServiceProviderForm(event) {
         return;
     }
 
+
+    
     const serviceProviderData = {
         services: Array.from(document.querySelectorAll('#service-provider-services input[type="text"]'))
             .map(input => input.value.trim())
