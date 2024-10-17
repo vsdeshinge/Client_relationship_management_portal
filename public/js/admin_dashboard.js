@@ -214,213 +214,291 @@ fetchVisitorDetails('all');
     
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    async function fetchClientCounts() {
-        const token = localStorage.getItem('adminToken');
-        try {
-            const response = await fetch('/api/client-counts', {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+// document.addEventListener('DOMContentLoaded', () => {
+//     async function fetchClientCounts() {
+//         const token = localStorage.getItem('adminToken');
+//         try {
+//             const response = await fetch('/api/client-counts', {
+//                 method: 'GET',
+//                 headers: {
+//                     'Authorization': `Bearer ${token}`
+//                 }
+//             });
 
-            if (response.ok) {
-                const counts = await response.json();
-                createCharts(counts);
-            } else {
-                console.error('Error fetching client counts');
-            }
-        } catch (error) {
-            console.error('Error fetching client counts:', error);
-        }
-    }
+//             if (response.ok) {
+//                 const counts = await response.json();
+//                 createCharts(counts);
+//             } else {
+//                 console.error('Error fetching client counts');
+//             }
+//         } catch (error) {
+//             console.error('Error fetching client counts:', error);
+//         }
+//     }
 
-    function createCharts(counts) {
-        const categories = [
-            { id: 'customers', label: 'Customers', value: counts.customers, color: '#7221FD' },
-            { id: 'manufacturers', label: 'Manufacturers', value: counts.manufacturers, color: '#7221FD' },
-            { id: 'serviceProviders', label: 'Service Providers', value: counts.serviceProviders, color: '#7221FD' },
-            { id: 'channelPartners', label: 'Channel Partners', value: counts.channelPartners, color: '#7221FD' },
-            { id: 'investors', label: 'Investors', value: counts.investors, color: '#7221FD' },
-            { id: 'domainExperts', label: 'Domain Experts', value: counts.domainExperts, color: '#7221FD' },
-        ];
+//     function createCharts(counts) {
+//         const categories = [
+//             { id: 'customers', label: 'Customers', value: counts.customers, color: '#7221FD' },
+//             { id: 'manufacturers', label: 'Manufacturers', value: counts.manufacturers, color: '#7221FD' },
+//             { id: 'serviceProviders', label: 'Service Providers', value: counts.serviceProviders, color: '#7221FD' },
+//             { id: 'channelPartners', label: 'Channel Partners', value: counts.channelPartners, color: '#7221FD' },
+//             { id: 'investors', label: 'Investors', value: counts.investors, color: '#7221FD' },
+//             { id: 'domainExperts', label: 'Domain Experts', value: counts.domainExperts, color: '#7221FD' },
+//         ];
 
-        categories.forEach(category => {
-            createCircleChart(category.id, category.value, category.color);
-        });
-    }
-    fetchClientCounts();
+//         categories.forEach(category => {
+//             createCircleChart(category.id, category.value, category.color);
+//         });
+//     }
+//     fetchClientCounts();
     
     
     
-    // Initialize qualified lead page
-    function initQualifiedLeadPage(status) {
-        showContent('content-qualified-lead');
-        populateQualifiedLeadTable(status);
-    }
+//     // Initialize qualified lead page
+//     function initQualifiedLeadPage(status) {
+//         showContent('content-qualified-lead');
+//         populateQualifiedLeadTable(status);
+//     }
 
-    // Function to render qualified leads in the table
-    async function populateQualifiedLeadTable(status) {
-        const tableBody = document.getElementById('qualifiedLeadTableBody');
-        if (!tableBody) {
-            console.error('Table body with ID "qualifiedLeadTableBody" not found.');
-            return;
-        }
+//     // Function to render qualified leads in the table
+//     async function populateQualifiedLeadTable(status) {
+//         const tableBody = document.getElementById('qualifiedLeadTableBody');
+//         if (!tableBody) {
+//             console.error('Table body with ID "qualifiedLeadTableBody" not found.');
+//             return;
+//         }
 
-        const token = localStorage.getItem('adminToken');
-        try {
-            console.log('Fetching qualified leads with status:', status);
-            const response = await fetch(`/api/clients?status=${status}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+//         const token = localStorage.getItem('adminToken');
+//         try {
+//             console.log('Fetching qualified leads with status:', status);
+//             const response = await fetch(`/api/clients?status=${status}`, {
+//                 method: 'GET',
+//                 headers: {
+//                     'Authorization': `Bearer ${token}`
+//                 }
+//             });
 
-            if (response.ok) {
-                const qualifiedLeads = await response.json();
-                renderQualifiedLeads(qualifiedLeads);
-            } else {
-                console.error('Error fetching qualified leads');
-            }
-        } catch (error) {
-            console.error('Error fetching qualified leads:', error);
-        }
-    }
+//             if (response.ok) {
+//                 const qualifiedLeads = await response.json();
+//                 renderQualifiedLeads(qualifiedLeads);
+//             } else {
+//                 console.error('Error fetching qualified leads');
+//             }
+//         } catch (error) {
+//             console.error('Error fetching qualified leads:', error);
+//         }
+//     }
 
-    function renderQualifiedLeads(qualifiedLeads) {
-        const tableBody = document.getElementById('qualifiedLeadTableBody');
-        tableBody.innerHTML = ''; // Clear existing rows
-        qualifiedLeads.forEach((lead, index) => {
-            const createdAt = new Date(lead.createdAt);
-            const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
+//     function renderQualifiedLeads(qualifiedLeads) {
+//         const tableBody = document.getElementById('qualifiedLeadTableBody');
+//         tableBody.innerHTML = ''; // Clear existing rows
+//         qualifiedLeads.forEach((lead, index) => {
+//             const createdAt = new Date(lead.createdAt);
+//             const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
     
-            // Use lead's faceImage if available, otherwise use a placeholder image
-            const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
+//             // Use lead's faceImage if available, otherwise use a placeholder image
+//             const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
             
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td class="py-2 px-4">
+//                     <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+//                 </td>
+//                 <td class="p-2">${lead.name}</td>
+//                 <td class="p-2">${formattedDate}</td>
+//                 <td class="p-2">${lead.companyName || 'N/A'}</td>
+//                 <td class="p-2">${lead.phone}</td>
+//                 <td class="p-2">${lead.email}</td>
+//                 <td class="p-2">
+//                     <select id="lead-status-${index}" class="bg-gray-700 p-1 rounded" data-lead-id="${lead._id}">
+//                         <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+//                         <option value="on-hold" ${lead.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
+//                         <option value="not-relevant" ${lead.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
+//                     </select>
+//                 </td>
+//                 <td class="p-2">
+//                     ${lead.status === 'qualified' ? `
+//                         <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
+//                     ` : ''}
+//                     <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+//                     <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
+//                 </td>
+//             `;
+//             tableBody.appendChild(row);
+//         });
+    
+    
+//         // Add event listeners to "Add Fields" buttons
+//         document.querySelectorAll('.add-fields-button').forEach(button => {
+//             button.addEventListener('click', function(event) {
+//                 const leadId = event.target.dataset.leadId;
+//                 localStorage.setItem('leadId', leadId);
+//                 window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
+//             });
+//         });
+    
+//         // Add event listeners to "Go to MoM" buttons
+// document.querySelectorAll('.go-to-mom-button').forEach(button => {
+//     button.addEventListener('click', function(event) {
+//         const leadId = event.target.dataset.leadId;
+//         localStorage.setItem('leadId', leadId);
+//         window.location.href = `/mom.html?leadId=${leadId}`;
+//     });
+// });
+
+    
+
+//         // Add event listeners to save buttons
+//         document.querySelectorAll('.lead-save-button').forEach(button => {
+//             button.addEventListener('click', async (event) => {
+//                 const leadId = event.target.dataset.leadId;
+//                 // Find the select element by its unique ID
+//                 const selectElement = document.querySelector(`select[data-lead-id="${leadId}"]`);
+//                 if (!selectElement) {
+//                     console.error('Select element not found for leadId:', leadId);
+//                     return;
+//                 }
+//                 const newStatus = selectElement.value;
+//                 try {
+//                     const response = await fetch(`/clients/${leadId}/status`, {
+//                         method: 'PUT',
+//                         headers: {
+//                             'Content-Type': 'application/json',
+//                             'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+//                         },
+//                         body: JSON.stringify({ status: newStatus })
+//                     });
+//                     if (response.ok) {
+//                         alert('Status updated successfully');
+//                     } else {
+//                         console.error('Error updating status');
+//                     }
+//                 } catch (error) {
+//                     console.error('Error updating status:', error);
+//                 }
+//             });
+//         });
+//     }
+
+
+//     // Set up sidebar dropdown for Qualified Leads
+//     function setupQualifiedLeadsDropdown() {
+//         const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
+//         if (!qualifiedLeadItem) {
+//             console.error('Element with ID "nav-qualified-lead" not found.');
+//             return;
+//         }
+//         qualifiedLeadItem.classList.add('has-submenu');
+
+//         const submenu = document.createElement('ul');
+//         submenu.className = 'pl-4 mt-2 space-y-2 hidden';
+//         submenu.innerHTML = `
+//             <li id="nav-qualified-lead-qualified" class="cursor-pointer">Qualified</li>
+//             <li id="nav-qualified-lead-on-hold" class="cursor-pointer">On Hold</li>
+//             <li id="nav-qualified-lead-not-relevant" class="cursor-pointer">Not Relevant</li>
+//         `;
+
+//         qualifiedLeadItem.appendChild(submenu);
+
+//         qualifiedLeadItem.addEventListener('click', function(e) {
+//             e.stopPropagation();
+//             submenu.classList.toggle('hidden');
+//         });
+
+//         ['qualified', 'on-hold', 'not-relevant'].forEach(status => {
+//             const element = document.getElementById(`nav-qualified-lead-${status}`);
+//             if (element) {
+//                 element.addEventListener('click', function(e) {
+//                     e.stopPropagation();
+//                     initQualifiedLeadPage(status);
+//                 });
+//             } else {
+//                 console.error(`Element with ID "nav-qualified-lead-${status}" not found.`);
+//             }
+//         });
+//     }
+
+//     setupQualifiedLeadsDropdown();
+// });
+
+
+// <--------------Stratergy partner content start ---->
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // Function to initialize and show the "Stratergy Partner" page
+    function initStratergyPartnerPage() {
+        // Show the 'Stratergy Partner' content (remove hidden class)
+        showContent('content-stratergy-partner');
+
+        // Populate the strategy partner table
+        fetchStrategyPartnerData();
+    }
+
+    // Function to show the content by ID (remove the hidden class from the div)
+    function showContent(contentId) {
+        // Hide other content if necessary
+        document.querySelectorAll('.content').forEach(content => {
+            content.classList.add('hidden');  // Hide all other sections
+        });
+
+        // Show the target content
+        const targetContent = document.getElementById(contentId);
+        if (targetContent) {
+            targetContent.classList.remove('hidden');  // Show the selected section
+        }
+    }
+
+    // Set up the event listener for the "Stratergy Partners" sidebar item
+    const strategyPartnerNavItem = document.getElementById('nav-stratergy-partner');
+    if (strategyPartnerNavItem) {
+        strategyPartnerNavItem.addEventListener('click', initStratergyPartnerPage);
+    }
+
+    // Function to fetch and populate strategy partner data (adjust as per previous instructions)
+    async function fetchStrategyPartnerData() {
+        try {
+            const token = localStorage.getItem('adminToken');
+            const response = await fetch('/api/syndicates?=id', {  // Replace with correct API endpoint
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                populateStrategyPartnerTable(data);
+            } else {
+                console.error('Error fetching strategy partner data');
+            }
+        } catch (error) {
+            console.error('Error fetching strategy partner data:', error);
+        }
+    }
+
+    // Function to populate the strategy partner table (already defined above)
+    function populateStrategyPartnerTable(data) {
+        const tableBody = document.getElementById('strategyPartnerTableBody');
+        tableBody.innerHTML = ''; // Clear any existing rows
+
+        data.forEach(syndicates => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="py-2 px-4">
-                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
-                </td>
-                <td class="p-2">${lead.name}</td>
-                <td class="p-2">${formattedDate}</td>
-                <td class="p-2">${lead.companyName || 'N/A'}</td>
-                <td class="p-2">${lead.phone}</td>
-                <td class="p-2">${lead.email}</td>
-                <td class="p-2">
-                    <select id="lead-status-${index}" class="bg-gray-700 p-1 rounded" data-lead-id="${lead._id}">
-                        <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-                        <option value="on-hold" ${lead.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-                        <option value="not-relevant" ${lead.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-                    </select>
-                </td>
-                <td class="p-2">
-                    ${lead.status === 'qualified' ? `
-                        <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
-                    ` : ''}
-                    <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-                    <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
-                </td>
+                <td class="p-2 border border-gray-700">${syndicates._id.$oid}</td>
+                <td class="p-2 border border-gray-700">${syndicates.user_id}</td>
+                <td class="p-2 border border-gray-700">${syndicates.syndicate_name}</td>
+                <td class="p-2 border border-gray-700">${syndicates.password}</td>
+                <td class="p-2 border border-gray-700">${syndicates.department}</td>
+                <td class="p-2 border border-gray-700">${syndicates.__v}</td>
             `;
             tableBody.appendChild(row);
         });
-    
-    
-        // Add event listeners to "Add Fields" buttons
-        document.querySelectorAll('.add-fields-button').forEach(button => {
-            button.addEventListener('click', function(event) {
-                const leadId = event.target.dataset.leadId;
-                localStorage.setItem('leadId', leadId);
-                window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
-            });
-        });
-    
-        // Add event listeners to "Go to MoM" buttons
-document.querySelectorAll('.go-to-mom-button').forEach(button => {
-    button.addEventListener('click', function(event) {
-        const leadId = event.target.dataset.leadId;
-        localStorage.setItem('leadId', leadId);
-        window.location.href = `/mom.html?leadId=${leadId}`;
-    });
+    }
 });
 
-    
 
-        // Add event listeners to save buttons
-        document.querySelectorAll('.lead-save-button').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const leadId = event.target.dataset.leadId;
-                // Find the select element by its unique ID
-                const selectElement = document.querySelector(`select[data-lead-id="${leadId}"]`);
-                if (!selectElement) {
-                    console.error('Select element not found for leadId:', leadId);
-                    return;
-                }
-                const newStatus = selectElement.value;
-                try {
-                    const response = await fetch(`/clients/${leadId}/status`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                        },
-                        body: JSON.stringify({ status: newStatus })
-                    });
-                    if (response.ok) {
-                        alert('Status updated successfully');
-                    } else {
-                        console.error('Error updating status');
-                    }
-                } catch (error) {
-                    console.error('Error updating status:', error);
-                }
-            });
-        });
-    }
-
-
-    // Set up sidebar dropdown for Qualified Leads
-    function setupQualifiedLeadsDropdown() {
-        const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
-        if (!qualifiedLeadItem) {
-            console.error('Element with ID "nav-qualified-lead" not found.');
-            return;
-        }
-        qualifiedLeadItem.classList.add('has-submenu');
-
-        const submenu = document.createElement('ul');
-        submenu.className = 'pl-4 mt-2 space-y-2 hidden';
-        submenu.innerHTML = `
-            <li id="nav-qualified-lead-qualified" class="cursor-pointer">Qualified</li>
-            <li id="nav-qualified-lead-on-hold" class="cursor-pointer">On Hold</li>
-            <li id="nav-qualified-lead-not-relevant" class="cursor-pointer">Not Relevant</li>
-        `;
-
-        qualifiedLeadItem.appendChild(submenu);
-
-        qualifiedLeadItem.addEventListener('click', function(e) {
-            e.stopPropagation();
-            submenu.classList.toggle('hidden');
-        });
-
-        ['qualified', 'on-hold', 'not-relevant'].forEach(status => {
-            const element = document.getElementById(`nav-qualified-lead-${status}`);
-            if (element) {
-                element.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    initQualifiedLeadPage(status);
-                });
-            } else {
-                console.error(`Element with ID "nav-qualified-lead-${status}" not found.`);
-            }
-        });
-    }
-
-    setupQualifiedLeadsDropdown();
-});
-
+// <--------------Stratergy partner content ends ---->
 
 
 // Navigation functionality

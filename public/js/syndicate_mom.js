@@ -36,7 +36,7 @@ function displayClientDetails(client) {
 
     userInfoCard.innerHTML = `
         <div class="flex items-center">
-            <img src="${faceImageUrl}" alt="Profile" class="w-16 h-16 rounded-full">
+            <img src="${faceImageUrl}" alt="Profile" class="w-16 h-16 rounded-full object-cover" style="width: 64px; height: 64px;">
             <div class="ml-4">
                 <p>Name: ${client.name}</p>
                 <p>Email: ${client.email}</p>
@@ -44,6 +44,7 @@ function displayClientDetails(client) {
                 <p>Phone: ${client.phone}</p>
             </div>
         </div>
+
     `;
 }
 

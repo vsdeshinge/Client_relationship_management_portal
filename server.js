@@ -348,15 +348,15 @@ app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
 });
 
 // Route to fetch all syndicate names (dropdown)
-app.get('/api/syndicate/names', async (req, res) => {
-  try {
-      const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only syndicate names
-      res.json(syndicates);
-  } catch (error) {
-      console.error('Error fetching syndicate names:', error);
-      res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// app.get('/api/syndicate/names', async (req, res) => {
+//   try {
+//       const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only syndicate names
+//       res.json(syndicates);
+//   } catch (error) {
+//       console.error('Error fetching syndicate names:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//   }
+// });
 
 // Syndicate login route
 app.post('/syndicate-login', async (req, res) => {
