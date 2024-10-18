@@ -54,8 +54,9 @@ function displayClientDetails(client) {
                 <div>
                     <p class="text-lg font-bold">Name: ${client.name || 'N/A'}</p>
                     <p class="text-sm">Company: ${client.companyName || 'N/A'}</p>
+                      <p class="text-sm">Domain: ${client.domain || 'N/A'}</p> 
                     <p class="text-sm">Person To Meet: ${client.personToMeet || 'N/A'}</p>
-                    <p class="text-sm">Referred By: ${client.personReferred || 'N/A'}</p>
+                    <p class="text-sm">Referred By: ${client.personreferred || 'N/A'}</p>
                     <p class="text-sm">Email: ${client.email || 'N/A'}</p>
                     <p class="text-sm">Phone No.: ${client.phone || 'N/A'}</p>
                 </div>

@@ -7,6 +7,8 @@ const syndicateClientSchema = new mongoose.Schema({
     companyName: { type: String },
     personToMeet: { type: String },
     syndicate_name: { type: String, required: true },
+    domain: { type: String, required: true },
+    personreferred: { type: String }, // Add domain field
     faceImage: { type: mongoose.Schema.Types.ObjectId },
     priority: { type: String, enum: ['low', 'medium', 'high'], default: 'low' }, // Add priority field
 }, { timestamps: true });

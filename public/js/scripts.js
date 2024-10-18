@@ -19,19 +19,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify(data) // Send the form data to the server as JSON
                 });
 
+                const result = await response.json(); // Parse JSON response
+                console.log("Response from server:", result); // Log the entire response
+
                 if (!response.ok) {
-                    const result = await response.json();
                     alert(result.message); // Show error message if login fails
                     return;
                 }
 
-                const result = await response.json();
-                alert(result.message); // Show success message
+                // Now check if the token exists instead of checking the exact message
+                if (result.token) {
+                    alert(result.message); // Show success message
 
-                if (result.message === 'Syndicate login successful') {
                     localStorage.setItem('syndicateToken', result.token); // Store token in localStorage
                     localStorage.setItem('userType', 'syndicate'); // Optionally store the user type
+
                     window.location.href = '/syndicate-dashboard.html'; // Redirect to the dashboard
+                } else {
+                    alert('Login failed. Please check your credentials.'); // Fallback if token is missing
                 }
 
             } catch (error) {

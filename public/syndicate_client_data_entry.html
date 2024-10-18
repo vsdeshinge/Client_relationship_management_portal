@@ -55,13 +55,13 @@
             }
         }
     
-    function showVisitingCardPopup() {
-        document.getElementById('visiting-card-popup').classList.remove('hidden');
-    }
+    // function showVisitingCardPopup() {
+    //     document.getElementById('visiting-card-popup').classList.remove('hidden');
+    // }
 
-    function hideVisitingCardPopup() {
-        document.getElementById('visiting-card-popup').classList.add('hidden');
-    }
+    // function hideVisitingCardPopup() {
+    //     document.getElementById('visiting-card-popup').classList.add('hidden');
+    // }
 
     function showNeedFormPopup() {
         document.getElementById('need-form-popup').classList.remove('hidden');
@@ -155,7 +155,7 @@ function addMoreSolutionFields() {
     <main class="flex-1 p-10">
         <!-- User Information and Buttons -->
         <div id="user-info-container" class="container2 mx-auto">
-            <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center justify-between ">
                 <div id="profile-card" class="rounded-card">
                     <div class="flex items-center">
                         <img id="profile-img" src="https://via.placeholder.com/80" alt="Profile" class="profile-img">
@@ -168,32 +168,32 @@ function addMoreSolutionFields() {
                         </div>
                     </div>
                 </div>
-                <div id="action-buttons" class="container1">
+                <!-- <div id="action-buttons" class="container1">
                     <div class="flex space-x-4">
                         <button id="visiting-card-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="showVisitingCardPopup()">Visiting Card</button>
                         <button id="need-form-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="showNeedFormPopup()">View Need Form</button>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     
         <!-- Visiting Card Popup -->
-        <div id="visiting-card-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+        <!-- <div id="visiting-card-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
             <div class="bg-gray-800 p-5 rounded-lg text-white">
                 <h2 class="text-xl mb-4">Visiting Card</h2>
                 <img id="visiting-card-img" src="URL_TO_VISITING_CARD_IMAGE" alt="Visiting Card" class="mb-4">
                 <button id="close-visiting-card-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="hideVisitingCardPopup()">Close</button>
             </div>
-        </div>
+        </div> -->
     
         <!-- Need Form Popup -->
-        <div id="need-form-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+        <!-- <div id="need-form-popup" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
             <div class="bg-gray-800 p-5 rounded-lg text-white">
                 <h2 class="text-xl mb-4">Need Form</h2>
-                <!-- Add the Need Form details here -->
-                <button id="close-need-form-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="hideNeedFormPopup()">Close</button>
+                <-- Add the Need Form details here -->
+                <!-- <button id="close-need-form-btn" class="bg-blue-500 px-4 py-2 rounded" onclick="hideNeedFormPopup()">Close</button>
             </div>
-        </div>
+        </div>  -->
 
 <br>
        

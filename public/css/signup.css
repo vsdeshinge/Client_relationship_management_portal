@@ -105,7 +105,7 @@ h1 {
     text-align: center;
 }
 
-input, #syndicate_name , option {
+input, #syndicate_name , option ,#domains {
     background-color: #eee;
     border: none;
     border-radius: 10px;

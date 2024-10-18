@@ -153,15 +153,17 @@ function displayMoMDetails(mom) {
     viewMoMModal.id = 'viewMoMModal';
     viewMoMModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center';
     viewMoMModal.innerHTML = `
-        <div class="bg-gray-900 p-8 rounded-lg">
-            <h2 class="text-lg font-bold mb-4">View Minutes of Meeting</h2>
-            <p><strong>Heading:</strong> ${mom.heading}</p>
-            <p><strong>Summary:</strong> ${mom.summary}</p>
-            <p><strong>Date and Time:</strong> ${new Date(mom.dateTime).toLocaleString()}</p>
-            <div class="flex justify-end mt-4">
-                <button id="closeViewButton" class="bg-blue-500 py-2 px-4 rounded-md">Close</button>
+            <div class="bg-gray-900 p-8 rounded-lg" style="width: 100% !important; max-width: px !important;">
+                <h2 class="text-lg font-bold mb-4">View Minutes of Meeting</h2>
+                <p><strong>Heading:</strong> ${mom.heading}</p>
+                <p><strong>Summary:</strong> ${mom.summary}</p>
+                <p><strong>Date and Time:</strong> ${new Date(mom.dateTime).toLocaleString()}</p>
+                <div class="flex justify-end mt-4">
+                    <button id="closeViewButton" class="bg-blue-500 py-2 px-4 rounded-md">Close</button>
+                </div>
             </div>
-        </div>
+
+
     `;
 
     document.body.appendChild(viewMoMModal);

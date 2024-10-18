@@ -43,11 +43,13 @@ function displayClientDetails(client) {
                 <div class="flex items-center">
                     <img src="${faceImageUrl}" alt="Profile" class="profile-img">
                     <div>
-                        <p class="text-lg font-bold">Name: ${client.name}</p>
-                        <p class="text-sm">Company: ${client.companyName}</p>
-                        <p class="text-sm">Domain: ${client.domain || 'N/A'}</p>
-                        <p class="text-sm">Email: ${client.email}</p>
-                        <p class="text-sm">Phone no.: ${client.phone}</p>
+                        <p class="text-lg font-bold">Name: ${client.name || 'N/A'}</p>
+                        <p class="text-sm">Company: ${client.companyName || 'N/A'}</p>
+                        <p class="text-sm">Domain: ${client.domain || 'N/A'}</p> <!-- Updated this line -->
+                        <p class="text-sm">Person To Meet: ${client.personToMeet || 'N/A'}</p>
+                        <p class="text-sm">Referred By: ${client.personreferred || 'N/A'}</p> <!-- Updated this line -->
+                        <p class="text-sm">Email: ${client.email || 'N/A'}</p>
+                        <p class="text-sm">Phone No.: ${client.phone || 'N/A'}</p>
                     </div>
                 </div>
             </div>
@@ -56,6 +58,7 @@ function displayClientDetails(client) {
         console.error('Element for client details not found.');
     }
 }
+
 
 // Fetch all client data for syndicate module (for detailed sections)
 async function fetchSyndicateClientData(clientId, token) {
