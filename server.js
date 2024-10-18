@@ -496,6 +496,47 @@ router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
   }
 });
 
+router.patch('/api/mom/edit/:momId', authenticateToken, async (req, res) => {
+  try {
+      const { momId } = req.params;
+      const { heading, summary, dateTime } = req.body;
+
+      const updatedMoM = await MoM.findByIdAndUpdate(momId, {
+          heading,
+          summary,
+          dateTime
+      }, { new: true });
+
+      if (!updatedMoM) {
+          return res.status(404).json({ error: 'MoM not found' });
+      }
+
+      res.status(200).json(updatedMoM);
+  } catch (error) {
+      console.error('Error updating MoM:', error);
+      res.status(500).json({ error: 'Error updating MoM' });
+  }
+});
+
+
+router.delete('/api/mom/delete/:momId', authenticateToken, async (req, res) => {
+  try {
+      const { momId } = req.params;
+
+      const deletedMoM = await MoM.findByIdAndDelete(momId);
+
+      if (!deletedMoM) {
+          return res.status(404).json({ error: 'MoM not found' });
+      }
+
+      res.status(200).json({ message: 'MoM deleted successfully' });
+  } catch (error) {
+
+    console.error('Error deleting MoM:', error);
+      res.status(500).json({ error: 'Error deleting MoM' });
+  }
+});
+
 // Admin login route
 app.post('/admin/login', async (req, res) => {
   const { username, password } = req.body;
