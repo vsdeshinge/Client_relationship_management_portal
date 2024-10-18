@@ -35,16 +35,15 @@ function displayLeadDetails(lead) {
     const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
 
     userInfoCard.innerHTML = `
-                        <div class="flex items-center">
-                            <img src="${faceImageUrl}" alt="Profile" class="w-16 h-16 rounded-full object-cover" style="width: 64px; height: 64px;">
-                            <div class="ml-4">
-                                <p>Name: ${client.name}</p>
-                                <p>Email: ${client.email}</p>
-                                <p>Domain: ${client.domain || 'N/A'}</p>
-                                <p>Phone: ${client.phone}</p>
-                            </div>
-                        </div>
-
+        <div class="flex items-center">
+            <img src="${faceImageUrl}" alt="Profile" class="w-16 h-16 rounded-full">
+            <div class="ml-4">
+                <p>Name: ${lead.name}</p>
+                <p>Email: ${lead.email}</p>
+                <p>Domain: ${lead.domain || 'N/A'}</p>
+                <p>Phone: ${lead.phone}</p>
+            </div>
+        </div>
     `;
 }
 
