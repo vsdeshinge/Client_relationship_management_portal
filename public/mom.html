@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minutes of Meeting</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+
+       img {
+           width: 80px !important;
+           height: 80px !important;
+           border-radius: 100%;
+           margin-right: 20px;
+       }
+ 
+       </style>
 </head>
 <body class="bg-gray-800 text-white">
     <div class="container mx-auto p-8">
@@ -45,7 +55,8 @@
             
                     <div class="flex justify-between">
                         <button type="button" id="cancelButton" class="bg-red-500 py-2 px-4 rounded-md">Cancel</button>
-                        <button type="submit" class="bg-blue-500 py-2 px-4 rounded-md">Submit</button>
+                        <button type="submit" class="bg-green-500 py-2 px-4 rounded-md">Submit</button>
+
                     </div>
                 </form>
             </div>
@@ -63,8 +74,8 @@
 
         <!-- Table of MoMs -->
         <div class="bg-gray-700 p-4 rounded-md">
-            <table class="w-full">
-                <thead>
+            <table class="min-w-full bg-gray-700 text-white rounded-lg">
+                <thead class="">
                     <tr>
                         <th class="text-left">Sl No.</th>
                         <th class="text-left">Heading</th>
