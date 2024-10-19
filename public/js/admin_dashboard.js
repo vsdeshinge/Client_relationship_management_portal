@@ -1205,5 +1205,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }   
 });
 
+// stratergy partner 
 
+document.addEventListener('DOMContentLoaded', function () {
+    // Show/hide sections based on the clicked nav item
+    function showSection(sectionId) {
+      // Hide all sections
+      document.querySelectorAll('div[id^="content-"]').forEach(div => div.classList.add('hidden'));
+      // Show the selected section
+      const targetSection = document.getElementById(sectionId);
+      
+      if (targetSection) {
+        console.log(`Showing section: ${sectionId}`);
+        targetSection.classList.remove('hidden');
+      } else {
+        console.log(`Section ${sectionId} not found.`);
+      }
+    }
+  
+    function showContent(contentId) {
+        document.querySelectorAll('[id^="content-"]').forEach(el => el.style.display = 'none');
+        const contentElement = document.getElementById(contentId);
+        if (contentElement) {
+            console.log('Displaying content:', contentId); // Add this line
+            contentElement.style.display = 'block';
+        }
+    }
 
+    // Attach click listeners to the nav items
+    document.getElementById('nav-strategy-partner').addEventListener('click', function () {
+      showSection('content-strategy-partner');
+    });
+  
+    
+  
+   
+});
+  
