@@ -51,7 +51,8 @@ const DomainExpert = require('./models/domainexpert.js');
 const BusinessProposal = require('./models/buisnessproposal.js');
 const SyndicateClient = require('./models/syndicateclient.js');
 const Visit = require('./models/visitor_logs.js');
-const authenticateToken = require('./public/js/authenticationToken.js');
+const authenticateToken = require('./public/js/authenticateToken.js');
+const verifyAdminToken  = require('./public/js/verifyAdminToken.js');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Connect to MongoDB
@@ -102,10 +103,14 @@ const router = express.Router();
 function generateToken(user, role) {
   const payload = { 
     id: user._id, 
-    username: user.username, // Assuming admins have username
-    syndicate_name: user.syndicate_name, // Assuming syndicates have syndicate_name
+    username: user.username, // Assuming admins and syndicates have username
     role: role // 'admin' or 'syndicate'
   };
+
+  // Include syndicate_name only if the role is 'syndicate'
+  if (role === 'syndicate') {
+    payload.syndicate_name = user.syndicate_name; 
+  }
 
   const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
   return token;
@@ -910,6 +915,26 @@ router.get('/api/client-counts', async (req, res) => {
       res.status(500).json({ error: 'Error fetching client counts' });
   }
 });
+
+
+// Admin route to fetch all syndicate partners
+app.get('/api/admin/syndicate-partners', authenticateToken, async (req, res) => {
+  try {
+      const syndicates = await Syndicate.find({});
+      
+      if (!syndicates.length) {
+          return res.status(404).json({ message: 'No syndicate partners found' });
+      }
+      
+      res.status(200).json(syndicates);
+  } catch (error) {
+      console.error('Error fetching syndicate partners:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
 
 
 

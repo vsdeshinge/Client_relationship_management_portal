@@ -423,7 +423,6 @@ fetchVisitorDetails('all');
 
 
 // <--------------Stratergy partner content start ---->
-
 document.addEventListener('DOMContentLoaded', () => {
 
     // Function to initialize and show the "Stratergy Partner" page
@@ -449,17 +448,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Set up the event listener for the "Stratergy Partners" sidebar item
+    // Set up the event listener for the "Strategy Partners" sidebar item
     const strategyPartnerNavItem = document.getElementById('nav-stratergy-partner');
     if (strategyPartnerNavItem) {
         strategyPartnerNavItem.addEventListener('click', initStratergyPartnerPage);
     }
 
-    // Function to fetch and populate strategy partner data (adjust as per previous instructions)
+    // Function to fetch and populate strategy partner data
     async function fetchStrategyPartnerData() {
         try {
             const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/syndicates?=id', {  // Replace with correct API endpoint
+            const response = await fetch('/api/admin/syndicate-partners', {  // Correct API endpoint
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -471,30 +470,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 populateStrategyPartnerTable(data);
             } else {
                 console.error('Error fetching strategy partner data');
+                document.getElementById('errorMessage').innerText = 'Failed to fetch syndicate partners.';
             }
         } catch (error) {
             console.error('Error fetching strategy partner data:', error);
+            document.getElementById('errorMessage').innerText = 'Error fetching strategy partner data.';
         }
     }
 
-    // Function to populate the strategy partner table (already defined above)
-    function populateStrategyPartnerTable(data) {
+    // Function to populate the strategy partner table
+    function populateStrategyPartnerTable(syndicates) {
         const tableBody = document.getElementById('strategyPartnerTableBody');
         tableBody.innerHTML = ''; // Clear any existing rows
 
-        data.forEach(syndicates => {
+        syndicates.forEach(syndicate => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="p-2 border border-gray-700">${syndicates._id.$oid}</td>
-                <td class="p-2 border border-gray-700">${syndicates.user_id}</td>
-                <td class="p-2 border border-gray-700">${syndicates.syndicate_name}</td>
-                <td class="p-2 border border-gray-700">${syndicates.password}</td>
-                <td class="p-2 border border-gray-700">${syndicates.department}</td>
-                <td class="p-2 border border-gray-700">${syndicates.__v}</td>
+                <td class="p-2 border border-gray-700">${syndicate.syndicate_name}</td>
+                <td class="p-2 border border-gray-700">
+                    <button class="bg-blue-500 text-white px-4 py-1 rounded" onclick="openSyndicateDashboard('${syndicate._id}')">View Dashboard</button>
+                </td>
             `;
             tableBody.appendChild(row);
         });
     }
+
+    // Function to open the selected syndicate's dashboard
+    window.openSyndicateDashboard = function(syndicateId) {
+        localStorage.setItem('syndicateId', syndicateId); // Store the selected syndicate ID in localStorage
+        window.location.href = '/syndicate-dashboard.html'; // Redirect to the syndicate dashboard page
+    };
+
+    // Call the function to load syndicate partners when the page is loaded
+    fetchStrategyPartnerData();
 });
 
 
@@ -1126,119 +1134,136 @@ document.getElementById('nav-customer').addEventListener('click', function() {
 
 
 // advanced search filter 
-document.addEventListener('DOMContentLoaded', () => {
-    const advancedSearchButton = document.getElementById('advancedSearchButton');
-    const searchModal = document.getElementById('searchModal');
-    const closeModalButton = document.getElementById('closeModalButton');
-    const advancedSearchForm = document.getElementById('advancedSearchForm');
+// document.addEventListener('DOMContentLoaded', () => {
+//     const advancedSearchButton = document.getElementById('advancedSearchButton');
+//     const searchModal = document.getElementById('searchModal');
+//     const closeModalButton = document.getElementById('closeModalButton');
+//     const advancedSearchForm = document.getElementById('advancedSearchForm');
 
-    advancedSearchButton.addEventListener('click', () => {
-        searchModal.classList.remove('hidden');
-    });
+//     advancedSearchButton.addEventListener('click', () => {
+//         searchModal.classList.remove('hidden');
+//     });
 
-    closeModalButton.addEventListener('click', () => {
-        searchModal.classList.add('hidden');
-    });
+//     closeModalButton.addEventListener('click', () => {
+//         searchModal.classList.add('hidden');
+//     });
 
-    advancedSearchForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
-            .filter(input => input.checked)
-            .map(input => input.value);
+//     advancedSearchForm.addEventListener('submit', async (event) => {
+//         event.preventDefault();
+//         const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
+//             .filter(input => input.checked)
+//             .map(input => input.value);
         
-        if (searchFields.length === 0) {
-            alert('Please select at least one search criteria.');
-            return;
-        }
+//         if (searchFields.length === 0) {
+//             alert('Please select at least one search criteria.');
+//             return;
+//         }
 
-        await performAdvancedSearch(searchFields);
-        searchModal.classList.add('hidden'); // Close modal after search
-    });
+//         await performAdvancedSearch(searchFields);
+//         searchModal.classList.add('hidden'); // Close modal after search
+//     });
 
-    async function performAdvancedSearch(searchFields) {
-        const token = localStorage.getItem('adminToken');
-        try {
-            const response = await fetch(`/advanced-search`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ searchFields })
-            });
-            const result = await response.json();
-            if (response.ok) {
-                updateTableWithSearchResults(result);
-            } else {
-                console.error('Error performing advanced search:', result.error);
-            }
-        } catch (error) {
-            console.error('Error performing advanced search:', error);
-        }
-    }
+//     async function performAdvancedSearch(searchFields) {
+//         const token = localStorage.getItem('adminToken');
+//         try {
+//             const response = await fetch(`/advanced-search`, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${token}`
+//                 },
+//                 body: JSON.stringify({ searchFields })
+//             });
+//             const result = await response.json();
+//             if (response.ok) {
+//                 updateTableWithSearchResults(result);
+//             } else {
+//                 console.error('Error performing advanced search:', result.error);
+//             }
+//         } catch (error) {
+//             console.error('Error performing advanced search:', error);
+//         }
+//     }
 
-    function updateTableWithSearchResults(data) {
-        const visitorsTableBody = document.getElementById('visitorsTableBody');
-        visitorsTableBody.innerHTML = ''; // Clear existing table rows
+//     function updateTableWithSearchResults(data) {
+//         const visitorsTableBody = document.getElementById('visitorsTableBody');
+//         visitorsTableBody.innerHTML = ''; // Clear existing table rows
 
-        if (data.length === 0) {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td colspan="7" class="p-2 text-center">No clients available</td>
-            `;
-            visitorsTableBody.appendChild(row);
-        } else {
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="p-2">${item.name || ''}</td>
-                    <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
-                    <td class="p-2">${item.companyName || ''}</td>
-                    <td class="p-2">${item.phone || ''}</td>
-                    <td class="p-2">${item.email || ''}</td>
-                    <td class="p-2">${item.action || ''}</td>
-                    <td class="p-2">${item.status || ''}</td>
-                `;
-                visitorsTableBody.appendChild(row);
-            });
-        }
-    }   
-});
+//         if (data.length === 0) {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td colspan="7" class="p-2 text-center">No clients available</td>
+//             `;
+//             visitorsTableBody.appendChild(row);
+//         } else {
+//             data.forEach(item => {
+//                 const row = document.createElement('tr');
+//                 row.innerHTML = `
+//                     <td class="p-2">${item.name || ''}</td>
+//                     <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
+//                     <td class="p-2">${item.companyName || ''}</td>
+//                     <td class="p-2">${item.phone || ''}</td>
+//                     <td class="p-2">${item.email || ''}</td>
+//                     <td class="p-2">${item.action || ''}</td>
+//                     <td class="p-2">${item.status || ''}</td>
+//                 `;
+//                 visitorsTableBody.appendChild(row);
+//             });
+//         }
+//     }   
+// });
 
-// stratergy partner 
+// document.addEventListener('DOMContentLoaded', async function () {
+//     // Fetch syndicate partners when the page is loaded
+//     async function loadSyndicatePartners() {
+//         try {
+//             const response = await fetch('/api/admin/syndicate-partners', {
+//                 headers: {
+//                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+//                 }
+//             });
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Show/hide sections based on the clicked nav item
-    function showSection(sectionId) {
-      // Hide all sections
-      document.querySelectorAll('div[id^="content-"]').forEach(div => div.classList.add('hidden'));
-      // Show the selected section
-      const targetSection = document.getElementById(sectionId);
-      
-      if (targetSection) {
-        console.log(`Showing section: ${sectionId}`);
-        targetSection.classList.remove('hidden');
-      } else {
-        console.log(`Section ${sectionId} not found.`);
-      }
-    }
-  
-    function showContent(contentId) {
-        document.querySelectorAll('[id^="content-"]').forEach(el => el.style.display = 'none');
-        const contentElement = document.getElementById(contentId);
-        if (contentElement) {
-            console.log('Displaying content:', contentId); // Add this line
-            contentElement.style.display = 'block';
-        }
-    }
+//             if (response.ok) {
+//                 const syndicates = await response.json();
+//                 console.log('Syndicates fetched:', syndicates);
+//                 populateSyndicateTable(syndicates); // Call the function to populate the table
+//             } else {
+//                 console.error('Failed to fetch syndicate partners:', await response.text());
+//                 document.getElementById('errorMessage').innerText = 'Failed to fetch syndicate partners.';
+//             }
+//         } catch (error) {
+//             console.error('Error fetching syndicate partners:', error);
+//             document.getElementById('errorMessage').innerText = 'Error fetching syndicate partners.';
+//         }
+//     }
 
-    // Attach click listeners to the nav items
-    document.getElementById('nav-strategy-partner').addEventListener('click', function () {
-      showSection('content-strategy-partner');
-    });
-  
-    
-  
-   
-});
+//     // Function to populate the syndicate table with fetched data
+//     function populateSyndicateTable(syndicates) {
+//         const tableBody = document.getElementById('strategyPartnerTableBody');
+//         tableBody.innerHTML = ''; // Clear previous rows
+
+//         syndicates.forEach(syndicate => {
+//             const row = `
+//                 <tr>
+//                     <td class="py-2 px-4 text-white">${syndicate.syndicate_name}</td>
+//                     <td class="py-2 px-4">
+//                         <button class="bg-blue-500 text-white px-4 py-1 rounded" onclick="openSyndicateDashboard('${syndicate._id}')">View Dashboard</button>
+//                     </td>
+//                 </tr>
+//             `;
+//             tableBody.insertAdjacentHTML('beforeend', row); // Add the new row to the table
+//         });
+//     }
+
+//     // Function to open the selected syndicate's dashboard
+//     window.openSyndicateDashboard = function(syndicateId) {
+//         localStorage.setItem('syndicateId', syndicateId); // Store the selected syndicate ID in localStorage
+//         window.location.href = '/syndicate-dashboard.html'; // Redirect to the syndicate dashboard page
+//     };
+
+//     // Call the function to load syndicate partners
+//     loadSyndicatePartners();
+// });
+
+
   

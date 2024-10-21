@@ -295,46 +295,25 @@
                 <!-- </div>
             </div>  -->
 
-    
-  
-
-    <!-- Strategy Partner Content -->
+<!-- Strategy Partner Content -->
 <div id="content-strategy-partner" class="hidden">
-    <h2 class="text-2xl mb-5 font-bold text-white-400">Strategy Partners</h2><br>
-  
-    <div class="relative">
-      <h3 class="text-xl mb-3 text-blue-400 inline-block">Partners Data</h3>
-      <button id="dropdownButton" class="ml-2 bg-gray-700 text-white px-3 py-1 rounded">
-        Select Period ▼
-      </button>
-      <div id="dropdownMenu" class="absolute hidden bg-gray-700 text-white mt-1 rounded shadow-lg">
-        <a href="#" class="block px-4 py-2 hover:bg-gray-600" data-filter="total">All Partners</a>
-        <a href="#" data-filter="today" class="dropdown-item block px-4 py-2 hover:bg-gray-600">Today</a>
-        <a href="#" data-filter="week" class="dropdown-item block px-4 py-2 hover:bg-gray-600">This Week</a>
-        <a href="#" data-filter="month" class="dropdown-item block px-4 py-2 hover:bg-gray-600">This Month</a>
-      </div>
-    </div>
-  
-    <div class="overflow-x-auto">
-      <table class="w-full">
-        <thead>
-          <tr class="bg-gray-800">
-            <th class="p-2 text-left">Photos</th>
-            <th class="p-2 text-left">Name</th>
-            <th class="p-2 text-left">DD/MM</th>
-            <th class="p-2 text-left">Company Name</th>
-            <th class="p-2 text-left">Phone no.</th>
-            <th class="p-2 text-left">Email</th>
-            <th class="p-2 text-left">Action</th>
-            <th class="p-2 text-left">Status</th>
-          </tr>
-        </thead>
-        <tbody id="strategyPartnerTableBody">
-          <!-- Table rows will be dynamically added here -->
-        </tbody>
-      </table>
-    </div>
+  <h2 class="text-2xl mb-5 font-bold text-white-400">Strategy Partners</h2><br>
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr>
+          <th class="text-left text-white">Syndicate Name</th>
+          <th class="text-left text-white">Action</th>
+        </tr>
+      </thead>
+      <tbody id="strategyPartnerTableBody">
+        <!-- Table rows will be dynamically added here -->
+      </tbody>
+    </table>
   </div>
+</div>
+<div id="errorMessage" class="text-red-500"></div>
+
 
     <!-- Business proposal content -->
     <div id="content-business-proposal" class="hidden">
