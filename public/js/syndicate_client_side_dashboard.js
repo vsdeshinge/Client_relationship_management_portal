@@ -91,6 +91,9 @@ function populateTable(clients) {
               <td class="py-2 px-4">
                   <button href="./mom.html" onclick="handleAddDetailsClick1(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Log</button>
               </td>
+              <td class="py-2 px-4">
+                  <button href="./schedule_meeting.html" onclick="handleAddDetailsClick1(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Schedule</button>
+              </td>
               <!-- Priority Flag Column -->
               <td class="py-2 px-4">
                   <select id="priority-${client._id}" class="priority-select" onchange="updatePriorityColor('${client._id}')">
@@ -147,6 +150,12 @@ window.handleAddDetailsClick1 = function (event, clientId) {
     event.preventDefault(); // Prevent default anchor behavior
     localStorage.setItem('clientId', clientId); // Store the clientId in localStorage
     window.location.href = './mom.html'; // Redirect to the data entry page
+};
+
+window.handleAddDetailsClick1 = function (event, clientId) {
+    event.preventDefault(); // Prevent default anchor behavior
+    localStorage.setItem('clientId', clientId); // Store the clientId in localStorage
+    window.location.href = './schedule_meeting.html '; // Redirect to the data entry page
 };
 
 
