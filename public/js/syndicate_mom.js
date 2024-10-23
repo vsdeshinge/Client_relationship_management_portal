@@ -102,8 +102,7 @@ async function fetchMoMs(clientId) {
         console.error('Error fetching MoMs:', error);
     }
 }
-
-// Display MoMs in the table with a "View" button for each
+// Display schedule meetings in the table with "View", "Edit", and "Delete" buttons
 function displayMoMs(moms) {
     const momTable = document.getElementById('momTable');
     momTable.innerHTML = ''; // Clear existing rows
@@ -114,21 +113,154 @@ function displayMoMs(moms) {
             <td>${index + 1}</td>
             <td>${mom.heading}</td>
             <td>${new Date(mom.dateTime).toLocaleString()}</td>
-            <td><button class="view-button" data-id="${mom._id}">View</button></td>
+            <td>
+                <button class="view-button bg-blue-500 text-white py-1 px-3 rounded-md mr-2" data-id="${mom._id}">View</button>
+                <button class="edit-button bg-yellow-500 text-white py-1 px-3 rounded-md mr-2" data-id="${mom._id}">Edit</button>
+                <button class="delete-button bg-green-500 text-white py-1 px-3 rounded-md" data-id="${mom._id}">Delete</button>
+            </td> 
         `;
         momTable.appendChild(row);
     });
 
-    // Add event listeners for the view buttons
+    // Add event listeners for the buttons
     document.querySelectorAll('.view-button').forEach(button => {
         button.addEventListener('click', (e) => {
             const momId = e.target.dataset.id;
             viewMoM(momId);
         });
     });
+
+    document.querySelectorAll('.edit-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const momId = e.target.dataset.id;
+            editMoM(momId);
+        });
+    });
+
+    document.querySelectorAll('.delete-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const momId = e.target.dataset.id;
+            deleteMoM(momId);
+        });
+    });
 }
 
+// Fetch MoM details and open edit modal
+async function editMoM(momId) {
+    try {
+        const response = await fetch(`/api/mom/view/${momId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('syndicateToken')}`
+            }
+        });
+
+        if (response.ok) {
+            const mom = await response.json();
+            openEditMoMModal(mom);
+        } else {
+            console.error('Error fetching MoM:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error fetching MoM:', error);
+    }
+}
+
+// Open the edit modal and populate it with MoM data
+function openEditMoMModal(mom) {
+    const editMoMModal = document.createElement('div');
+    editMoMModal.id = 'editMoMModal';
+    editMoMModal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center';
+    editMoMModal.innerHTML = `
+        <div class="bg-gray-900 p-8 rounded-lg">
+            <h2 class="text-lg font-bold mb-4">Edit Minutes of Meeting</h2>
+            <form id="editMoMForm">
+                <div class="mb-4">
+                    <label>Heading:</label>
+                    <input type="text" id="editHeading" class="w-full p-2 rounded-md bg-gray-700" value="${mom.heading}">
+                </div>
+                <div class="mb-4">
+                    <label>Summary:</label>
+                    <textarea id="editSummary" class="w-full p-2 rounded-md bg-gray-700">${mom.summary}</textarea>
+                </div>
+                <div class="mb-4">
+                    <label>Date and Time:</label>
+                    <input type="datetime-local" id="editDateTime" class="w-full p-2 rounded-md bg-gray-700" value="${new Date(mom.dateTime).toISOString().slice(0, 16)}">
+                </div>
+                <div class="flex justify-between">
+                    <button type="button" id="cancelEditButton" class="bg-red-500 py-2 px-4 rounded-md">Cancel</button>
+                    <button type="submit" class="bg-green-500 py-2 px-4 rounded-md">Save</button>
+                </div>
+            </form>
+        </div>
+    `;
+
+    document.body.appendChild(editMoMModal);
+
+    // Event listener for cancel button
+    document.getElementById('cancelEditButton').addEventListener('click', function () {
+        editMoMModal.remove();
+    });
+
+    // Handle form submission
+    document.getElementById('editMoMForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const updatedMoM = {
+            heading: document.getElementById('editHeading').value,
+            summary: document.getElementById('editSummary').value,
+            dateTime: document.getElementById('editDateTime').value
+        };
+
+        try {
+            const response = await fetch(`/api/mom/update/${mom._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('syndicateToken')}`
+                },
+                body: JSON.stringify(updatedMoM)
+            });
+
+            if (response.ok) {
+                alert('MoM updated successfully');
+                editMoMModal.remove(); // Close the modal
+                fetchScheduleMeetings(clientId); // Refresh the MoM list
+            } else {
+                console.error('Error updating MoM:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error updating MoM:', error);
+        }
+    });
+}
+
+// Delete a specific MoM
+async function deleteMoM(momId) {
+    if (confirm('Are you sure you want to delete this MoM?')) {
+        try {
+            const response = await fetch(`/api/mom/delete/${momId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('syndicateToken')}`
+                }
+            });
+
+            if (response.ok) {
+                alert('MoM deleted successfully');
+                fetchScheduleMeetings(clientId); // Refresh the MoM list
+            } else {
+                console.error('Error deleting MoM:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error deleting MoM:', error);
+        }
+    }
+}
+
+
 // Fetch and display details of a specific MoM when "View" button is clicked
+
 async function viewMoM(momId) {
     try {
         const response = await fetch(`/api/mom/view/${momId}`, {

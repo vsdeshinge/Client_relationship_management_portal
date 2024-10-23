@@ -52,7 +52,8 @@ const BusinessProposal = require('./models/buisnessproposal.js');
 const SyndicateClient = require('./models/syndicateclient.js');
 const Visit = require('./models/visitor_logs.js');
 const authenticateToken = require('./public/js/authenticateToken.js');
-const verifyAdminToken  = require('./public/js/verifyAdminToken.js');
+
+const ScheduleMeeting = require('./models/schedule_meeting.js'); 
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Connect to MongoDB
@@ -511,46 +512,118 @@ router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
   }
 });
 
-router.patch('/api/mom/edit/:momId', authenticateToken, async (req, res) => {
+
+
+
+// Create a new meeting
+router.post('/api/schedulemeeting', async (req, res) => {
+  const { clientId, heading, summary, dateTime } = req.body;
   try {
-      const { momId } = req.params;
-      const { heading, summary, dateTime } = req.body;
+      const newMeeting = new ScheduleMeeting({ clientId, heading, summary, dateTime });
+      await newMeeting.save();
+      res.status(201).json(newMeeting);
+  } catch (error) {
+      console.error('Error creating meeting:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-      const updatedMoM = await MoM.findByIdAndUpdate(momId, {
-          heading,
-          summary,
-          dateTime
-      }, { new: true });
+// Get all meetings for a specific client
+router.get('/api/schedulemeeting/:clientId', async (req, res) => {
+  const { clientId } = req.params;
+  try {
+      const meetings = await ScheduleMeeting.find({ clientId });
+      res.status(200).json(meetings);
+  } catch (error) {
+      console.error('Error fetching meetings:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
-      if (!updatedMoM) {
-          return res.status(404).json({ error: 'MoM not found' });
+// View a specific meeting
+router.get('/api/schedulemeeting/view/:meetingId', async (req, res) => {
+  const { meetingId } = req.params;
+  try {
+      const meeting = await ScheduleMeeting.findById(meetingId);
+      if (!meeting) return res.status(404).json({ message: 'Meeting not found' });
+      res.status(200).json(meeting);
+  } catch (error) {
+      console.error('Error fetching meeting:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Edit a meeting (PUT route)
+router.put('/api/schedulemeeting/:meetingId', async (req, res) => {
+  const { meetingId } = req.params;
+  const { heading, summary, dateTime } = req.body;
+  try {
+      const updatedMeeting = await ScheduleMeeting.findByIdAndUpdate(meetingId, { heading, summary, dateTime }, { new: true });
+      res.status(200).json(updatedMeeting);
+  } catch (error) {
+      console.error('Error updating meeting:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Send email using Nodemailer
+router.post('/api/schedulemeeting/send-email/:meetingId', async (req, res) => {
+  const { meetingId } = req.params;
+  try {
+      // Fetch the meeting and populate clientId
+      const meeting = await ScheduleMeeting.findById(meetingId).populate('clientId');
+      
+      if (!meeting) return res.status(404).json({ message: 'Meeting not found' });
+      
+      // Log the meeting and clientId for debugging
+      console.log('Meeting found:', meeting);
+      console.log('ClientId:', meeting.clientId);
+      
+      // Check if clientId or email is missing
+      if (!meeting.clientId || !meeting.clientId.email) {
+          return res.status(400).json({ message: 'Client email not found' });
       }
 
-      res.status(200).json(updatedMoM);
+      // Nodemailer transporter setup
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'shakthi.amarnath@gmail.com', // Replace with your email
+            pass: 'leot sigm nvur fgou' // Replace with your email password
+        }
+      });
+      
+      // Custom email template
+      const mailOptions = {
+          from: 'shakthi.amarnath@gmail.com',
+          to: meeting.clientId.email, // Client's email
+          subject: `Thank You for Visiting POSSPOLE`,
+          text: `
+          Thank you for visiting POSSPOLE.
+
+          We are excited to meet you at the given date and time.
+
+          The scheduled meeting details are:
+          - Subject: ${meeting.heading}
+          - Summary: ${meeting.summary}
+          - Date & Time: ${new Date(meeting.dateTime).toLocaleString()}
+
+          Regards,
+          POSSPOLE
+          `
+      };
+
+      // Send email
+      await transporter.sendMail(mailOptions);
+      res.status(200).json({ message: 'Email sent successfully' });
+      
   } catch (error) {
-      console.error('Error updating MoM:', error);
-      res.status(500).json({ error: 'Error updating MoM' });
+      console.error('Error sending email:', error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 });
 
 
-router.delete('/api/mom/delete/:momId', authenticateToken, async (req, res) => {
-  try {
-      const { momId } = req.params;
-
-      const deletedMoM = await MoM.findByIdAndDelete(momId);
-
-      if (!deletedMoM) {
-          return res.status(404).json({ error: 'MoM not found' });
-      }
-
-      res.status(200).json({ message: 'MoM deleted successfully' });
-  } catch (error) {
-
-    console.error('Error deleting MoM:', error);
-      res.status(500).json({ error: 'Error deleting MoM' });
-  }
-});
 
 // Admin login route
 app.post('/admin/login', async (req, res) => {
@@ -1448,6 +1521,50 @@ router.get('/api/mom/view/:momId', async (req, res) => {
   } catch (error) {
     console.error('Error fetching MoM:', error);
     res.status(500).json({ error: 'Error fetching MoM' });
+  }
+});
+
+
+
+// Update MoM by ID
+router.put('/api/mom/update/:momId', async (req, res) => {
+  const { momId } = req.params;
+  const { heading, summary, dateTime } = req.body;
+
+  try {
+      const updatedMoM = await MoM.findByIdAndUpdate(
+          momId,
+          { heading, summary, dateTime },
+          { new: true } // Return the updated document
+      );
+
+      if (!updatedMoM) {
+          return res.status(404).json({ message: 'MoM not found' });
+      }
+
+      res.status(200).json(updatedMoM);
+  } catch (error) {
+      console.error('Error updating MoM:', error);
+      res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+// Delete MoM by ID
+router.delete('/api/mom/delete/:momId', async (req, res) => {
+  const { momId } = req.params;
+
+  try {
+      const deletedMoM = await MoM.findByIdAndDelete(momId);
+
+      if (!deletedMoM) {
+          return res.status(404).json({ message: 'MoM not found' });
+      }
+
+      res.status(200).json({ message: 'MoM deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting MoM:', error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 });
 

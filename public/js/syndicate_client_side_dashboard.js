@@ -37,7 +37,7 @@ function displaySyndicateDetails(user) {
               <div>
                   <p class="text-lg font-bold">Strategy Partner: ${user.syndicate_name}</p>
                   <p class="text-sm">User ID: ${user.user_id}</p>
-                  <p class="text-sm">Department: ${user.department}</p>
+                  <p class="text-sm">Designation: ${user.designation}</p>
               </div>
           </div>
       `;
@@ -80,7 +80,7 @@ function populateTable(clients) {
                   <img id="profile-img" src="${profileImage}" alt="Profile" class="profile-img cursor-pointer" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${profileImage}')">
               </td>
               <td class="py-2 px-4">${client.name || 'N/A'}</td>
-              <td class="py-2 px-4">${client.domanName || 'N/A'}</td>
+              <td class="py-2 px-4">${client.domain || 'N/A'}</td>
               <td class="py-2 px-4">${new Date(client.createdAt).toLocaleString()}</td>
               <td class="py-2 px-4">
                   <button class="bg-blue-500 px-2 py-1 rounded" onclick="handleViewClient('${client._id}')">View</button>
@@ -92,7 +92,7 @@ function populateTable(clients) {
                   <button href="./mom.html" onclick="handleAddDetailsClick1(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Log</button>
               </td>
               <td class="py-2 px-4">
-                  <button href="./schedule_meeting.html" onclick="handleAddDetailsClick1(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Schedule</button>
+                  <button href="./schedule_meeting.html" onclick="handleAddDetailsClick2(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Schedule</button>
               </td>
               <!-- Priority Flag Column -->
               <td class="py-2 px-4">
@@ -152,7 +152,7 @@ window.handleAddDetailsClick1 = function (event, clientId) {
     window.location.href = './mom.html'; // Redirect to the data entry page
 };
 
-window.handleAddDetailsClick1 = function (event, clientId) {
+window.handleAddDetailsClick2 = function (event, clientId) {
     event.preventDefault(); // Prevent default anchor behavior
     localStorage.setItem('clientId', clientId); // Store the clientId in localStorage
     window.location.href = './schedule_meeting.html '; // Redirect to the data entry page

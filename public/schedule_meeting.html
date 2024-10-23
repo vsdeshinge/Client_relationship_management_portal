@@ -6,15 +6,13 @@
     <title>Minutes of Meeting</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-
-       img {
-           width: 80px !important;
-           height: 80px !important;
-           border-radius: 100%;
-           margin-right: 20px;
-       }
- 
-       </style>
+        img {
+            width: 80px !important;
+            height: 80px !important;
+            border-radius: 100%;
+            margin-right: 20px;
+        }
+    </style>
 </head>
 <body class="bg-gray-800 text-white">
     <div class="container mx-auto p-8">
@@ -36,7 +34,7 @@
 
         <!-- Modal for Creating schedulemeeting -->
         <div id="createschedulemeetingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-            <div class="bg-gray-900 p-8 rounded-lg" style="width: 50% !important; max-width: 1200px !important;">
+            <div class="bg-gray-900 p-8 rounded-lg" style="width: 50%; max-width: 1200px;">
                 <h2 class="text-lg font-bold mb-4">Schedule a Meeting</h2>
                 <form id="schedulemeetingForm">
                     <div class="mb-4">
@@ -47,16 +45,13 @@
                         <label class="block">Meet With:</label>
                         <textarea id="summary" class="w-full p-2 rounded-md bg-gray-700"></textarea>
                     </div>
-                   
                     <div class="mb-4">
                         <label class="block">Date and Time:</label>
                         <input type="datetime-local" id="dateTime" class="w-full p-2 rounded-md bg-gray-700">
                     </div>
-            
                     <div class="flex justify-between">
                         <button type="button" id="cancelButton" class="bg-red-500 py-2 px-4 rounded-md">Cancel</button>
                         <button type="submit" class="bg-green-500 py-2 px-4 rounded-md">Submit</button>
-
                     </div>
                 </form>
             </div>
@@ -67,15 +62,35 @@
             <!-- Content for viewing schedulemeeting will be populated dynamically -->
         </div>
 
-        <!-- Last 3 schedulemeetings -->
-        <div id="last3schedulemeetings" class="grid grid-cols-3 gap-4 mb-6">
-            <!-- schedulemeetings will be populated here -->
+        <!-- Modal for Editing schedulemeeting -->
+        <div id="editScheduleModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-gray-900 p-8 rounded-lg" style="width: 50%; max-width: 1200px;">
+                <h2 class="text-lg font-bold mb-4">Edit Meeting</h2>
+                <form id="editScheduleForm">
+                    <div class="mb-4">
+                        <label class="block">Heading:</label>
+                        <input type="text" id="editHeading" class="w-full p-2 rounded-md bg-gray-700">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block">Summary:</label>
+                        <textarea id="editSummary" class="w-full p-2 rounded-md bg-gray-700"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block">Date and Time:</label>
+                        <input type="datetime-local" id="editDateTime" class="w-full p-2 rounded-md bg-gray-700">
+                    </div>
+                    <div class="flex justify-between">
+                        <button type="button" id="cancelEditButton" class="bg-red-500 py-2 px-4 rounded-md">Cancel</button>
+                        <button type="button" id="saveEditButton" class="bg-blue-500 py-2 px-4 rounded-md">Save</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- Table of schedulemeetings -->
         <div class="bg-gray-700 p-4 rounded-md">
             <table class="min-w-full bg-gray-700 text-white rounded-lg">
-                <thead class="">
+                <thead>
                     <tr>
                         <th class="text-left">Sl No.</th>
                         <th class="text-left">Heading</th>
@@ -89,8 +104,7 @@
             </table>
         </div>
     </div>
-    <script src="./js/schedulemeeting.js"></script>
+
     <script src="./js/syndicate_schedule_meeting.js"></script>
-   
 </body>
 </html>
