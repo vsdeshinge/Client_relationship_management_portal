@@ -105,7 +105,7 @@ h1 {
     text-align: center;
 }
 
-input, #syndicate_name , option ,#domains {
+input, #syndicate_name , option ,#domains ,#suggestions ,#suggestions li{
     background-color: #eee;
     border: none;
     border-radius: 10px;
@@ -225,4 +225,23 @@ button:focus {
     width: 80%;
     height: 80%;
     object-fit: cover; /* Ensures the image covers the box while maintaining aspect ratio */
+}
+
+#suggestions {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 150px; /* Set a max height */
+    overflow-y: auto;  /* Enable vertical scrolling */
+    border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+}
+
+#suggestions li {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd; /* Optional: Add a border between list items */
+}
+
+#suggestions li:hover {
+    background-color: #f0f0f0;
 }

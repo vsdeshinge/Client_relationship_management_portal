@@ -139,7 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('personReferred', document.getElementById('personReferred').value.trim());
-        formData.append('domain', document.getElementById('domains').value.trim());
+        // formData.append('domain', document.getElementById('domains').value.trim());
+
+       
+
 
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
@@ -175,4 +178,40 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         overlayContainer.classList.add('transition-left');
     }, 1200);
+});
+
+
+const domains = ["Health Care", "Food", "Agriculture", "IT Software", "Electronics", "Government Agencies", "NGO", "Investors","Civil Infrastructure", "Future Mobility", "Fintech","Architecture", "Interior Design", "Real Estate", "Education", "Biotech", "Bio Informatics", "Electronics", "Electrical","Semiconductors", "Corprate", "MNC", "Promoters", "B2B", "Designers", "IT hardware", "Manufacturer", "Researcher", "Others", "Scientist", "Defence"];
+
+const input = document.getElementById('domain-input');
+const suggestions = document.getElementById('suggestions');
+
+input.addEventListener('input', function() {
+    const query = input.value.toLowerCase();
+    suggestions.innerHTML = ''; // Clear existing suggestions
+
+    if (query.length > 0) {
+        const filteredDomains = domains.filter(domain => domain.toLowerCase().includes(query));
+
+        if (filteredDomains.length > 0) {
+            suggestions.style.display = 'block'; // Show suggestions
+            filteredDomains.forEach(domain => {
+                const li = document.createElement('li');
+                li.textContent = domain;
+                suggestions.appendChild(li);
+            });
+        } else {
+            suggestions.style.display = 'none'; // Hide if no results
+        }
+    } else {
+        suggestions.style.display = 'none'; // Hide when input is empty
+    }
+});
+
+suggestions.addEventListener('click', function(e) {
+    if (e.target.tagName === 'LI') {
+        input.value = e.target.textContent;
+        suggestions.innerHTML = ''; // Clear suggestions after selection
+        suggestions.style.display = 'none'; // Hide suggestions after clicking
+    }
 });
