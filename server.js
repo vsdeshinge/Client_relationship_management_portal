@@ -49,7 +49,7 @@ const Manufacturer = require('./models/manufacturer.js');
 const ChannelPartner = require('./models/channelpartner.js');
 const DomainExpert = require('./models/domainexpert.js');
 const BusinessProposal = require('./models/buisnessproposal.js');
-const SyndicateClient = require('./models/syndicateclient.js');
+// const SyndicateClient = require('./models/syndicateclient.js');
 const Visit = require('./models/visitor_logs.js');
 const authenticateToken = require('./public/js/authenticateToken.js');
 
@@ -101,6 +101,7 @@ const upload = multer({ storage });
 const router = express.Router();
 
 
+
 function generateToken(user, role) {
   const payload = { 
     id: user._id, 
@@ -149,14 +150,13 @@ app.get('/images/:id', async (req, res) => {
 const transporter = nodemailer.createTransport({
   service: 'gmail', // You can use other email services if needed
   auth: {
-      user: 'shakthi.amarnath@gmail.com', // Replace with your email
-      pass: 'leot sigm nvur fgou' // Replace with your email password
+      user: 'shakthi@posspole.com', // Replace with your email
+      pass: 'dzro fvkr usix bsjo' // Replace with your email password
   }
 });
 
 
-
-// Visitor - Register Client (Admin perspective)
+// Visitor - Register Client
 app.post('/register', faceImageUpload, async (req, res) => {
   const { name, phone, email, companyName, personToMeet, personReferred, domain } = req.body; // Added domain
 
@@ -165,9 +165,9 @@ app.post('/register', faceImageUpload, async (req, res) => {
   }
 
   try {
-    // Check if a client with the same email or phone exists in BOTH collections (Client and SyndicateClient)
-    const existingClientByEmail = await Client.findOne({ email }) || await SyndicateClient.findOne({ email });
-    const existingClientByPhone = await Client.findOne({ phone }) || await SyndicateClient.findOne({ phone });
+    // Check if a client with the same email or phone exists in the Client collection (no SyndicateClient)
+    const existingClientByEmail = await Client.findOne({ email });
+    const existingClientByPhone = await Client.findOne({ phone });
 
     if (existingClientByEmail) {
       return res.status(400).json({ error: 'Email already exists.' });
@@ -184,7 +184,7 @@ app.post('/register', faceImageUpload, async (req, res) => {
       email,
       companyName,
       personToMeet,
-      personreferred,
+      personReferred,
       domain // Save domain
     });
 
@@ -227,8 +227,6 @@ app.post('/register', faceImageUpload, async (req, res) => {
 
 
 
-
-
 // Function to generate a QR code, save it, and send it as an inline image in the email
 async function generateAndSendQRCode(client, isSyndicateClient = false) {
   try {
@@ -252,9 +250,9 @@ async function generateAndSendQRCode(client, isSyndicateClient = false) {
 
       // Set up the email with the QR code as an inline image
       const mailOptions = {
-          from: 'your-email@gmail.com',
+          from: 'shakthi@posspole.com',
           to: client.email,
-          subject: 'Thank You for Registering!',
+          subject: 'Welcome to POSSPOLE',
           html: `
               <!DOCTYPE html>
               <html>
@@ -265,15 +263,22 @@ async function generateAndSendQRCode(client, isSyndicateClient = false) {
                           color: #333;
                           line-height: 1.5;
                       }
+                      h3 {
+                          color: #007bff;
+                      }
+                      p {
+                          margin-bottom: 15px;
+                      }
                   </style>
               </head>
               <body>
-                  <h3>Thank you for registering!</h3>
-                  <p><strong>Name:</strong> ${client.name}</p>
-                  <p><strong>Phone No:</strong> ${client.phone}</p>
-                  <p><strong>Email ID:</strong> ${client.email}</p>
-                  <p>Scan the QR code below when you visit:</p>
-                  <img src="cid:qrcode" alt="QR Code" style="width: 300px; height: 300px;"/>
+                  <h3>Dear ${client.name},</h3>
+                  <p>Welcome to <strong>POSSPOLE</strong>! We’re thrilled to have you as part of our innovative ecosystem. Whether you’re exploring our cutting-edge products or collaborating with our expert team, we’re here to ensure a smooth and successful experience.</p>
+                  <p>To facilitate seamless access to our office, please find your personalized QR code below. This code is required each time you enter the POSSPOLE premises. Simply scan it upon arrival, and you’ll be on your way!</p>
+                  <p><img src="cid:qrcode" alt="QR Code" style="width: 300px; height: 300px;"/></p>
+                  <p>We look forward to a productive and lasting partnership with you at POSSPOLE!</p>
+                  <br>
+                  <p>Warm regards,<br><strong>TEAM POSSPOLE</strong></p>
               </body>
               </html>
           `,
@@ -337,17 +342,6 @@ app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
   }
 });
 
-// Route to fetch all syndicate names (dropdown)
-app.get('/api/syndicate/names', async (req, res) => {
-  try {
-      const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only syndicate names
-      res.json(syndicates);
-  } catch (error) {
-      console.error('Error fetching syndicate names:', error);
-      res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
 // Syndicate login route
 
 app.post('/syndicate-login', async (req, res) => {
@@ -384,24 +378,22 @@ app.post('/syndicate-login', async (req, res) => {
 // Syndicate Route - Register Syndicate Client
 router.post('/api/syndicateclients/register', upload.single('faceImage'), async (req, res) => {
   try {
-    const token = req.headers['authorization'].split(' ')[1]; // Extract token from Bearer authorization header
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Use the same secret key used for signing the token
+    const token = req.headers['authorization'].split(' ')[1];
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
     if (!decodedToken || !decodedToken.syndicate_name) {
       return res.status(403).json({ error: 'Syndicate name not found in token' });
     }
 
-    const syndicate_name = decodedToken.syndicate_name; // Extract syndicate_name from token payload
-    const { name, phone, email, companyName, personToMeet, domain, personreferred } = req.body; // Include domain and personReferred
+    const syndicate_name = decodedToken.syndicate_name;
+    const { name, phone, email, companyName, personToMeet, domain, personreferred } = req.body;
 
-    // Validate required fields: name, phone
     if (!name || !phone) {
       return res.status(400).json({ error: 'Name and Phone are required.' });
     }
 
-    // Check if a client with the same email or phone already exists
-    const existingClientByEmail = await SyndicateClient.findOne({ email });
-    const existingClientByPhone = await SyndicateClient.findOne({ phone });
+    const existingClientByEmail = await Client.findOne({ email });
+    const existingClientByPhone = await Client.findOne({ phone });
 
     if (existingClientByEmail) {
       return res.status(400).json({ error: 'Email already exists.' });
@@ -411,7 +403,6 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       return res.status(400).json({ error: 'Phone number already exists.' });
     }
 
-    // Handle face image upload
     let faceImageId = null;
     if (req.file) {
       const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
@@ -420,100 +411,159 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
 
       await new Promise((resolve, reject) => {
         uploadStream.on('finish', () => {
-          faceImageId = uploadStream.id; // Store file ID
+          faceImageId = uploadStream.id;
           resolve();
         });
         uploadStream.on('error', reject);
       });
     }
 
-    // Create a new syndicate client
-    const syndicateClient = new SyndicateClient({
+    const client = new Client({
       name,
       phone,
       email,
       companyName,
       personToMeet,
-      domain, // Include domain
-      personreferred, // Include personReferred
-      syndicate_name, // Assign syndicate_name from token
-      faceImage: faceImageId, // Reference the uploaded image ID
+      domain,
+      personReferred: personreferred,
+      syndicate_name, 
+      faceImage: faceImageId
     });
 
-    await syndicateClient.save();
-
-    // Generate the QR code and send the email
-    await generateAndSendQRCode(syndicateClient);
+    await client.save();
+    await generateAndSendQRCode(client);
 
     res.status(201).json({ message: 'Syndicate client registered successfully. QR code sent to email.' });
-
   } catch (error) {
     console.error('Error registering syndicate client:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-
-
-
-
-// Route to fetch syndicate clients filtered by syndicate_name
-router.get('/api/syndicateclients', authenticateToken, async (req, res) => {
-  const syndicateName = req.user.syndicate_name; // Get syndicate name from authenticated user
+// Ensure this is in your server.js or appropriate routes file
+app.get('/api/syndicateclients', authenticateToken, async (req, res) => {
+  const referredBy = req.user.syndicate_name; // Assuming req.user.syndicate_name contains the syndicate's name
 
   try {
-    // Fetch clients associated with the syndicate name
-    const syndicateClients = await SyndicateClient.find({ syndicate_name: syndicateName });
-    res.status(200).json(syndicateClients);
+    const clients = await Client.find({ personReferred: referredBy });
+
+    if (clients.length === 0) {
+      return res.status(404).json({ error: 'No clients found referred by this user.' });
+    }
+
+    res.status(200).json(clients);
   } catch (error) {
-    console.error('Error fetching syndicate clients:', error);
-    res.status(500).json({ error: 'Error fetching syndicate clients' });
+    console.error('Error fetching clients referred by:', error);
+    res.status(500).json({ error: 'Error fetching clients' });
   }
 });
 
-// Route to fetch a specific syndicate client by ID
+
+// Route to fetch a specific client by ID
 router.get('/api/syndicateclient/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
 
   try {
-      const syndicateClient = await SyndicateClient.findById(clientId);
-      if (!syndicateClient) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
-      res.status(200).json(syndicateClient);
+    // Fetch the client by ID from the Client collection
+    const client = await Client.findById(clientId);
+
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    res.status(200).json(client);
   } catch (error) {
-      console.error('Error fetching syndicate client:', error);
-      res.status(500).json({ error: 'Error fetching syndicate client' });
+    console.error('Error fetching client:', error);
+    res.status(500).json({ error: 'Error fetching client' });
   }
 });
 
 
+// Route to get all syndicate names
+router.get('/api/syndicates', async (req, res) => {
+  try {
+      const syndicates = await Syndicate.find({}, 'syndicate_name'); // Fetch only the syndicate_name field
+      res.json(syndicates);
+  } catch (error) {
+      console.error('Error fetching syndicate names:', error);
+      res.status(500).json({ message: 'Error fetching syndicate names' });
+  }
+});
+
+// Route to fetch a specific client by ID with populated references
 router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {
   const clientId = req.params.id;
 
   try {
-      // Populate references to other collections
-      const syndicateClient = await SyndicateClient.findById(clientId)
-        .populate('project')
-        .populate('service')
-        .populate('investor')
-        .populate('channelPartner')
-        .populate('manufacturer')
-        .populate('domainExpert');
+    // Fetch the client by ID from the Client collection and populate references
+    const client = await Client.findById(clientId)
+      .populate('project')
+      .populate('service')
+      .populate('investor')
+      .populate('channelPartner')
+      .populate('manufacturer')
+      .populate('domainExpert');
 
-      if (!syndicateClient) {
-          return res.status(404).json({ error: 'Client not found' });
-      }
+    if (!client) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
 
-      res.status(200).json(syndicateClient);
+    res.status(200).json(client);
   } catch (error) {
-      console.error('Error fetching syndicate client:', error);
-      res.status(500).json({ error: 'Error fetching syndicate client' });
+    console.error('Error fetching client:', error);
+    res.status(500).json({ error: 'Error fetching client' });
   }
 });
 
+// Delete a client by ID
+router.delete('/api/client/:id', authenticateToken, async (req, res) => {
+  const clientId = req.params.id;
 
+  try {
+    const deletedClient = await Client.findByIdAndDelete(clientId);
 
+    if (!deletedClient) {
+      return res.status(404).json({ error: 'Client not found' });
+    }
+
+    res.status(200).json({ message: 'Client deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting client:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+//  Fetch client details by ID
+app.get('/api/client/:id', authenticateToken, async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    const client = await Client.findById(clientId);
+    if (client) {
+      res.json(client);
+    } else {
+      res.status(404).json({ message: 'Client not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching client details', error });
+  }
+});
+
+// Update client details by ID
+app.put('/api/client/update/:id',authenticateToken, async (req, res) => {
+  try {
+    const clientId = req.params.id;
+    const updatedData = req.body;
+
+    const client = await Client.findByIdAndUpdate(clientId, updatedData, { new: true });
+    if (client) {
+      res.json({ message: 'Client updated successfully', client });
+    } else {
+      res.status(404).json({ message: 'Client not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating client details', error });
+  }
+});
 
 // Create a new meeting
 router.post('/api/schedulemeeting', async (req, res) => {
@@ -539,6 +589,7 @@ router.get('/api/schedulemeeting/:clientId', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 // View a specific meeting
 router.get('/api/schedulemeeting/view/:meetingId', async (req, res) => {
@@ -588,14 +639,14 @@ router.post('/api/schedulemeeting/send-email/:meetingId', async (req, res) => {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: 'shakthi.amarnath@gmail.com', // Replace with your email
-            pass: 'leot sigm nvur fgou' // Replace with your email password
+            user: 'shakthi@posspole.com', // Replace with your email
+            pass: 'dzro fvkr usix bsjo' // Replace with your email password
         }
       });
       
       // Custom email template
       const mailOptions = {
-          from: 'shakthi.amarnath@gmail.com',
+          from: 'shakthi@posspole.com',
           to: meeting.clientId.email, // Client's email
           subject: `Thank You for Visiting POSSPOLE`,
           text: `
@@ -741,6 +792,8 @@ router.put('/clients/:id/status', async (req, res) => {
       res.status(500).send('Server error');
   }
 });
+
+
 
 // Update business proposal section status
 router.put('/api/buisness/clients/:id/status', async (req, res) => {
@@ -988,28 +1041,6 @@ router.get('/api/client-counts', async (req, res) => {
       res.status(500).json({ error: 'Error fetching client counts' });
   }
 });
-
-
-// Admin route to fetch all syndicate partners
-app.get('/api/admin/syndicate-partners', authenticateToken, async (req, res) => {
-  try {
-      const syndicates = await Syndicate.find({});
-      
-      if (!syndicates.length) {
-          return res.status(404).json({ message: 'No syndicate partners found' });
-      }
-      
-      res.status(200).json(syndicates);
-  } catch (error) {
-      console.error('Error fetching syndicate partners:', error);
-      res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-
-
-
-
 
 
 // Update profile data for a customer
@@ -1569,7 +1600,7 @@ router.delete('/api/mom/delete/:momId', async (req, res) => {
 });
 
 // set priority in snydicate dashboard 
-// Route to update the priority of a client
+
 app.put('/api/syndicateclients/:id/priority', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const { priority } = req.body;
@@ -1579,7 +1610,7 @@ app.put('/api/syndicateclients/:id/priority', authenticateToken, async (req, res
   }
 
   try {
-      const updatedClient = await SyndicateClient.findByIdAndUpdate(
+      const updatedClient = await Client.findByIdAndUpdate(
           id, 
           { priority }, // Update the priority field
           { new: true } // Return the updated document
@@ -1743,6 +1774,7 @@ cron.schedule('0 18 * * *', async () => {
       console.error('Error during automatic check-out:', error);
   }
 });
+
 
 
 

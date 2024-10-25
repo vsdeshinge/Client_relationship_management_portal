@@ -422,93 +422,6 @@ fetchVisitorDetails('all');
 // });
 
 
-// <--------------Stratergy partner content start ---->
-document.addEventListener('DOMContentLoaded', () => {
-
-    // Function to initialize and show the "Stratergy Partner" page
-    function initStratergyPartnerPage() {
-        // Show the 'Stratergy Partner' content (remove hidden class)
-        showContent('content-stratergy-partner');
-
-        // Populate the strategy partner table
-        fetchStrategyPartnerData();
-    }
-
-    // Function to show the content by ID (remove the hidden class from the div)
-    function showContent(contentId) {
-        // Hide other content if necessary
-        document.querySelectorAll('.content').forEach(content => {
-            content.classList.add('hidden');  // Hide all other sections
-        });
-
-        // Show the target content
-        const targetContent = document.getElementById(contentId);
-        if (targetContent) {
-            targetContent.classList.remove('hidden');  // Show the selected section
-        }
-    }
-
-    // Set up the event listener for the "Strategy Partners" sidebar item
-    const strategyPartnerNavItem = document.getElementById('nav-stratergy-partner');
-    if (strategyPartnerNavItem) {
-        strategyPartnerNavItem.addEventListener('click', initStratergyPartnerPage);
-    }
-
-    // Function to fetch and populate strategy partner data
-    async function fetchStrategyPartnerData() {
-        try {
-            const token = localStorage.getItem('adminToken');
-            const response = await fetch('/api/admin/syndicate-partners', {  // Correct API endpoint
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                populateStrategyPartnerTable(data);
-            } else {
-                console.error('Error fetching strategy partner data');
-                document.getElementById('errorMessage').innerText = 'Failed to fetch syndicate partners.';
-            }
-        } catch (error) {
-            console.error('Error fetching strategy partner data:', error);
-            document.getElementById('errorMessage').innerText = 'Error fetching strategy partner data.';
-        }
-    }
-
-    // Function to populate the strategy partner table
-    function populateStrategyPartnerTable(syndicates) {
-        const tableBody = document.getElementById('strategyPartnerTableBody');
-        tableBody.innerHTML = ''; // Clear any existing rows
-
-        syndicates.forEach(syndicate => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="p-2 border border-gray-700">${syndicate.syndicate_name}</td>
-                <td class="p-2 border border-gray-700">
-                    <button class="bg-blue-500 text-white px-4 py-1 rounded" onclick="openSyndicateDashboard('${syndicate._id}')">View Dashboard</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-    }
-
-    // Function to open the selected syndicate's dashboard
-    window.openSyndicateDashboard = function(syndicateId) {
-        localStorage.setItem('syndicateId', syndicateId); // Store the selected syndicate ID in localStorage
-        window.location.href = '/syndicate-dashboard.html'; // Redirect to the syndicate dashboard page
-    };
-
-    // Call the function to load syndicate partners when the page is loaded
-    fetchStrategyPartnerData();
-});
-
-
-// <--------------Stratergy partner content ends ---->
-
-
 // Navigation functionality
 function showContent(contentId) {
     document.querySelectorAll('[id^="content-"]').forEach(el => el.style.display = 'none');
@@ -522,7 +435,7 @@ function showContent(contentId) {
 
 document.querySelectorAll('nav li').forEach(el => {
     el.addEventListener('click', function() {
-        console.log('Navigation item clicked:', this.id); // Add this line
+        console.log('Navigation item clicked:', this.id); // Check if the tab is clicked
         if (!this.classList.contains('has-submenu')) {
             document.querySelectorAll('nav li').forEach(item => item.classList.remove('bg-gray-700'));
             this.classList.add('bg-gray-700');
@@ -530,6 +443,9 @@ document.querySelectorAll('nav li').forEach(el => {
             showContent(contentId);
             if (contentId === 'content-business-proposal') {
                 initBusinessProposalPage();
+            }
+            if (contentId === 'content-strategy-partner') {
+                fetchStrategyPartners(); // Ensure that data fetching happens when the tab is clicked
             }
         }
     });
@@ -1264,6 +1180,64 @@ document.getElementById('nav-customer').addEventListener('click', function() {
 //     // Call the function to load syndicate partners
 //     loadSyndicatePartners();
 // });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Fetch the strategy partners when the content is displayed
+    const strategyPartnerNav = document.getElementById('nav-strategy-partner');
+    if (strategyPartnerNav) {
+        strategyPartnerNav.addEventListener('click', async () => {
+            await fetchStrategyPartners();  // Fetch and render syndicate names when the section is clicked
+        });
+    }
+
+    async function fetchStrategyPartners() {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch('/api/admin/syndicate-partners', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+    
+            if (response.ok) {
+                const syndicates = await response.json();
+                console.log('Fetched syndicates:', syndicates); // Log the fetched data
+                renderStrategyPartners(syndicates);
+            } else {
+                console.error('Error fetching strategy partner data');
+                document.getElementById('errorMessage').textContent = 'Error fetching strategy partner data';
+            }
+        } catch (error) {
+            console.error('Error fetching strategy partner data:', error);
+            document.getElementById('errorMessage').textContent = 'Error fetching strategy partner data';
+        }
+    }
+    
+    function renderStrategyPartners(syndicates) {
+    const tableBody = document.getElementById('strategyPartnerTableBody');
+    tableBody.innerHTML = ''; // Clear existing rows
+    console.log('Rendering syndicates:', syndicates); // Check if syndicates are being passed correctly
+    
+    syndicates.forEach((syndicate) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td class="p-2">${syndicate.name}</td>
+            <td class="p-2">
+                <button class="view-details-button" data-syndicate-id="${syndicate._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">View</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+        console.log('Appended row:', row); // Log each appended row
+    });
+}
+
+    
+   
+    
+    
+});
+
 
 
   

@@ -139,7 +139,8 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('personReferred', document.getElementById('personReferred').value.trim());
-        // formData.append('domain', document.getElementById('domains').value.trim());
+        formData.append('domain', document.getElementById('domain-input').value.trim());
+
 
        
 
@@ -214,4 +215,44 @@ suggestions.addEventListener('click', function(e) {
         suggestions.innerHTML = ''; // Clear suggestions after selection
         suggestions.style.display = 'none'; // Hide suggestions after clicking
     }
+});
+document.addEventListener('DOMContentLoaded', function() {
+    // Fetch syndicate names and populate the personReferred dropdown
+    async function fetchSyndicateNames() {
+        try {
+            const response = await fetch('/api/syndicates'); // Adjust the path according to your backend route
+            if (response.ok) {
+                const syndicates = await response.json();
+                populateSyndicateDropdown(syndicates);
+            } else {
+                console.error('Error fetching syndicate names');
+            }
+        } catch (error) {
+            console.error('Error fetching syndicate names:', error);
+        }
+    }
+    function populateSyndicateDropdown(syndicates) {
+        const personReferredField = document.getElementById('personReferred');
+        personReferredField.innerHTML = ''; // Clear any existing options
+    
+        // Add a default "Select" option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'I am referred by?';
+        personReferredField.appendChild(defaultOption);
+    
+        // Add each syndicate's name as an option
+        syndicates.forEach(syndicate => {
+            const option = document.createElement('option');
+            option.value = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+            option.textContent = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+            personReferredField.appendChild(option);
+        });
+    }
+    
+
+    // Call the function to fetch and populate the dropdown when the page loads
+    fetchSyndicateNames();
+
+    // Your existing form handling code here
 });

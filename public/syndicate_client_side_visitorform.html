@@ -21,8 +21,12 @@
                 <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
                 <input type="text" id="name" placeholder="Name" required />
                 <input type="tel" id="phone" placeholder="Phone Number" required />
+                <input type="text" id="companyName" placeholder="CompanyName" required />
                 <input type="email" id="email" placeholder="Email" />
-                <input type="text" id="personreferred" placeholder="I'm Referred by" />
+                <select id="personReferred" required>
+                    <option value="">I'm Referred by?</option>
+                    <!-- Options will be dynamically added here -->
+                </select>
                 
                 <input type="text" id="domain-input" placeholder="Start typing domain...">
                 <ul id="suggestions" style="display:none;"></ul>
@@ -79,6 +83,7 @@
     });
     
     
+        
 const domains = ["Health Care", "Food", "Agriculture", "IT Software", "Electronics", "Government Agencies", "NGO", "Investors","Civil Infrastructure", "Future Mobility", "Fintech","Architecture", "Interior Design", "Real Estate", "Education", "Biotech", "Bio Informatics", "Electronics", "Electrical","Semiconductors", "Corprate", "MNC", "Promoters", "B2B", "Designers", "IT hardware", "Manufacturer", "Researcher", "Others", "Scientist", "Defence"];
 
 const input = document.getElementById('domain-input');
@@ -96,6 +101,8 @@ input.addEventListener('input', function() {
             filteredDomains.forEach(domain => {
                 const li = document.createElement('li');
                 li.textContent = domain;
+                li.style.padding = "10px"; // Ensure it's clickable
+                li.style.cursor = "pointer";
                 suggestions.appendChild(li);
             });
         } else {

@@ -20,7 +20,11 @@
                 <h1>My Details</h1>
                 <!-- Your input fields -->
                 <input type="text" id="personToMeet" placeholder="I'm here to Meet" required />
-                <input type="text" id="personReferred" placeholder="I'm Referred by" />
+                <select id="personReferred" required>
+                    <option value="">I'm Referred by?</option>
+                    <!-- Options will be dynamically added here -->
+                </select>
+                
                 <input type="text" id="name" placeholder="Name" required />
                 <input type="tel" id="phone" placeholder="Phone Number" required />
                 <input type="email" id="email" placeholder="Email" />
@@ -28,23 +32,9 @@
                 
 
                 
-                <!-- <select  required>
-                    <option value="" disabled selected>Select Domain</option>
-                    <option value="fintech">Fintech</option>
-                    <option value="medtech">Medtech</option>
-                    <option value="edtech">Edtech</option>
-                    <option value="agritech">Agritech</option>
-                    <option value="healthcare">Healthcare</option>
-                    <option value="ecommerce">E-commerce</option>
-                    <option value="saas">SaaS</option>
-                    <option value="ai">Artificial Intelligence</option>
-                    <option value="blockchain">Blockchain</option>
-                    <option value="logistics">Logistics</option>
-                    <option value="iot">Internet of Things (IoT)</option>
-                    <option value="biotech">Biotech</option>
-                </select> -->
+    
 
-                <input type="text" id="domain-input" placeholder="Start typing domain...">
+                <input type="text" id="domain-input" placeholder="Start typing domain..." required/>
                 <ul id="suggestions" style="display:none;"></ul>
 
 

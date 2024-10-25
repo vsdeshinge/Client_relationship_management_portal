@@ -157,6 +157,45 @@ button:focus {
     }
 }
 
+/* Styling the personReferred dropdown */
+#personReferred {
+    background-color: #eee;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    width: calc(100% - 20px); /* Matches other input fields */
+    box-sizing: border-box;
+    font-size: 16px; /* Ensure readability */
+    color: #333; /* Text color */
+    appearance: none; /* Remove default browser styles for dropdown */
+    cursor: pointer;
+}
+
+/* Add an arrow for the dropdown */
+#personReferred::after {
+    content: "▼"; /* Arrow symbol */
+    color: #333;
+    padding-left: 10px;
+    pointer-events: none;
+}
+
+/* Focus state to match input fields */
+#personReferred:focus {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+/* Styling individual dropdown options */
+#personReferred option {
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+}
+
+
+
 /* Media Queries */
 @media (max-width: 768px) {
     .container {

@@ -143,32 +143,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 1200);
 
 
-    // fetch syndicate names (dropdown)
-      // Fetch syndicate names and populate dropdown
-    //   async function fetchSyndicateNames() {
-    //     try {
-    //         const response = await fetch('/api/syndicate/names', {
-    //             method: 'GET'
-    //         });
-
-    //         if (response.ok) {
-    //             const syndicates = await response.json();
-    //             syndicates.forEach(syndicate => {
-    //                 const option = document.createElement('option');
-    //                 option.value = syndicate.syndicate_name;
-    //                 option.textContent = syndicate.syndicate_name;
-    //                 syndicateDropdown.appendChild(option);
-    //             });
-    //         } else {
-    //             console.error('Error fetching syndicate names:', await response.text());
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching syndicate names:', error);
-    //     }
-    // }
-
-
-    // fetchSyndicateNames(); // Call the function to populate dropdown
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         form.style.display = 'none';
@@ -181,11 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('email', document.getElementById('email').value.trim());
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
-        formData.append('domain', document.getElementById('domains').value.trim()); // Append domain
-        formData.append('personreferred', document.getElementById('personreferred').value.trim()); 
+        formData.append('domain', document.getElementById('domain-input').value.trim());
+        formData.append('personreferred', document.getElementById('personReferred').value.trim()); 
 
     
-        console.log('Submitting form data:', formData.get('domain'), formData.get('personReferred'));
+
     
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
@@ -221,7 +195,44 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('message').textContent = 'Error during registration. Please try again later.';
         }
     });
+  
+ // Fetch syndicate names and populate the personReferred dropdown
+        async function fetchSyndicateNames() {
+            try {
+                const response = await fetch('/api/syndicates'); // Adjust the path according to your backend route
+                if (response.ok) {
+                    const syndicates = await response.json();
+                    populateSyndicateDropdown(syndicates);
+                } else {
+                    console.error('Error fetching syndicate names');
+                }
+            } catch (error) {
+                console.error('Error fetching syndicate names:', error);
+            }
+        }
+        function populateSyndicateDropdown(syndicates) {
+            const personReferredField = document.getElementById('personReferred');
+            personReferredField.innerHTML = ''; // Clear any existing options
+        
+            // Add a default "Select" option
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'I am referred by?';
+            personReferredField.appendChild(defaultOption);
+        
+            // Add each syndicate's name as an option
+            syndicates.forEach(syndicate => {
+                const option = document.createElement('option');
+                option.value = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+                option.textContent = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+                personReferredField.appendChild(option);
+            });
+        }
+        
     
+        // Call the function to fetch and populate the dropdown when the page loads
+        fetchSyndicateNames();
     
+        // Your existing form handling code here
+    });
     
-});

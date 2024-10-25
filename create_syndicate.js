@@ -35,11 +35,13 @@ async function main() {
     }
     
     const usersToCreate = [
-      { user_id: '101', syndicateName: 'kiranvaithi', password: 'kiran', designation: 'Eco-System Coordinator' },
-      // { user_id: '102', syndicateName: 'kiranR', password: 'kiranR', designation: 'Chief-Executive Officer' },
-      // { user_id: '103', syndicateName: 'shashidhar', password: 'shashidhar', designation: 'President' },
-      // { user_id: '104', syndicateName: 'anandkannan', password: 'anand', designation: 'Strategy Partner' },
-      // { user_id: '105', syndicateName: 'sujatha', password: 'sujatha', designation: 'Strategy Partner' }
+      { user_id: '101', syndicateName: 'Kiran_Vaithi', password: 'kiran', designation: 'Eco-System Coordinator' },
+      { user_id: '102', syndicateName: 'Kiran_Rudrappa', password: 'kiran@123', designation: 'Chief-Executive Officer' },
+      { user_id: '103', syndicateName: 'Shashidhara_MR', password: 'shashidhar', designation: 'President' },
+      { user_id: '104', syndicateName: 'Anand_Kannan', password: 'anand', designation: 'Strategy Partner' },
+      { user_id: '105', syndicateName: 'Sujatha', password: 'sujatha', designation: 'Strategy Partner' },
+      { user_id: '106', syndicateName: 'Vishal_Rao', password: 'vishal@123', designation: 'Strategy Partner' },
+      { user_id: '107', syndicateName: 'others', password: 'others', designation: 'Strategy Partner' }
     ];
     
     for (let user of usersToCreate) {
