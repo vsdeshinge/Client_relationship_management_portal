@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <!-- Include Tailwind CSS for styling -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./css/qr_scanner.css">
     <style>
         .hidden-section {
             display: none;
@@ -16,19 +17,31 @@
 </head>
 <body class="bg-gray-100">
 
+<div class="container relative">
+        <!-- Overlay -->
+        <div class="overlay-container" id="overlayContainer">
+            <div class="overlay-panel">
+                <img src="./assets/posspole_logo.png" alt="Posspole Logo" class="overlay-image">
+                <br>
+                <h1 class="text-3xl font-bold mb-4 text-white">Namaste!</h1>
+                <p class="text-3xl font-bold mb-4 text-white">Welcome to POSSPOLE!</p>
+                <button id="visitorRedirect" class="ghost mt-4">Click here and Scan Passes</button>
+            </div>
+        </div>
+
     <!-- Navigation Bar -->
-    <nav class="bg-blue-600 p-4 text-white flex justify-between">
+    <nav class="bg-gray-600 p-4 text-white flex justify-between rounded-lg">
         <h1 id="qr-tab" class="cursor-pointer">QR Scanner</h1>
         <h1 id="history-tab" class="cursor-pointer">History</h1>
     </nav>
 
     <!-- Container for QR Scanner -->
-    <div id="scanner-section" class="p-4">
-        <h1 class="text-2xl mb-4">QR Code Scanner</h1>
+    <div id="scanner-section" class="p-4 flex flex-col items-center">
+        <h1 class="text-3xl font-bold mb-4 text-gray">QR Code Scanner</h1>
         <!-- QR Scanner area -->
-        <div id="qr-reader" class="mb-4" style="width: 300px;"></div>
+        <div class= "qr-reader" id="qr-reader" class="mb-4" style="width: 300px; "></div>
         <!-- Toggle Camera Button -->
-        <button id="flip-camera-btn" class="bg-blue-600 text-white p-2 rounded mb-4">Flip Camera</button>
+        <button id="flip-camera-btn" class="bg-gray-600 text-white p-2 rounded mb-4">Flip Camera</button>
 
         <!-- Client Details -->
         <div id="client-details" class="bg-white p-4 rounded shadow-md">
@@ -48,12 +61,13 @@
 
     <!-- Container for History -->
     <div id="history-section" class="hidden-section p-4">
-        <h1 class="text-2xl mb-4">Client Visit History</h1>
+        <h1 class="text-3xl font-bold mb-4 text-gray">Client Visit History</h1>
         <div id="history-list" class="bg-white p-4 rounded shadow-md">
             <!-- History items will be populated here -->
         </div>
     </div>
-
+    
+</div>
     <!-- Link to the external JavaScript file -->
     <script src="./js/qr_scanner.js"></script>
 </body>

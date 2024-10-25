@@ -1,0 +1,103 @@
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+
+ body {
+    background: #3b3b3c;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+} 
+
+.qr-reader , .overlay-panel{
+    display: flex !important;
+    align-items: center !important;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: space-evenly;
+    
+
+}
+.logo-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 60px;
+    width: 60px;
+}
+
+.logo {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+/* QR Scanner and Details Container */
+.container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    margin: 10%;
+    height: auto; /* Set to auto to fit content */
+    width: auto;
+    max-width: 90%; /* Ensure container does not overflow */
+    padding: 20px;
+    position: relative; /* Ensure relative positioning for overlay */
+    overflow: hidden;
+}
+
+/* Overlay */
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%; /* Fill the container width */
+    background-color: rgb(59, 59, 60); /* Use semi-transparency for the overlay */
+    display: flex!important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    color: white;
+    z-index: 2;
+    transition: transform 1s ease; /* Add transition here for smooth movement */
+}
+
+/* Overlay transition effect */
+.overlay-container.transition-left {
+    transform: translateX(-100%);
+}
+
+/* Forms and Buttons */
+button {
+    background-color: #1c1e22;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 8px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    transition: transform 0.1s ease;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+#visitorRedirect {
+    background: #4A5568;
+}
+
+.client-details, #history-list {
+    background: #f7fafc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.hidden-section {
+    display: none;
+}
