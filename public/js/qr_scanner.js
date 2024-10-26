@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+
     const clientDetails = {
         id: null,
         name: '',
@@ -223,4 +225,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const overlayContainer = document.getElementById('overlayContainer');
+    const scannerSection = document.getElementById('scanner-section');
+    const visitorRedirect = document.getElementById('visitorRedirect');
+
+    // Handle the overlay transition and show the scanner
+    visitorRedirect.addEventListener('click', () => {
+        setTimeout(() => {
+            overlayContainer.classList.add('transition-left');
+            // After transition, hide overlay and show scanner
+            setTimeout(() => {
+                overlayContainer.style.display = 'none';
+                scannerSection.classList.remove('hidden-section');
+            }, 1000); // Matches the CSS transition duration of 1 second
+        }, 1200);
+    });
 });
