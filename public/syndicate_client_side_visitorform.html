@@ -30,7 +30,8 @@
                 
                 <input type="text" id="domain-input" placeholder="Ex: Fintech, Edtech, Medtech, etc.">
                 <ul id="suggestions" style="display: none;"></ul>
-                <p id="error-message" style="color: red; display: none;">Please select a valid domain from the list.</p>
+                <input type="text" id="custom-domain" placeholder="Specify your domain" style="display: none;">
+                <p id="error-message" style="color: red; display: none;">Please select a valid domain from the list or specify a custom one.</p>
 
 
 
@@ -215,26 +216,10 @@ const domainSet = new Set(domains.map(domain => domain.name)); // For validation
 
 const input = document.getElementById('domain-input');
 const suggestions = document.getElementById('suggestions');
+const customDomainInput = document.getElementById('custom-domain');
 const errorMessage = document.getElementById('error-message');
 
-// Simple fuzzy match function for AI-like intelligent filtering
-function fuzzyMatch(query) {
-    const lowercaseQuery = query.toLowerCase();
-    return domains
-        .filter(domain => domain.name.toLowerCase().includes(lowercaseQuery))
-        .sort((a, b) => b.popularity - a.popularity); // Prioritize by popularity
-}
-
-// Debounce function to reduce excessive calls
-function debounce(fn, delay) {
-    let timer;
-    return function(...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), delay);
-    };
-}
-
-// Display suggestions
+// Function to display suggestions
 function displaySuggestions(list) {
     suggestions.innerHTML = '';
     list.forEach(domain => {
@@ -247,12 +232,24 @@ function displaySuggestions(list) {
     suggestions.style.display = 'block';
 }
 
-// Show initial intelligent suggestions on focus
-input.addEventListener('focus', function() {
-    displaySuggestions(domains.sort((a, b) => b.popularity - a.popularity).slice(0, 10)); // Show top 10
-});
+// Fuzzy matching for suggestions
+function fuzzyMatch(query) {
+    const lowercaseQuery = query.toLowerCase();
+    return domains
+        .filter(domain => domain.name.toLowerCase().includes(lowercaseQuery))
+        .sort((a, b) => b.popularity - a.popularity);
+}
 
-// Filter suggestions as user types, using fuzzy matching
+// Debounce to handle excessive calls
+function debounce(fn, delay) {
+    let timer;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    };
+}
+
+// Display suggestions on input
 input.addEventListener('input', debounce(function() {
     const query = input.value.toLowerCase();
     if (query) {
@@ -260,20 +257,27 @@ input.addEventListener('input', debounce(function() {
         if (filteredDomains.length > 0) {
             displaySuggestions(filteredDomains);
         } else {
-            suggestions.style.display = 'none'; // Hide if no matches
+            suggestions.style.display = 'none';
         }
     } else {
-        displaySuggestions(domains.slice(0, 10)); // Show initial top suggestions if input is empty
+        displaySuggestions(domains.slice(0, 10)); // Show top suggestions
     }
-    errorMessage.style.display = 'none'; // Hide error when user starts typing
+    errorMessage.style.display = 'none';
+    customDomainInput.style.display = 'none'; // Hide custom input if typing something else
 }, 300));
 
 // Handle suggestion click
 suggestions.addEventListener('click', function(e) {
     if (e.target.tagName === 'LI') {
         input.value = e.target.textContent;
-        suggestions.innerHTML = '';
         suggestions.style.display = 'none';
+
+        if (e.target.textContent === "Others") {
+            customDomainInput.style.display = 'block'; // Show custom input if "Others" is selected
+            customDomainInput.focus();
+        } else {
+            customDomainInput.style.display = 'none';
+        }
         errorMessage.style.display = 'none';
     }
 });
@@ -281,7 +285,14 @@ suggestions.addEventListener('click', function(e) {
 // Validate input on blur
 input.addEventListener('blur', function() {
     const userInput = input.value.trim();
-    if (userInput && !domainSet.has(userInput)) {
+    if (userInput === "Others") {
+        // Ensure custom domain input is shown and not empty for "Others" selection
+        if (customDomainInput.value.trim() === "") {
+            errorMessage.textContent = "Please specify your domain.";
+            errorMessage.style.display = 'block';
+        }
+    } else if (userInput && !domainSet.has(userInput)) {
+        errorMessage.textContent = "Please select a valid domain from the list.";
         errorMessage.style.display = 'block';
         input.value = ''; // Clear invalid input
     }
