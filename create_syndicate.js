@@ -41,7 +41,8 @@ async function main() {
       { user_id: '104', syndicateName: 'Anand_Kannan', password: 'anand', designation: 'Strategy Partner' },
       { user_id: '105', syndicateName: 'Sujatha', password: 'sujatha', designation: 'Strategy Partner' },
       { user_id: '106', syndicateName: 'Vishal_Rao', password: 'vishal@123', designation: 'Strategy Partner' },
-      { user_id: '107', syndicateName: 'others', password: 'others', designation: 'Strategy Partner' }
+      { user_id: '107', syndicateName: 'others', password: 'others', designation: 'Strategy Partner' },
+      { user_id: '108', syndicateName: 'Vidya', password: 'vidya@123', designation: 'Strategy Partner' }
     ];
     
     for (let user of usersToCreate) {
