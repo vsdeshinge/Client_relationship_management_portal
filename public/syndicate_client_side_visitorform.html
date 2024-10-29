@@ -34,14 +34,15 @@
                 <p id="error-message" style="color: red; display: none;">Please select a valid domain from the list or specify a custom one.</p>
 
 
-
-                <!-- Button for capturing face image -->
-                <button type="button" id="captureFace">Capture Face Image</button>
-            
-                <!-- New input for uploading an image from the device -->
-                <input type="file" id="uploadImage" accept="image/*" style="display:none;" />
-                <button type="button" id="uploadImageButton">Upload Image</button>
-            
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <!-- Button for capturing face image -->
+                    <button type="button" id="captureFace">Capture Face Image</button>
+                    
+                    <!-- New input for uploading an image from the device -->
+                    <input type="file" id="uploadImage" accept="image/*" style="display:none;" />
+                    <button type="button" id="uploadImageButton">Upload Image</button>
+                </div>
+                
                 <!-- Placeholder for displaying captured/uploaded image -->
                 <div id="capturedImages">
                     <h2>Captured/Uploaded Image:</h2>

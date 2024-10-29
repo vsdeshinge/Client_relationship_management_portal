@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     phoneMessage.style.color = 'red';
     phoneInput.parentNode.insertBefore(phoneMessage, phoneInput.nextSibling);
     const syndicateDropdown = document.getElementById('syndicate_name');
-    const faceImageInput = document.getElementById('faceImage');
     let faceImageFile = null;
 
     phoneInput.addEventListener('input', function() {
@@ -51,10 +50,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const captureButton = document.createElement('button');
             captureButton.textContent = 'Capture';
+            captureButton.style.marginTop = '10px';
             container.appendChild(captureButton);
 
             const closeButton = document.createElement('button');
             closeButton.textContent = 'Close';
+            closeButton.style.marginTop = '10px';
             container.appendChild(closeButton);
 
             captureButton.addEventListener('click', async () => {
@@ -90,44 +91,36 @@ document.addEventListener('DOMContentLoaded', function() {
         reader.onload = function(e) {
             const img = document.createElement('img');
             img.src = e.target.result;
-            img.style.maxWidth = '100px';
-            img.style.maxHeight = '100px';
+            img.style.maxWidth = '150px';
+            img.style.maxHeight = '150px';
+            img.style.borderRadius = '8px';
+            img.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.3)';
+            img.style.border = '1px solid #ccc';
 
             const fileSize = document.createElement('span');
             fileSize.textContent = `File Size: ${(blob.size / 1024).toFixed(2)} KB`;
+            fileSize.style.display = 'block';
+            fileSize.style.fontSize = '0.8em';
+            fileSize.style.color = '#555';
 
-            const previewContainer = document.getElementById(elementId);
-            previewContainer.innerHTML = '';
-            previewContainer.appendChild(img);
-            previewContainer.appendChild(fileSize);
+            const faceImageDisplay = document.getElementById(elementId);
+            faceImageDisplay.innerHTML = ''; // Clear previous images
+            faceImageDisplay.appendChild(img);
+            faceImageDisplay.appendChild(fileSize);
+            document.getElementById('capturedImages').style.display = 'block'; // Show captured images section
         };
-
         reader.readAsDataURL(blob);
     }
 
     async function dataURLtoBlob(dataURL) {
-        return new Promise((resolve) => {
-            const parts = dataURL.split(';base64,');
-            const contentType = parts[0].split(':')[1];
-            const raw = window.atob(parts[1]);
-            const rawLength = raw.length;
-            const uInt8Array = new Uint8Array(rawLength);
-
-            for (let i = 0; i < rawLength; ++i) {
-                uInt8Array[i] = raw.charCodeAt(i);
-            }
-
-            resolve(new Blob([uInt8Array], { type: contentType }));
-        });
+        const response = await fetch(dataURL);
+        return await response.blob();
     }
 
-    document.getElementById('captureFace').addEventListener('click', (e) => {
-        e.preventDefault(); // Prevent form submission
-        openCameraForImageCapture();
-    });
-       // Handle image upload
-       document.getElementById('uploadImageButton').addEventListener('click', function() {
-        document.getElementById('uploadImage').click(); // Trigger the hidden file input
+    document.getElementById('captureFace').addEventListener('click', openCameraForImageCapture);
+
+    document.getElementById('uploadImageButton').addEventListener('click', function() {
+        document.getElementById('uploadImage').click();
     });
 
     document.getElementById('uploadImage').addEventListener('change', function(event) {
@@ -142,13 +135,12 @@ document.addEventListener('DOMContentLoaded', function() {
         overlayContainer.classList.add('transition-left');
     }, 1200);
 
-
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
         form.style.display = 'none';
         overlayContainer.style.display = 'none';
         thankYouContainer.style.display = 'block';
-    
+
         const formData = new FormData();
         formData.append('name', document.getElementById('name').value.trim());
         formData.append('phone', document.getElementById('phone').value.trim());
@@ -156,15 +148,12 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('domain', document.getElementById('domain-input').value.trim());
-        formData.append('personreferred', document.getElementById('personReferred').value.trim()); 
+        formData.append('personreferred', document.getElementById('personReferred').value.trim());
 
-    
-
-    
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
         }
-    
+
         try {
             const syndicateToken = localStorage.getItem('syndicateToken'); // Get the token from local storage
             const response = await fetch(`/api/syndicateclients/register`, {
@@ -174,10 +163,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 body: formData
             });
-    
+
             if (response.headers.get('Content-Type')?.includes('application/json')) {
                 const result = await response.json();
-    
+
                 if (response.ok) {
                     document.getElementById('message').textContent = 'Registration successful! Thank you.';
                     setTimeout(() => {
@@ -195,44 +184,41 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('message').textContent = 'Error during registration. Please try again later.';
         }
     });
-  
- // Fetch syndicate names and populate the personReferred dropdown
-        async function fetchSyndicateNames() {
-            try {
-                const response = await fetch('/api/syndicates'); // Adjust the path according to your backend route
-                if (response.ok) {
-                    const syndicates = await response.json();
-                    populateSyndicateDropdown(syndicates);
-                } else {
-                    console.error('Error fetching syndicate names');
-                }
-            } catch (error) {
-                console.error('Error fetching syndicate names:', error);
+
+    // Fetch syndicate names and populate the personReferred dropdown
+    async function fetchSyndicateNames() {
+        try {
+            const response = await fetch('/api/syndicates'); // Adjust the path according to your backend route
+            if (response.ok) {
+                const syndicates = await response.json();
+                populateSyndicateDropdown(syndicates);
+            } else {
+                console.error('Error fetching syndicate names');
             }
+        } catch (error) {
+            console.error('Error fetching syndicate names:', error);
         }
-        function populateSyndicateDropdown(syndicates) {
-            const personReferredField = document.getElementById('personReferred');
-            personReferredField.innerHTML = ''; // Clear any existing options
-        
-            // Add a default "Select" option
-            const defaultOption = document.createElement('option');
-            defaultOption.value = '';
-            defaultOption.textContent = 'I am referred by?';
-            personReferredField.appendChild(defaultOption);
-        
-            // Add each syndicate's name as an option
-            syndicates.forEach(syndicate => {
-                const option = document.createElement('option');
-                option.value = syndicate.syndicate_name; // Use syndicate.syndicate_name here
-                option.textContent = syndicate.syndicate_name; // Use syndicate.syndicate_name here
-                personReferredField.appendChild(option);
-            });
-        }
-        
-    
-        // Call the function to fetch and populate the dropdown when the page loads
-        fetchSyndicateNames();
-    
-        // Your existing form handling code here
-    });
-    
+    }
+
+    function populateSyndicateDropdown(syndicates) {
+        const personReferredField = document.getElementById('personReferred');
+        personReferredField.innerHTML = ''; // Clear any existing options
+
+        // Add a default "Select" option
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'I am referred by?';
+        personReferredField.appendChild(defaultOption);
+
+        // Add each syndicate's name as an option
+        syndicates.forEach(syndicate => {
+            const option = document.createElement('option');
+            option.value = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+            option.textContent = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+            personReferredField.appendChild(option);
+        });
+    }
+
+    // Call the function to fetch and populate the dropdown when the page loads
+    fetchSyndicateNames();
+});

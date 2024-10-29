@@ -12,7 +12,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: auto;
     margin: 0;
     position: relative;
 }
@@ -73,6 +73,41 @@ body {
     text-align: center;
     color: white;
 }
+
+#capturedImages {
+    display: none; /* Hide initially */
+}
+
+
+#capturedImages {
+    display: none; /* Hide initially */
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#faceImageDisplay {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+#faceImageDisplay img {
+    max-width: 150px;
+    max-height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #ccc;
+}
+
+#faceImageDisplay span {
+    font-size: 0.9em;
+    color: #555;
+}
+
 
 .overlay-image {
     max-width: 200px;
