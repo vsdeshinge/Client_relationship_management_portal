@@ -148,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('domain', document.getElementById('domain-input').value.trim());
-        formData.append('personreferred', document.getElementById('personReferred').value.trim());
+        // formData.append('personreferred', document.getElementById('personReferred').value.trim());
 
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
