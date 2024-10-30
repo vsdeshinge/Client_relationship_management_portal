@@ -260,6 +260,7 @@
                 </div>
                 <div>
                     <button class="bg-blue-500 px-4 py-2 rounded" onclick="redirectToVisitorForm()">Add Visitor Details</button>
+                    <button class="bg-blue-500 px-4 py-2 rounded" onclick="copyReferralLink(this)" data-user-id="user1">Copy Invite Link for User 1</button>
                 </div>
             </div>
             <!-- Table Section -->
@@ -438,7 +439,16 @@
         }
         });
 
-        
+        function copyInviteLink(button) {
+        const inviteLink = button.getAttribute("data-invite-link"); // Retrieve the link from the data attribute
+        navigator.clipboard.writeText(inviteLink)
+            .then(() => {
+            alert("Invite link copied to clipboard!");
+            })
+            .catch(err => {
+            console.error("Failed to copy: ", err);
+            });
+        }
 
     </script>
    
