@@ -435,4 +435,27 @@ const domains = [
       input.value = ''; // Clear invalid input
     }
     });
-    
+
+     
+document.addEventListener('DOMContentLoaded', function() {
+    // Trigger the hidden file input when the "Upload Image" button is clicked
+    document.getElementById('uploadImageButton').addEventListener('click', function() {
+        document.getElementById('uploadImage').click(); // Trigger the hidden file input
+    });
+  
+    // Event listener for when a file is selected
+    document.getElementById('uploadImage').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Display the uploaded image in the image container
+                const imageDisplay = document.getElementById('faceImageDisplay');
+                imageDisplay.innerHTML = `<img src="${e.target.result}" alt="Uploaded Image">`;
+                imageDisplay.style.display = 'flex'; 
+            };
+            reader.readAsDataURL(file); // Read the file as a Data URL for preview
+        }
+    });
+  });
+  
