@@ -638,3 +638,4 @@ if (userInput === "Others") {
   input.value = ''; // Clear invalid input
 }
 });
+
