@@ -638,4 +638,29 @@ if (userInput === "Others") {
   input.value = ''; // Clear invalid input
 }
 });
+document.getElementById('copyInviteLinkButton').addEventListener('click', async () => {
+  const syndicateToken = localStorage.getItem('syndicateToken'); // Fetch the token
+
+  try {
+      // Get the user's syndicate_name or user_id from the backend
+      const response = await fetch('/api/getSyndicateInfo', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${syndicateToken}` // Send token in Authorization header
+          }
+      });
+
+      const userData = await response.json();
+      const syndicateName = userData.syndicate_name; // Get the syndicate_name from the response
+
+      const inviteLink = `http://localhost:3000/syndicate_client_side_visitorform.html?referrer=${syndicateName}`;
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(inviteLink);
+      alert("Invite link copied to clipboard!");
+  } catch (error) {
+      console.error("Failed to copy invite link:", error);
+      alert("Failed to copy invite link.");
+  }
+});
 
