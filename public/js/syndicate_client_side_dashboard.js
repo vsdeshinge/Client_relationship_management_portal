@@ -46,6 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+
+    const PAGE_SIZE = 10; // Number of clients per page
+    let currentPage = 1;
+    let totalPages = 1;
+
     // Fetch syndicate clients
     async function fetchSyndicateClients(token) {
       try {
@@ -66,6 +71,28 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error fetching syndicate clients:', error);
       }
     }
+
+    // Function to render pagination controls
+
+    function renderPagination() {
+      const paginationContainer = document.getElementById('pagination');
+      paginationContainer.innerHTML = ''; // Clear existing controls
+
+      for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
+          if (i === currentPage) {
+              pageButton.classList.add('bg-blue-700'); // Highlight the current page
+          }
+          pageButton.innerText = i;
+          pageButton.onclick = () => {
+              currentPage = i;
+              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+          };
+          paginationContainer.appendChild(pageButton);
+      }
+    }
+
 
     // Populate the client table with data
     function populateTable(clients) {
@@ -118,6 +145,58 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.insertAdjacentHTML('beforeend', row);
       });
     }
+
+    // Render pagination buttons
+    function renderPagination() {
+      const paginationContainer = document.getElementById('pagination');
+      paginationContainer.innerHTML = ''; // Clear existing controls
+
+      // Previous Button
+      const prevButton = document.createElement('button');
+      prevButton.innerText = 'Previous';
+      prevButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
+      prevButton.disabled = currentPage === 1; // Disable if on the first page
+      prevButton.onclick = () => {
+          if (currentPage > 1) {
+              currentPage -= 1;
+              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+          }
+      };
+      paginationContainer.appendChild(prevButton);
+
+      // Page Buttons
+      for (let i = 1; i <= totalPages; i++) {
+          const pageButton = document.createElement('button');
+          pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
+          if (i === currentPage) {
+              pageButton.classList.add('bg-blue-700'); // Highlight the current page
+          }
+          pageButton.innerText = i;
+          pageButton.onclick = () => {
+              currentPage = i;
+              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+          };
+          paginationContainer.appendChild(pageButton);
+      }
+
+      // Next Button
+      const nextButton = document.createElement('button');
+      nextButton.innerText = 'Next';
+      nextButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
+      nextButton.disabled = currentPage === totalPages; // Disable if on the last page
+      nextButton.onclick = () => {
+          if (currentPage < totalPages) {
+              currentPage += 1;
+              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+          }
+      };
+      paginationContainer.appendChild(nextButton);
+    }
+
+    // Call fetch function when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+      fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+    });
 
  // Toggle the dropdown menu
 window.toggleDropdown = function(clientId, event) {
