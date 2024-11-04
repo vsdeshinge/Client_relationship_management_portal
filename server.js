@@ -377,15 +377,13 @@ app.post('/syndicate-login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-// Syndicate Route - Register Syndicate Client
-router.post('/api/syndicateclients/register', upload.single('faceImage'), async (req, res) => {
-  try {
-    // Get syndicate name directly from form data instead of the token
-    const { name, phone, email, companyName, personToMeet, domain, personReferred } = req.body;
 
-    if (!personReferred) {
-      return res.status(400).json({ error: 'Referrer (syndicate name) is required.' });
-    }
+
+// Syndicate Route - Register Syndicate Client
+router.post('/api/syndicateclients/register', authenticateToken, upload.single('faceImage'), async (req, res) => {
+  try {
+    const { name, phone, email, companyName, personToMeet, domain } = req.body;
+    const personReferred = req.user ? req.user.syndicate_name : req.body.personReferred; // Use syndicate_name from token if available, otherwise from form data
 
     // Validate required fields: name and phone
     if (!name || !phone) {
@@ -404,23 +402,7 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       return res.status(400).json({ error: 'Phone number already exists.' });
     }
 
-    // Handle face image upload
-    let faceImageId = null;
-    if (req.file) {
-      const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
-      const uploadStream = gridfsBucket.openUploadStream(filename);
-      uploadStream.end(req.file.buffer);
-
-      await new Promise((resolve, reject) => {
-        uploadStream.on('finish', () => {
-          faceImageId = uploadStream.id;
-          resolve();
-        });
-        uploadStream.on('error', reject);
-      });
-    }
-
-    // Create a new client document
+    // Create a new client document with the personReferred
     const client = new Client({
       name,
       phone,
@@ -428,51 +410,22 @@ router.post('/api/syndicateclients/register', upload.single('faceImage'), async 
       companyName,
       personToMeet,
       domain,
-      personReferred, // Assign personReferred from form data
-      faceImage: faceImageId,
+      personReferred,
+      faceImage: req.file ? req.file.id : null,
     });
 
     await client.save();
 
-    // Optionally, send a QR code if applicable
-    await generateAndSendQRCode(client);
+    // Send the welcome email with QR code after successful registration
+    await generateAndSendQRCode(client, true);
 
-    res.status(201).json({ message: 'Syndicate client registered successfully. QR code sent to email.' });
+    res.status(201).json({ message: 'Syndicate client registered successfully.' });
   } catch (error) {
     console.error('Error registering syndicate client:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-app.get('/api/syndicateclients', authenticateToken, async (req, res) => {
-  const referredBy = req.user.syndicate_name;
-  console.log("Fetching clients referred by:", referredBy);
-
-  try {
-    // Construct query based on the presence of a valid syndicate name
-    let query = {};
-    if (referredBy && referredBy.toLowerCase() !== "others") {
-      query = {
-        $or: [
-          { personReferred: referredBy },
-          { syndicate_name: referredBy }
-        ]
-      };
-    }
-
-    const clients = await Client.find(query);
-
-    // If no clients are found, return an empty array
-    if (clients.length === 0) {
-      return res.status(200).json([]); // Return empty array if no clients are found
-    }
-
-    res.status(200).json(clients);
-  } catch (error) {
-    console.error('Error fetching clients referred by:', error);
-    res.status(500).json({ error: 'Error fetching clients' });
-  }
-});
 
 
 // Route to fetch a specific client by ID
@@ -491,6 +444,18 @@ router.get('/api/syndicateclient/:id', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('Error fetching client:', error);
     res.status(500).json({ error: 'Error fetching client' });
+  }
+});
+
+// Syndicate Route - Get All Syndicate Clients
+router.get('/api/syndicateclients', authenticateToken,async (req, res) => {
+  try {
+    // Fetch all clients associated with the syndicate
+    const clients = await Client.find({ personReferred: req.user.syndicate_name });
+    res.status(200).json(clients);
+  } catch (error) {
+    console.error('Error fetching syndicate clients:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -516,6 +481,51 @@ router.get('/api/getSyndicateInfo', authenticateToken, async (req, res) => {
     res.status(500).json({ error: 'Error fetching syndicate info' });
   }
 });
+
+
+// Fetch all syndicate partners
+app.get('/api/strategy-partners', authenticateToken, async (req, res) => {
+  try {
+    // Fetch all syndicate partners
+    const syndicatePartners = await Syndicate.find({}, 'syndicate_name designation user_id');
+
+    // For each syndicate partner, get the count of clients they referred
+    const partnersWithReferrals = await Promise.all(syndicatePartners.map(async (partner) => {
+      const totalReferrals = await Client.countDocuments({ personReferred: partner.syndicate_name });
+      return {
+        ...partner.toObject(),
+        totalReferrals
+      };
+    }));
+
+    res.status(200).json(partnersWithReferrals);
+  } catch (error) {
+    console.error('Error fetching strategy partners:', error);
+    res.status(500).json({ error: 'Error fetching strategy partners' });
+  }
+});
+// Endpoint to fetch syndicate token by userId
+app.get('/api/getSyndicateToken/:userId', authenticateToken, async (req, res) => {
+  try {
+      // Find the syndicate by user_id
+      const syndicate = await Syndicate.findOne({ user_id: req.params.userId });
+
+      if (!syndicate) {
+          return res.status(404).json({ error: 'Syndicate not found' });
+      }
+
+      // Generate a token for the syndicate
+      const syndicateToken = generateToken(syndicate, 'syndicate');
+
+      res.status(200).json({ syndicateToken });
+  } catch (error) {
+      console.error('Error fetching syndicate token:', error);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
 
 // Route to fetch a specific client by ID with populated references
 router.get('/api/syndicateclients/:id', authenticateToken, async (req, res) => {

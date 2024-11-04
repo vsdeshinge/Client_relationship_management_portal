@@ -1,50 +1,78 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem('syndicateToken'); // Get the syndicate token
-  
-    if (token) {
-        fetchSyndicateDetails(token);
-        fetchSyndicateClients(token);
-    } else {
-        console.error('Token not found in local storage.');
-    }
+  // Fetch `syndicateToken` and `syndicateId` from localStorage
+  const token = localStorage.getItem('syndicateToken');
+  const syndicateId = localStorage.getItem('syndicateId');
 
-    // Fetch syndicate details
-    async function fetchSyndicateDetails(token) {
-      try {
-        const response = await fetch('/api/syndicate-details', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+  if (token) {
+      // For syndicate access, use only the token to fetch data
+      fetchSyndicateDetails(token);
+      fetchSyndicateClients(token);
+  } else if (syndicateId) {
+      // For admin access to the syndicate dashboard, use the syndicateId
+      fetchSyndicateDetailsForAdmin(syndicateId);
+  } else {
+      console.error('Syndicate token or ID not found.');
+  }
 
-        if (response.ok) {
-          const syndicateUser = await response.json();
-          displaySyndicateDetails(syndicateUser);
-        } else {
-          console.error('Error fetching syndicate details:', await response.text());
+  // Fetch syndicate details using token
+  async function fetchSyndicateDetails(token) {
+    try {
+      const response = await fetch('/api/syndicate-details', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      } catch (error) {
-        console.error('Error fetching syndicate details:', error);
-      }
-    }
+      });
 
-    function displaySyndicateDetails(user) {
-      const profileCard = document.getElementById('profile-card');
-      if (profileCard) {
-        profileCard.innerHTML = `
-            <div class="flex items-center">
-                <div>
-                    <p class="text-lg font-bold">Strategy Partner: ${user.syndicate_name}</p>
-                    <p class="text-sm">User ID: ${user.user_id}</p>
-                    <p class="text-sm">Designation: ${user.designation}</p>
-                </div>
-            </div>
-        `;
+      if (response.ok) {
+        const syndicateUser = await response.json();
+        displaySyndicateDetails(syndicateUser);
       } else {
-        console.error('Profile card element not found.');
+        console.error('Error fetching syndicate details:', await response.text());
       }
+    } catch (error) {
+      console.error('Error fetching syndicate details:', error);
     }
+  }
+
+  // Fetch syndicate details using syndicateId for admin access
+  async function fetchSyndicateDetailsForAdmin(syndicateId) {
+    try {
+      const response = await fetch(`/api/syndicate-details/${syndicateId}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}` // Assumes adminToken is stored
+        }
+      });
+
+      if (response.ok) {
+        const syndicateUser = await response.json();
+        displaySyndicateDetails(syndicateUser);
+      } else {
+        console.error('Error fetching syndicate details for admin:', await response.text());
+      }
+    } catch (error) {
+      console.error('Error fetching syndicate details for admin:', error);
+    }
+  }
+
+  function displaySyndicateDetails(user) {
+    const profileCard = document.getElementById('profile-card');
+    if (profileCard) {
+      profileCard.innerHTML = `
+          <div class="flex items-center">
+              <div>
+                  <p class="text-lg font-bold">Strategy Partner: ${user.syndicate_name}</p>
+                  <p class="text-sm">User ID: ${user.user_id}</p>
+                  <p class="text-sm">Designation: ${user.designation}</p>
+              </div>
+          </div>
+      `;
+    } else {
+      console.error('Profile card element not found.');
+    }
+  }
+
 
 
     const PAGE_SIZE = 10; // Number of clients per page
@@ -112,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <img id="profile-img" src="${profileImage}" alt="Profile" class="profile-img cursor-pointer" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${profileImage}')">
           </td>
           <td class="py-2 px-4">${client.name || 'N/A'}</td>
-          <td class="py-2 px-4">${client.domain || 'N/A'}</td>
+          <td class="py-2 px-4">${client.domain ? client.domain : 'N/A'}</td> <!-- Ensure domain is checked -->
           <td class="py-2 px-4">${new Date(client.createdAt).toLocaleString()}</td>
           <td class="py-2 px-4">
             <div class="relative inline-block text-left">

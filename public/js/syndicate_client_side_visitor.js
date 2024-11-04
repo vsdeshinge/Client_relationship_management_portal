@@ -7,9 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneMessage = document.createElement('div');
     phoneMessage.style.color = 'red';
     phoneInput.parentNode.insertBefore(phoneMessage, phoneInput.nextSibling);
-    // const syndicateDropdown = document.getElementById('syndicate_name');
-    // let faceImageFile = null;
+    let faceImageFile = null;
 
+      // Set referrer field if passed in the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const referrer = urlParams.get('referrer');
+      const personReferredField = document.getElementById('personReferred');
+      let requiresReferral = Boolean(referrer);
+      
+      if (referrer) {
+          personReferredField.value = referrer;
+          personReferredField.disabled = true;
+      } else {
+          personReferredField.value = '';
+      }
+
+    // Phone number validation
     phoneInput.addEventListener('input', function() {
         const phone = phoneInput.value.trim();
         if (phone.length !== 10 || !/^\d{10}$/.test(phone)) {
@@ -39,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-
             const video = document.createElement('video');
             video.style.width = '100%';
             video.style.height = 'auto';
@@ -104,10 +116,10 @@ document.addEventListener('DOMContentLoaded', function() {
             fileSize.style.color = '#555';
 
             const faceImageDisplay = document.getElementById(elementId);
-            faceImageDisplay.innerHTML = ''; // Clear previous images
+            faceImageDisplay.innerHTML = '';
             faceImageDisplay.appendChild(img);
             faceImageDisplay.appendChild(fileSize);
-            document.getElementById('capturedImages').style.display = 'block'; // Show captured images section
+            document.getElementById('capturedImages').style.display = 'block';
         };
         reader.readAsDataURL(blob);
     }
@@ -126,8 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('uploadImage').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
-            faceImageFile = file; // Set faceImageFile to uploaded file
-            showImagePreview('faceImageDisplay', file); // Show preview of uploaded file
+            faceImageFile = file;
+            showImagePreview('faceImageDisplay', file);
         }
     });
 
@@ -135,11 +147,15 @@ document.addEventListener('DOMContentLoaded', function() {
         overlayContainer.classList.add('transition-left');
     }, 1200);
 
+    // Capture token from local storage
+    const syndicateToken = localStorage.getItem('syndicateToken');
+    
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        form.style.display = 'none';
-        overlayContainer.style.display = 'none';
-        thankYouContainer.style.display = 'block';
+    
+        if (requiresReferral && !personReferredField.value.trim()) {
+            personReferredField.value = referrer;
+        }
     
         const formData = new FormData();
         formData.append('name', document.getElementById('name').value.trim());
@@ -148,7 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('domain', document.getElementById('domain-input').value.trim());
-        formData.append('personReferred', document.getElementById('personReferred').value.trim());
+        formData.append('personReferred', personReferredField.value.trim()); 
     
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
@@ -157,29 +173,53 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await fetch(`/api/syndicateclients/register`, {
                 method: 'POST',
-                body: formData // Remove Authorization header
+                headers: {
+                    'Authorization': `Bearer ${syndicateToken}`
+                },
+                body: formData
             });
     
             const result = await response.json();
+    
+            const messageDiv = document.getElementById('message');
             if (response.ok) {
-                document.getElementById('message').textContent = 'Registration successful! Thank you.';
+                messageDiv.classList.remove('show');
+                messageDiv.style.display = 'none';
+                thankYouContainer.style.display = 'block';
                 setTimeout(() => {
                     location.href = 'syndicate-dashboard.html';
-                }, 1000);
+                }, 3000);
             } else {
-                document.getElementById('message').textContent = `Error: ${result.error}`;
+                thankYouContainer.style.display = 'none';
+                messageDiv.style.display = 'block';
+                messageDiv.classList.add('show'); // Apply transition effect
+    
+                if (response.status === 400) {
+                    if (result.error === 'Email already exists.') {
+                        messageDiv.textContent = 'Email already exists. Please try again with another email ID.';
+                    } else if (result.error === 'Phone number already exists.') {
+                        messageDiv.textContent = 'Phone number already exists. Please try filling with an alternate phone number.';
+                    } else {
+                        messageDiv.textContent = `Error: ${result.error}`;
+                    }
+                } else if (response.status === 500) {
+                    messageDiv.textContent = 'Internal server error. Please try again later.';
+                }
             }
         } catch (error) {
             console.error('Error during registration:', error);
-            document.getElementById('message').textContent = 'Error during registration. Please try again later.';
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = 'Error during registration. Please try again later.';
+            messageDiv.style.display = 'block';
+            messageDiv.classList.add('show'); // Apply transition effect
+            thankYouContainer.style.display = 'none';
         }
     });
     
 
-    // Fetch syndicate names and populate the personReferred dropdown
     async function fetchSyndicateNames() {
         try {
-            const response = await fetch('/api/syndicates'); // Adjust the path according to your backend route
+            const response = await fetch('/api/syndicates');
             if (response.ok) {
                 const syndicates = await response.json();
                 populateSyndicateDropdown(syndicates);
@@ -192,30 +232,39 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function populateSyndicateDropdown(syndicates) {
-        const personReferredField = document.getElementById('personReferred');
-        personReferredField.innerHTML = ''; // Clear any existing options
+        personReferredField.innerHTML = '';
 
-        // Add a default "Select" option
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
         defaultOption.textContent = 'I am referred by?';
         personReferredField.appendChild(defaultOption);
 
-        // Add each syndicate's name as an option
         syndicates.forEach(syndicate => {
             const option = document.createElement('option');
-            option.value = syndicate.syndicate_name; // Use syndicate.syndicate_name here
-            option.textContent = syndicate.syndicate_name; // Use syndicate.syndicate_name here
+            option.value = syndicate.syndicate_name;
+            option.textContent = syndicate.syndicate_name;
             personReferredField.appendChild(option);
         });
     }
 
-    // Call the function to fetch and populate the dropdown when the page loads
     fetchSyndicateNames();
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrer = urlParams.get('referrer'); // Get the referrer from URL
 
-  
+    if (referrer) {
+        const personReferredField = document.getElementById('personReferred');
+        personReferredField.value = referrer; // Automatically fill with referrer
+        personReferredField.disabled = true;  // Disable editing
+    }
+
+    const form = document.getElementById('connectForm');
+    // Other form-related code remains unchanged
+});
+
+
 const domains = [
     { name: "Health Care", popularity: 90 },
     { name: "Food", popularity: 85 },
@@ -450,17 +499,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const referrer = urlParams.get('referrer'); // Get the referrer from URL
-
-    if (referrer) {
-        const personReferredField = document.getElementById('personReferred');
-        personReferredField.value = referrer; // Automatically fill with referrer
-        personReferredField.disabled = true;  // Disable editing
-    }
-
-    const form = document.getElementById('connectForm');
-    // Other form-related code remains unchanged
-});
-
+ 

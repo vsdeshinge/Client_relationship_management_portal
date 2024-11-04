@@ -1051,85 +1051,85 @@ document.getElementById('nav-customer').addEventListener('click', function() {
 
 
 
-// advanced search filter 
-document.addEventListener('DOMContentLoaded', () => {
-    const advancedSearchButton = document.getElementById('advancedSearchButton');
-    const searchModal = document.getElementById('searchModal');
-    const closeModalButton = document.getElementById('closeModalButton');
-    const advancedSearchForm = document.getElementById('advancedSearchForm');
+// // advanced search filter 
+// document.addEventListener('DOMContentLoaded', () => {
+//     const advancedSearchButton = document.getElementById('advancedSearchButton');
+//     const searchModal = document.getElementById('searchModal');
+//     const closeModalButton = document.getElementById('closeModalButton');
+//     const advancedSearchForm = document.getElementById('advancedSearchForm');
 
-    advancedSearchButton.addEventListener('click', () => {
-        searchModal.classList.remove('hidden');
-    });
+//     advancedSearchButton.addEventListener('click', () => {
+//         searchModal.classList.remove('hidden');
+//     });
 
-    closeModalButton.addEventListener('click', () => {
-        searchModal.classList.add('hidden');
-    });
+//     closeModalButton.addEventListener('click', () => {
+//         searchModal.classList.add('hidden');
+//     });
 
-    advancedSearchForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
-            .filter(input => input.checked)
-            .map(input => input.value);
+//     advancedSearchForm.addEventListener('submit', async (event) => {
+//         event.preventDefault();
+//         const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
+//             .filter(input => input.checked)
+//             .map(input => input.value);
         
-        if (searchFields.length === 0) {
-            alert('Please select at least one search criteria.');
-            return;
-        }
+//         if (searchFields.length === 0) {
+//             alert('Please select at least one search criteria.');
+//             return;
+//         }
 
-        await performAdvancedSearch(searchFields);
-        searchModal.classList.add('hidden'); // Close modal after search
-    });
+//         await performAdvancedSearch(searchFields);
+//         searchModal.classList.add('hidden'); // Close modal after search
+//     });
 
-    async function performAdvancedSearch(searchFields) {
-        const token = localStorage.getItem('adminToken');
-        try {
-            const response = await fetch(`/advanced-search`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ searchFields })
-            });
-            const result = await response.json();
-            if (response.ok) {
-                updateTableWithSearchResults(result);
-            } else {
-                console.error('Error performing advanced search:', result.error);
-            }
-        } catch (error) {
-            console.error('Error performing advanced search:', error);
-        }
-    }
+//     async function performAdvancedSearch(searchFields) {
+//         const token = localStorage.getItem('adminToken');
+//         try {
+//             const response = await fetch(`/advanced-search`, {
+//                 method: 'POST',
+//                 headers: {
+//                     'Content-Type': 'application/json',
+//                     'Authorization': `Bearer ${token}`
+//                 },
+//                 body: JSON.stringify({ searchFields })
+//             });
+//             const result = await response.json();
+//             if (response.ok) {
+//                 updateTableWithSearchResults(result);
+//             } else {
+//                 console.error('Error performing advanced search:', result.error);
+//             }
+//         } catch (error) {
+//             console.error('Error performing advanced search:', error);
+//         }
+//     }
 
-    function updateTableWithSearchResults(data) {
-        const visitorsTableBody = document.getElementById('visitorsTableBody');
-        visitorsTableBody.innerHTML = ''; // Clear existing table rows
+//     function updateTableWithSearchResults(data) {
+//         const visitorsTableBody = document.getElementById('visitorsTableBody');
+//         visitorsTableBody.innerHTML = ''; // Clear existing table rows
 
-        if (data.length === 0) {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td colspan="7" class="p-2 text-center">No clients available</td>
-            `;
-            visitorsTableBody.appendChild(row);
-        } else {
-            data.forEach(item => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="p-2">${item.name || ''}</td>
-                    <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
-                    <td class="p-2">${item.companyName || ''}</td>
-                    <td class="p-2">${item.phone || ''}</td>
-                    <td class="p-2">${item.email || ''}</td>
-                    <td class="p-2">${item.action || ''}</td>
-                    <td class="p-2">${item.status || ''}</td>
-                `;
-                visitorsTableBody.appendChild(row);
-            });
-        }
-    }   
-});
+//         if (data.length === 0) {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td colspan="7" class="p-2 text-center">No clients available</td>
+//             `;
+//             visitorsTableBody.appendChild(row);
+//         } else {
+//             data.forEach(item => {
+//                 const row = document.createElement('tr');
+//                 row.innerHTML = `
+//                     <td class="p-2">${item.name || ''}</td>
+//                     <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
+//                     <td class="p-2">${item.companyName || ''}</td>
+//                     <td class="p-2">${item.phone || ''}</td>
+//                     <td class="p-2">${item.email || ''}</td>
+//                     <td class="p-2">${item.action || ''}</td>
+//                     <td class="p-2">${item.status || ''}</td>
+//                 `;
+//                 visitorsTableBody.appendChild(row);
+//             });
+//         }
+//     }   
+// });
 
 
 
@@ -1245,49 +1245,47 @@ document.addEventListener('DOMContentLoaded', () => {
 //     }
 // }
 
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize and load Strategy Partners with pagination
-    populateStrategyPartnerCards(1); // Start at page 1
+    loadStrategyPartners(); // Load strategy partners on page load
 });
 
 // Pagination variables
-const itemsPerPage = 6; // Number of cards per page
+const itemsPerPage = 6;
 let currentPage = 1;
 let totalPages = 1;
 
-// Example data
-const strategyPartners = [
-    { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
-    { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
-    { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
-    { name: "John Doe", department: "Finance", totalReferrals: 130, totalProposals: 55, profileId: "delta4" },
-    { name: "Emily Smith", department: "HR", totalReferrals: 125, totalProposals: 65, profileId: "epsilon5" },
-    { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
-    { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
-    { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
-    { name: "John Doe", department: "Finance", totalReferrals: 130, totalProposals: 55, profileId: "delta4" },
-    { name: "Emily Smith", department: "HR", totalReferrals: 125, totalProposals: 65, profileId: "epsilon5" },
-    { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
-    { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
-    { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
-    { name: "John Doe", department: "Finance", totalReferrals: 130, totalProposals: 55, profileId: "delta4" },
-    { name: "Emily Smith", department: "HR", totalReferrals: 125, totalProposals: 65, profileId: "epsilon5" },
-    { name: "Laura Wilson", department: "IT", totalReferrals: 115, totalProposals: 60, profileId: "zeta6" }
-];
+async function loadStrategyPartners() {
+    try {
+        const response = await fetch('/api/strategy-partners', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('adminToken')}` // Admin token for authentication
+            }
+        });
 
-// Calculate total pages
-totalPages = Math.ceil(strategyPartners.length / itemsPerPage);
+        if (response.ok) {
+            const data = await response.json();
+            totalPages = Math.ceil(data.length / itemsPerPage);
+            populateStrategyPartnerCards(data, currentPage);
+        } else {
+            console.error('Failed to fetch strategy partners:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error fetching strategy partners:', error);
+    }
+}
 
-function populateStrategyPartnerCards(page) {
+function populateStrategyPartnerCards(data, page) {
     const cardContainer = document.getElementById('strategyPartnerCards');
     cardContainer.innerHTML = ''; // Clear existing cards
 
-    // Determine start and end index for the current page
+    // Calculate items for the current page
     const startIndex = (page - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-
-    // Slice the array to get only the items for the current page
-    const currentItems = strategyPartners.slice(startIndex, endIndex);
+    const currentItems = data.slice(startIndex, endIndex);
 
     // Populate the cards for the current page
     currentItems.forEach(partner => {
@@ -1296,28 +1294,22 @@ function populateStrategyPartnerCards(page) {
 
         card.innerHTML = `
             <div class="text-center">
-                <img src="https://via.placeholder.com/64" alt="${partner.name}" class="w-16 h-16 rounded-full mx-auto shadow-lg">
-                <h3 class="text-lg font-semibold mt-3 text-gray-800">${partner.name}</h3>
-                <p class="text-sm text-gray-500">Dept: ${partner.department}</p>
+                <h3 class="text-lg font-semibold mt-3 text-gray-800">${partner.syndicate_name}</h3>
+                <p class="text-sm text-gray-500">Dept: ${partner.designation}</p>
             </div>
             <div class="mt-4">
                 <div class="flex justify-between items-center">
                     <p class="text-sm font-medium text-gray-600">Total Referrals</p>
-                    <p class="text-lg font-bold text-blue-600">${partner.totalReferrals}</p>
-                </div>
-                <div class="flex justify-between items-center mt-2">
-                    <p class="text-sm font-medium text-gray-600">Total Proposals</p>
-                    <p class="text-lg font-bold text-blue-600">${partner.totalProposals}</p>
+                    <p class="text-lg font-bold text-blue-600">${partner.totalReferrals || 0}</p>
                 </div>
             </div>
-            <button class="mt-6 w-full bg-gray-800 text-white font-semibold py-2 rounded-lg transition duration-200 hover:bg-blue-600 focus:outline-none" onclick="openSyndicateDashboard('${partner.profileId}')">
+            <button class="mt-6 w-full bg-gray-800 text-white font-semibold py-2 rounded-lg transition duration-200 hover:bg-blue-600 focus:outline-none" onclick="openSyndicateDashboard('${partner.user_id}')">
                 View Profile
             </button>
         `;
         cardContainer.appendChild(card);
     });
 
-    // Update pagination controls
     updatePaginationControls();
 }
 
@@ -1333,7 +1325,7 @@ function updatePaginationControls() {
     prevButton.onclick = () => changePage(currentPage - 1);
     paginationContainer.appendChild(prevButton);
 
-    // Page numbers
+    // Page number display
     const pageNumber = document.createElement('span');
     pageNumber.className = "px-4 py-2 text-gray-800";
     pageNumber.textContent = `Page ${currentPage} of ${totalPages}`;
@@ -1349,7 +1341,34 @@ function updatePaginationControls() {
 }
 
 function changePage(page) {
-    if (page < 1 || page > totalPages) return; // Prevent out-of-range pages
+    if (page < 1 || page > totalPages) return; // Ensure page is within bounds
     currentPage = page;
-    populateStrategyPartnerCards(currentPage);
+    loadStrategyPartners();
 }
+
+async function openSyndicateDashboard(userId) {
+    try {
+        const adminToken = localStorage.getItem('adminToken');
+        const response = await fetch(`/api/getSyndicateToken/${userId}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${adminToken}`
+            }
+        });
+
+        if (response.ok) {
+            const { syndicateToken } = await response.json();
+            localStorage.setItem('syndicateId', userId);
+            localStorage.setItem('syndicateToken', syndicateToken); // Store the fetched syndicate token
+
+            // Redirect to syndicate dashboard
+            window.location.href = `/syndicate-dashboard.html`;
+        } else {
+            console.error("Failed to fetch syndicate token:", await response.text());
+        }
+    } catch (error) {
+        console.error("Error navigating to syndicate dashboard:", error);
+    }
+}
+
+
