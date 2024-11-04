@@ -214,212 +214,212 @@ fetchVisitorDetails('all');
     
 });
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     async function fetchClientCounts() {
-//         const token = localStorage.getItem('adminToken');
-//         try {
-//             const response = await fetch('/api/client-counts', {
-//                 method: 'GET',
-//                 headers: {
-//                     'Authorization': `Bearer ${token}`
-//                 }
-//             });
+document.addEventListener('DOMContentLoaded', () => {
+    async function fetchClientCounts() {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch('/api/client-counts', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-//             if (response.ok) {
-//                 const counts = await response.json();
-//                 createCharts(counts);
-//             } else {
-//                 console.error('Error fetching client counts');
-//             }
-//         } catch (error) {
-//             console.error('Error fetching client counts:', error);
-//         }
-//     }
+            if (response.ok) {
+                const counts = await response.json();
+                createCharts(counts);
+            } else {
+                console.error('Error fetching client counts');
+            }
+        } catch (error) {
+            console.error('Error fetching client counts:', error);
+        }
+    }
 
-//     function createCharts(counts) {
-//         const categories = [
-//             { id: 'customers', label: 'Customers', value: counts.customers, color: '#7221FD' },
-//             { id: 'manufacturers', label: 'Manufacturers', value: counts.manufacturers, color: '#7221FD' },
-//             { id: 'serviceProviders', label: 'Service Providers', value: counts.serviceProviders, color: '#7221FD' },
-//             { id: 'channelPartners', label: 'Channel Partners', value: counts.channelPartners, color: '#7221FD' },
-//             { id: 'investors', label: 'Investors', value: counts.investors, color: '#7221FD' },
-//             { id: 'domainExperts', label: 'Domain Experts', value: counts.domainExperts, color: '#7221FD' },
-//         ];
+    function createCharts(counts) {
+        const categories = [
+            { id: 'customers', label: 'Customers', value: counts.customers, color: '#7221FD' },
+            { id: 'manufacturers', label: 'Manufacturers', value: counts.manufacturers, color: '#7221FD' },
+            { id: 'serviceProviders', label: 'Service Providers', value: counts.serviceProviders, color: '#7221FD' },
+            { id: 'channelPartners', label: 'Channel Partners', value: counts.channelPartners, color: '#7221FD' },
+            { id: 'investors', label: 'Investors', value: counts.investors, color: '#7221FD' },
+            { id: 'domainExperts', label: 'Domain Experts', value: counts.domainExperts, color: '#7221FD' },
+        ];
 
-//         categories.forEach(category => {
-//             createCircleChart(category.id, category.value, category.color);
-//         });
-//     }
-//     fetchClientCounts();
+        categories.forEach(category => {
+            createCircleChart(category.id, category.value, category.color);
+        });
+    }
+    fetchClientCounts();
     
     
     
-//     // Initialize qualified lead page
-//     function initQualifiedLeadPage(status) {
-//         showContent('content-qualified-lead');
-//         populateQualifiedLeadTable(status);
-//     }
+    // Initialize qualified lead page
+    function initQualifiedLeadPage(status) {
+        showContent('content-qualified-lead');
+        populateQualifiedLeadTable(status);
+    }
 
-//     // Function to render qualified leads in the table
-//     async function populateQualifiedLeadTable(status) {
-//         const tableBody = document.getElementById('qualifiedLeadTableBody');
-//         if (!tableBody) {
-//             console.error('Table body with ID "qualifiedLeadTableBody" not found.');
-//             return;
-//         }
+    // Function to render qualified leads in the table
+    async function populateQualifiedLeadTable(status) {
+        const tableBody = document.getElementById('qualifiedLeadTableBody');
+        if (!tableBody) {
+            console.error('Table body with ID "qualifiedLeadTableBody" not found.');
+            return;
+        }
 
-//         const token = localStorage.getItem('adminToken');
-//         try {
-//             console.log('Fetching qualified leads with status:', status);
-//             const response = await fetch(`/api/clients?status=${status}`, {
-//                 method: 'GET',
-//                 headers: {
-//                     'Authorization': `Bearer ${token}`
-//                 }
-//             });
+        const token = localStorage.getItem('adminToken');
+        try {
+            console.log('Fetching qualified leads with status:', status);
+            const response = await fetch(`/api/clients?status=${status}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
 
-//             if (response.ok) {
-//                 const qualifiedLeads = await response.json();
-//                 renderQualifiedLeads(qualifiedLeads);
-//             } else {
-//                 console.error('Error fetching qualified leads');
-//             }
-//         } catch (error) {
-//             console.error('Error fetching qualified leads:', error);
-//         }
-//     }
+            if (response.ok) {
+                const qualifiedLeads = await response.json();
+                renderQualifiedLeads(qualifiedLeads);
+            } else {
+                console.error('Error fetching qualified leads');
+            }
+        } catch (error) {
+            console.error('Error fetching qualified leads:', error);
+        }
+    }
 
-//     function renderQualifiedLeads(qualifiedLeads) {
-//         const tableBody = document.getElementById('qualifiedLeadTableBody');
-//         tableBody.innerHTML = ''; // Clear existing rows
-//         qualifiedLeads.forEach((lead, index) => {
-//             const createdAt = new Date(lead.createdAt);
-//             const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
+    function renderQualifiedLeads(qualifiedLeads) {
+        const tableBody = document.getElementById('qualifiedLeadTableBody');
+        tableBody.innerHTML = ''; // Clear existing rows
+        qualifiedLeads.forEach((lead, index) => {
+            const createdAt = new Date(lead.createdAt);
+            const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
     
-//             // Use lead's faceImage if available, otherwise use a placeholder image
-//             const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
+            // Use lead's faceImage if available, otherwise use a placeholder image
+            const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
             
-//             const row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td class="py-2 px-4">
-//                     <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
-//                 </td>
-//                 <td class="p-2">${lead.name}</td>
-//                 <td class="p-2">${formattedDate}</td>
-//                 <td class="p-2">${lead.companyName || 'N/A'}</td>
-//                 <td class="p-2">${lead.phone}</td>
-//                 <td class="p-2">${lead.email}</td>
-//                 <td class="p-2">
-//                     <select id="lead-status-${index}" class="bg-gray-700 p-1 rounded" data-lead-id="${lead._id}">
-//                         <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-//                         <option value="on-hold" ${lead.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-//                         <option value="not-relevant" ${lead.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-//                     </select>
-//                 </td>
-//                 <td class="p-2">
-//                     ${lead.status === 'qualified' ? `
-//                         <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
-//                     ` : ''}
-//                     <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-//                     <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
-//                 </td>
-//             `;
-//             tableBody.appendChild(row);
-//         });
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="py-2 px-4">
+                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+                </td>
+                <td class="p-2">${lead.name}</td>
+                <td class="p-2">${formattedDate}</td>
+                <td class="p-2">${lead.companyName || 'N/A'}</td>
+                <td class="p-2">${lead.phone}</td>
+                <td class="p-2">${lead.email}</td>
+                <td class="p-2">
+                    <select id="lead-status-${index}" class="bg-gray-700 p-1 rounded" data-lead-id="${lead._id}">
+                        <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+                        <option value="on-hold" ${lead.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
+                        <option value="not-relevant" ${lead.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
+                    </select>
+                </td>
+                <td class="p-2">
+                    ${lead.status === 'qualified' ? `
+                        <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
+                    ` : ''}
+                    <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+                    <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
     
     
-//         // Add event listeners to "Add Fields" buttons
-//         document.querySelectorAll('.add-fields-button').forEach(button => {
-//             button.addEventListener('click', function(event) {
-//                 const leadId = event.target.dataset.leadId;
-//                 localStorage.setItem('leadId', leadId);
-//                 window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
-//             });
-//         });
+        // Add event listeners to "Add Fields" buttons
+        document.querySelectorAll('.add-fields-button').forEach(button => {
+            button.addEventListener('click', function(event) {
+                const leadId = event.target.dataset.leadId;
+                localStorage.setItem('leadId', leadId);
+                window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
+            });
+        });
     
-//         // Add event listeners to "Go to MoM" buttons
-// document.querySelectorAll('.go-to-mom-button').forEach(button => {
-//     button.addEventListener('click', function(event) {
-//         const leadId = event.target.dataset.leadId;
-//         localStorage.setItem('leadId', leadId);
-//         window.location.href = `/mom.html?leadId=${leadId}`;
-//     });
-// });
+        // Add event listeners to "Go to MoM" buttons
+document.querySelectorAll('.go-to-mom-button').forEach(button => {
+    button.addEventListener('click', function(event) {
+        const leadId = event.target.dataset.leadId;
+        localStorage.setItem('leadId', leadId);
+        window.location.href = `/mom.html?leadId=${leadId}`;
+    });
+});
 
     
 
-//         // Add event listeners to save buttons
-//         document.querySelectorAll('.lead-save-button').forEach(button => {
-//             button.addEventListener('click', async (event) => {
-//                 const leadId = event.target.dataset.leadId;
-//                 // Find the select element by its unique ID
-//                 const selectElement = document.querySelector(`select[data-lead-id="${leadId}"]`);
-//                 if (!selectElement) {
-//                     console.error('Select element not found for leadId:', leadId);
-//                     return;
-//                 }
-//                 const newStatus = selectElement.value;
-//                 try {
-//                     const response = await fetch(`/clients/${leadId}/status`, {
-//                         method: 'PUT',
-//                         headers: {
-//                             'Content-Type': 'application/json',
-//                             'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-//                         },
-//                         body: JSON.stringify({ status: newStatus })
-//                     });
-//                     if (response.ok) {
-//                         alert('Status updated successfully');
-//                     } else {
-//                         console.error('Error updating status');
-//                     }
-//                 } catch (error) {
-//                     console.error('Error updating status:', error);
-//                 }
-//             });
-//         });
-//     }
+        // Add event listeners to save buttons
+        document.querySelectorAll('.lead-save-button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const leadId = event.target.dataset.leadId;
+                // Find the select element by its unique ID
+                const selectElement = document.querySelector(`select[data-lead-id="${leadId}"]`);
+                if (!selectElement) {
+                    console.error('Select element not found for leadId:', leadId);
+                    return;
+                }
+                const newStatus = selectElement.value;
+                try {
+                    const response = await fetch(`/clients/${leadId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+                    if (response.ok) {
+                        alert('Status updated successfully');
+                    } else {
+                        console.error('Error updating status');
+                    }
+                } catch (error) {
+                    console.error('Error updating status:', error);
+                }
+            });
+        });
+    }
 
 
-//     // Set up sidebar dropdown for Qualified Leads
-//     function setupQualifiedLeadsDropdown() {
-//         const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
-//         if (!qualifiedLeadItem) {
-//             console.error('Element with ID "nav-qualified-lead" not found.');
-//             return;
-//         }
-//         qualifiedLeadItem.classList.add('has-submenu');
+    // Set up sidebar dropdown for Qualified Leads
+    function setupQualifiedLeadsDropdown() {
+        const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
+        if (!qualifiedLeadItem) {
+            console.error('Element with ID "nav-qualified-lead" not found.');
+            return;
+        }
+        qualifiedLeadItem.classList.add('has-submenu');
 
-//         const submenu = document.createElement('ul');
-//         submenu.className = 'pl-4 mt-2 space-y-2 hidden';
-//         submenu.innerHTML = `
-//             <li id="nav-qualified-lead-qualified" class="cursor-pointer">Qualified</li>
-//             <li id="nav-qualified-lead-on-hold" class="cursor-pointer">On Hold</li>
-//             <li id="nav-qualified-lead-not-relevant" class="cursor-pointer">Not Relevant</li>
-//         `;
+        const submenu = document.createElement('ul');
+        submenu.className = 'pl-4 mt-2 space-y-2 hidden';
+        submenu.innerHTML = `
+            <li id="nav-qualified-lead-qualified" class="cursor-pointer">Qualified</li>
+            <li id="nav-qualified-lead-on-hold" class="cursor-pointer">On Hold</li>
+            <li id="nav-qualified-lead-not-relevant" class="cursor-pointer">Not Relevant</li>
+        `;
 
-//         qualifiedLeadItem.appendChild(submenu);
+        qualifiedLeadItem.appendChild(submenu);
 
-//         qualifiedLeadItem.addEventListener('click', function(e) {
-//             e.stopPropagation();
-//             submenu.classList.toggle('hidden');
-//         });
+        qualifiedLeadItem.addEventListener('click', function(e) {
+            e.stopPropagation();
+            submenu.classList.toggle('hidden');
+        });
 
-//         ['qualified', 'on-hold', 'not-relevant'].forEach(status => {
-//             const element = document.getElementById(`nav-qualified-lead-${status}`);
-//             if (element) {
-//                 element.addEventListener('click', function(e) {
-//                     e.stopPropagation();
-//                     initQualifiedLeadPage(status);
-//                 });
-//             } else {
-//                 console.error(`Element with ID "nav-qualified-lead-${status}" not found.`);
-//             }
-//         });
-//     }
+        ['qualified', 'on-hold', 'not-relevant'].forEach(status => {
+            const element = document.getElementById(`nav-qualified-lead-${status}`);
+            if (element) {
+                element.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    initQualifiedLeadPage(status);
+                });
+            } else {
+                console.error(`Element with ID "nav-qualified-lead-${status}" not found.`);
+            }
+        });
+    }
 
-//     setupQualifiedLeadsDropdown();
-// });
+    setupQualifiedLeadsDropdown();
+});
 
 
 // Navigation functionality
@@ -440,13 +440,15 @@ document.querySelectorAll('nav li').forEach(el => {
             document.querySelectorAll('nav li').forEach(item => item.classList.remove('bg-gray-700'));
             this.classList.add('bg-gray-700');
             const contentId = 'content-' + this.id.split('-')[1];
+            console.log('Attempting to display:', contentId); 
             showContent(contentId);
             if (contentId === 'content-business-proposal') {
                 initBusinessProposalPage();
             }
-            if (contentId === 'content-strategy-partner') {
-                fetchStrategyPartners(); // Ensure that data fetching happens when the tab is clicked
+            else if (contentId === 'content-strategy') {
+                initStrategyPartners(); // Ensure that data fetching happens when the tab is clicked
             }
+
         }
     });
 });
@@ -1050,194 +1052,304 @@ document.getElementById('nav-customer').addEventListener('click', function() {
 
 
 // advanced search filter 
-// document.addEventListener('DOMContentLoaded', () => {
-//     const advancedSearchButton = document.getElementById('advancedSearchButton');
-//     const searchModal = document.getElementById('searchModal');
-//     const closeModalButton = document.getElementById('closeModalButton');
-//     const advancedSearchForm = document.getElementById('advancedSearchForm');
-
-//     advancedSearchButton.addEventListener('click', () => {
-//         searchModal.classList.remove('hidden');
-//     });
-
-//     closeModalButton.addEventListener('click', () => {
-//         searchModal.classList.add('hidden');
-//     });
-
-//     advancedSearchForm.addEventListener('submit', async (event) => {
-//         event.preventDefault();
-//         const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
-//             .filter(input => input.checked)
-//             .map(input => input.value);
-        
-//         if (searchFields.length === 0) {
-//             alert('Please select at least one search criteria.');
-//             return;
-//         }
-
-//         await performAdvancedSearch(searchFields);
-//         searchModal.classList.add('hidden'); // Close modal after search
-//     });
-
-//     async function performAdvancedSearch(searchFields) {
-//         const token = localStorage.getItem('adminToken');
-//         try {
-//             const response = await fetch(`/advanced-search`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     'Authorization': `Bearer ${token}`
-//                 },
-//                 body: JSON.stringify({ searchFields })
-//             });
-//             const result = await response.json();
-//             if (response.ok) {
-//                 updateTableWithSearchResults(result);
-//             } else {
-//                 console.error('Error performing advanced search:', result.error);
-//             }
-//         } catch (error) {
-//             console.error('Error performing advanced search:', error);
-//         }
-//     }
-
-//     function updateTableWithSearchResults(data) {
-//         const visitorsTableBody = document.getElementById('visitorsTableBody');
-//         visitorsTableBody.innerHTML = ''; // Clear existing table rows
-
-//         if (data.length === 0) {
-//             const row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td colspan="7" class="p-2 text-center">No clients available</td>
-//             `;
-//             visitorsTableBody.appendChild(row);
-//         } else {
-//             data.forEach(item => {
-//                 const row = document.createElement('tr');
-//                 row.innerHTML = `
-//                     <td class="p-2">${item.name || ''}</td>
-//                     <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
-//                     <td class="p-2">${item.companyName || ''}</td>
-//                     <td class="p-2">${item.phone || ''}</td>
-//                     <td class="p-2">${item.email || ''}</td>
-//                     <td class="p-2">${item.action || ''}</td>
-//                     <td class="p-2">${item.status || ''}</td>
-//                 `;
-//                 visitorsTableBody.appendChild(row);
-//             });
-//         }
-//     }   
-// });
-
-// document.addEventListener('DOMContentLoaded', async function () {
-//     // Fetch syndicate partners when the page is loaded
-//     async function loadSyndicatePartners() {
-//         try {
-//             const response = await fetch('/api/admin/syndicate-partners', {
-//                 headers: {
-//                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-//                 }
-//             });
-
-//             if (response.ok) {
-//                 const syndicates = await response.json();
-//                 console.log('Syndicates fetched:', syndicates);
-//                 populateSyndicateTable(syndicates); // Call the function to populate the table
-//             } else {
-//                 console.error('Failed to fetch syndicate partners:', await response.text());
-//                 document.getElementById('errorMessage').innerText = 'Failed to fetch syndicate partners.';
-//             }
-//         } catch (error) {
-//             console.error('Error fetching syndicate partners:', error);
-//             document.getElementById('errorMessage').innerText = 'Error fetching syndicate partners.';
-//         }
-//     }
-
-//     // Function to populate the syndicate table with fetched data
-//     function populateSyndicateTable(syndicates) {
-//         const tableBody = document.getElementById('strategyPartnerTableBody');
-//         tableBody.innerHTML = ''; // Clear previous rows
-
-//         syndicates.forEach(syndicate => {
-//             const row = `
-//                 <tr>
-//                     <td class="py-2 px-4 text-white">${syndicate.syndicate_name}</td>
-//                     <td class="py-2 px-4">
-//                         <button class="bg-blue-500 text-white px-4 py-1 rounded" onclick="openSyndicateDashboard('${syndicate._id}')">View Dashboard</button>
-//                     </td>
-//                 </tr>
-//             `;
-//             tableBody.insertAdjacentHTML('beforeend', row); // Add the new row to the table
-//         });
-//     }
-
-//     // Function to open the selected syndicate's dashboard
-//     window.openSyndicateDashboard = function(syndicateId) {
-//         localStorage.setItem('syndicateId', syndicateId); // Store the selected syndicate ID in localStorage
-//         window.location.href = '/syndicate-dashboard.html'; // Redirect to the syndicate dashboard page
-//     };
-
-//     // Call the function to load syndicate partners
-//     loadSyndicatePartners();
-// });
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Fetch the strategy partners when the content is displayed
-    const strategyPartnerNav = document.getElementById('nav-strategy-partner');
-    if (strategyPartnerNav) {
-        strategyPartnerNav.addEventListener('click', async () => {
-            await fetchStrategyPartners();  // Fetch and render syndicate names when the section is clicked
-        });
-    }
+    const advancedSearchButton = document.getElementById('advancedSearchButton');
+    const searchModal = document.getElementById('searchModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const advancedSearchForm = document.getElementById('advancedSearchForm');
 
-    async function fetchStrategyPartners() {
+    advancedSearchButton.addEventListener('click', () => {
+        searchModal.classList.remove('hidden');
+    });
+
+    closeModalButton.addEventListener('click', () => {
+        searchModal.classList.add('hidden');
+    });
+
+    advancedSearchForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
+            .filter(input => input.checked)
+            .map(input => input.value);
+        
+        if (searchFields.length === 0) {
+            alert('Please select at least one search criteria.');
+            return;
+        }
+
+        await performAdvancedSearch(searchFields);
+        searchModal.classList.add('hidden'); // Close modal after search
+    });
+
+    async function performAdvancedSearch(searchFields) {
         const token = localStorage.getItem('adminToken');
         try {
-            const response = await fetch('/api/admin/syndicate-partners', {
-                method: 'GET',
+            const response = await fetch(`/advanced-search`, {
+                method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                body: JSON.stringify({ searchFields })
             });
-    
+            const result = await response.json();
             if (response.ok) {
-                const syndicates = await response.json();
-                console.log('Fetched syndicates:', syndicates); // Log the fetched data
-                renderStrategyPartners(syndicates);
+                updateTableWithSearchResults(result);
             } else {
-                console.error('Error fetching strategy partner data');
-                document.getElementById('errorMessage').textContent = 'Error fetching strategy partner data';
+                console.error('Error performing advanced search:', result.error);
             }
         } catch (error) {
-            console.error('Error fetching strategy partner data:', error);
-            document.getElementById('errorMessage').textContent = 'Error fetching strategy partner data';
+            console.error('Error performing advanced search:', error);
         }
     }
-    
-    function renderStrategyPartners(syndicates) {
-    const tableBody = document.getElementById('strategyPartnerTableBody');
-    tableBody.innerHTML = ''; // Clear existing rows
-    console.log('Rendering syndicates:', syndicates); // Check if syndicates are being passed correctly
-    
-    syndicates.forEach((syndicate) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="p-2">${syndicate.name}</td>
-            <td class="p-2">
-                <button class="view-details-button" data-syndicate-id="${syndicate._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">View</button>
-            </td>
-        `;
-        tableBody.appendChild(row);
-        console.log('Appended row:', row); // Log each appended row
-    });
-}
 
-    
-   
-    
-    
+    function updateTableWithSearchResults(data) {
+        const visitorsTableBody = document.getElementById('visitorsTableBody');
+        visitorsTableBody.innerHTML = ''; // Clear existing table rows
+
+        if (data.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="7" class="p-2 text-center">No clients available</td>
+            `;
+            visitorsTableBody.appendChild(row);
+        } else {
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="p-2">${item.name || ''}</td>
+                    <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
+                    <td class="p-2">${item.companyName || ''}</td>
+                    <td class="p-2">${item.phone || ''}</td>
+                    <td class="p-2">${item.email || ''}</td>
+                    <td class="p-2">${item.action || ''}</td>
+                    <td class="p-2">${item.status || ''}</td>
+                `;
+                visitorsTableBody.appendChild(row);
+            });
+        }
+    }   
 });
 
 
 
-  
+// document.querySelectorAll('nav li').forEach(el => {
+//     el.addEventListener('click', function() {
+//         console.log('Navigation item clicked:', this.id); // Log the tab click
+        
+//         // Check if this item has no submenu
+//         if (!this.classList.contains('has-submenu')) {
+//             document.querySelectorAll('nav li').forEach(item => item.classList.remove('bg-gray-700'));
+//             this.classList.add('bg-gray-700');
+            
+//             const contentId = 'content-' + this.id.split('-')[1];
+//             showContent(contentId); // Show the relevant content section
+
+//             // Initialize sections based on content ID
+//             if (contentId === 'content-business-proposal') {
+//                 initBusinessProposalPage();
+//             } else if (contentId === 'content-strategy') {
+//                 populateStrategyPartnerTable(); // Call function to populate Strategy Partner table
+//             }
+//         }
+//     });
+// });
+
+// // Function to show only the specified content section
+// function showContent(contentId) {
+//     document.querySelectorAll('[id^="content-"]').forEach(el => el.classList.add('hidden'));
+//     const contentElement = document.getElementById(contentId);
+//     if (contentElement) {
+//         contentElement.classList.remove('hidden');
+//     } else {
+//         console.error(`Element with ID ${contentId} not found.`);
+//     }
+// }
+
+// // Populate Strategy Partner table (example function if you haven't defined it yet)
+// function populateStrategyPartnerTable() {
+//     const tableBody = document.getElementById('strategyPartnerTableBody');
+//     if (tableBody) {
+//         tableBody.innerHTML = ''; // Clear existing rows
+//         const strategyPartners = [
+//             { name: "Syndicate Alpha", id: "alpha1" },
+//             { name: "Syndicate Beta", id: "beta2" },
+//             { name: "Syndicate Gamma", id: "gamma3" }
+//         ];
+
+//         strategyPartners.forEach(partner => {
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td class="py-2 px-4 text-white">${partner.name}</td>
+//                 <td class="py-2 px-4">
+//                     <button class="bg-blue-500 text-white px-4 py-1 rounded" onclick="openSyndicateDashboard('${partner.id}')">View Dashboard</button>
+//                 </td>
+//             `;
+//             tableBody.appendChild(row);
+//         });
+//     } else {
+//         console.error('Table body for strategy partners not found.');
+//     }
+// }
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     // Initialize and load Strategy Partners
+//     populateStrategyPartnerCards();
+// });
+
+// function populateStrategyPartnerCards() {
+//     const cardContainer = document.getElementById('strategyPartnerCards');
+//     console.log("Card container found:", !!cardContainer); // Check if card container is found
+
+//     if (cardContainer) {
+//         cardContainer.innerHTML = ''; // Clear existing cards
+
+//         // Example data
+//         const strategyPartners = [
+//             { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
+//             { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
+//             { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
+//             { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
+//             { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
+//             { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" }
+//         ];
+
+//         strategyPartners.forEach(partner => {
+//             const card = document.createElement('div');
+//             card.className = "bg-white shadow-lg rounded-lg p-5 w-64 transform transition-transform duration-300 hover:scale-105";
+
+//             card.innerHTML = `
+//                 <div class="text-center">
+//                     <img src="https://via.placeholder.com/64" alt="${partner.name}" class="w-16 h-16 rounded-full mx-auto shadow-lg">
+//                     <h3 class="text-lg font-semibold mt-3 text-gray-800">${partner.name}</h3>
+//                     <p class="text-sm text-gray-500">Dept: ${partner.department}</p>
+//                 </div>
+//                 <div class="mt-4">
+//                     <div class="flex justify-between items-center">
+//                         <p class="text-sm font-medium text-gray-600">Total Referrals</p>
+//                         <p class="text-lg font-bold text-blue-600">${partner.totalReferrals}</p>
+//                     </div>
+//                     <div class="flex justify-between items-center mt-2">
+//                         <p class="text-sm font-medium text-gray-600">Total Proposals</p>
+//                         <p class="text-lg font-bold text-blue-600">${partner.totalProposals}</p>
+//                     </div>
+//                 </div>
+//                 <button class="mt-6 w-full bg-gray-800 text-white font-semibold py-2 rounded-lg transition duration-200 hover:bg-blue-600 focus:outline-none" onclick="openSyndicateDashboard('${partner.profileId}')">
+//                     View Profile
+//                 </button>
+//             `;
+//             cardContainer.appendChild(card);
+//         });
+//     } else {
+//         console.error('Card container for strategy partners not found.');
+//     }
+// }
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize and load Strategy Partners with pagination
+    populateStrategyPartnerCards(1); // Start at page 1
+});
+
+// Pagination variables
+const itemsPerPage = 6; // Number of cards per page
+let currentPage = 1;
+let totalPages = 1;
+
+// Example data
+const strategyPartners = [
+    { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
+    { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
+    { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
+    { name: "John Doe", department: "Finance", totalReferrals: 130, totalProposals: 55, profileId: "delta4" },
+    { name: "Emily Smith", department: "HR", totalReferrals: 125, totalProposals: 65, profileId: "epsilon5" },
+    { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
+    { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
+    { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
+    { name: "John Doe", department: "Finance", totalReferrals: 130, totalProposals: 55, profileId: "delta4" },
+    { name: "Emily Smith", department: "HR", totalReferrals: 125, totalProposals: 65, profileId: "epsilon5" },
+    { name: "Alice Brown", department: "Marketing", totalReferrals: 150, totalProposals: 70, profileId: "beta2" },
+    { name: "Bradley Steve", department: "Syndicate", totalReferrals: 120, totalProposals: 60, profileId: "alpha1" },
+    { name: "Michael Johnson", department: "Operations", totalReferrals: 110, totalProposals: 50, profileId: "gamma3" },
+    { name: "John Doe", department: "Finance", totalReferrals: 130, totalProposals: 55, profileId: "delta4" },
+    { name: "Emily Smith", department: "HR", totalReferrals: 125, totalProposals: 65, profileId: "epsilon5" },
+    { name: "Laura Wilson", department: "IT", totalReferrals: 115, totalProposals: 60, profileId: "zeta6" }
+];
+
+// Calculate total pages
+totalPages = Math.ceil(strategyPartners.length / itemsPerPage);
+
+function populateStrategyPartnerCards(page) {
+    const cardContainer = document.getElementById('strategyPartnerCards');
+    cardContainer.innerHTML = ''; // Clear existing cards
+
+    // Determine start and end index for the current page
+    const startIndex = (page - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    // Slice the array to get only the items for the current page
+    const currentItems = strategyPartners.slice(startIndex, endIndex);
+
+    // Populate the cards for the current page
+    currentItems.forEach(partner => {
+        const card = document.createElement('div');
+        card.className = "bg-white shadow-lg rounded-lg p-5 w-64 transform transition-transform duration-300 hover:scale-105";
+
+        card.innerHTML = `
+            <div class="text-center">
+                <img src="https://via.placeholder.com/64" alt="${partner.name}" class="w-16 h-16 rounded-full mx-auto shadow-lg">
+                <h3 class="text-lg font-semibold mt-3 text-gray-800">${partner.name}</h3>
+                <p class="text-sm text-gray-500">Dept: ${partner.department}</p>
+            </div>
+            <div class="mt-4">
+                <div class="flex justify-between items-center">
+                    <p class="text-sm font-medium text-gray-600">Total Referrals</p>
+                    <p class="text-lg font-bold text-blue-600">${partner.totalReferrals}</p>
+                </div>
+                <div class="flex justify-between items-center mt-2">
+                    <p class="text-sm font-medium text-gray-600">Total Proposals</p>
+                    <p class="text-lg font-bold text-blue-600">${partner.totalProposals}</p>
+                </div>
+            </div>
+            <button class="mt-6 w-full bg-gray-800 text-white font-semibold py-2 rounded-lg transition duration-200 hover:bg-blue-600 focus:outline-none" onclick="openSyndicateDashboard('${partner.profileId}')">
+                View Profile
+            </button>
+        `;
+        cardContainer.appendChild(card);
+    });
+
+    // Update pagination controls
+    updatePaginationControls();
+}
+
+function updatePaginationControls() {
+    const paginationContainer = document.getElementById('paginationControls');
+    paginationContainer.innerHTML = ''; // Clear existing controls
+
+    // Previous button
+    const prevButton = document.createElement('button');
+    prevButton.className = "bg-gray-200 text-gray-800 px-4 py-2 rounded mr-2 hover:bg-gray-300";
+    prevButton.textContent = "Previous";
+    prevButton.disabled = currentPage === 1;
+    prevButton.onclick = () => changePage(currentPage - 1);
+    paginationContainer.appendChild(prevButton);
+
+    // Page numbers
+    const pageNumber = document.createElement('span');
+    pageNumber.className = "px-4 py-2 text-gray-800";
+    pageNumber.textContent = `Page ${currentPage} of ${totalPages}`;
+    paginationContainer.appendChild(pageNumber);
+
+    // Next button
+    const nextButton = document.createElement('button');
+    nextButton.className = "bg-gray-200 text-gray-800 px-4 py-2 rounded ml-2 hover:bg-gray-300";
+    nextButton.textContent = "Next";
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.onclick = () => changePage(currentPage + 1);
+    paginationContainer.appendChild(nextButton);
+}
+
+function changePage(page) {
+    if (page < 1 || page > totalPages) return; // Prevent out-of-range pages
+    currentPage = page;
+    populateStrategyPartnerCards(currentPage);
+}

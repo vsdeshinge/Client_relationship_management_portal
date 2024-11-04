@@ -87,10 +87,9 @@
                     <li id="nav-visitors" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Visitors</li>
                     <li id="nav-strategy-partner" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Strategy Partner</li>
     
-                   <!-- <li id="nav-qualified-lead" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">
+                   <li id="nav-qualified-lead" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">
                         Qualified Lead
-                      
-                   </li> -->
+                   </li>
                     <li id="nav-business-proposal" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Business Proposal</li>
                     <li id="nav-customer" class="mb-2 p-2 cursor-pointer hover:bg-gray-700 rounded">Customer</li>
                 </ul>
@@ -214,7 +213,7 @@
 
 
             
- <!-- qualified lead content 
+ <!-- qualified lead content  -->
             <div id="content-qualified-lead" class="hidden">
                 <--  
                 <div class="mb-10">
@@ -270,51 +269,47 @@
                             </tr>
                         </thead>
                         <tbody id="qualifiedLeadTableBody">
-                            <-- Table rows will be dynamically added here -->
-                        <!-- </tbody>
-                    </table> -->
+                            <!-- Table rows will be dynamically added here -->
+                         </tbody>
+                    </table> 
 
-                    <!-- <div id="paginationQualifiedLeads" class="mt-4 flex justify-center"> -->
-                        <!-- Pagination controls will be generated here -->
-                        <!-- <div class="flex"> -->
-                            <!-- Previous Button -->
-                            <!-- <a href="#" class="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                <div id="paginationQualifiedLeads" class="mt-4 flex justify-center"> 
+                       <!---- Pagination controls will be generated here -->
+                        <div class="flex">
+                           Previous Button 
+                            <a href="#" class="flex items-center justify-center px-3 h-8 me-3 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                 <svg class="w-3.5 h-3.5 me-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
                                 </svg>
                                 Previous
-                            </a> -->
-                            <!-- <a href="#" class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                            </a> 
+                             <a href="#" class="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                                 Next
                                 <svg class="w-3.5 h-3.5 ms-2 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
                                 </svg>
-                            </a> -->
-                        <!-- </div>
-                    </div> -->
-                <!-- </div>
-            </div>  -->
+                            </a> 
+                       </div>
+                    </div> 
+                </div>
+            </div> 
 
-<!-- Strategy Partner Content -->
-<div id="content-strategy-partner" class="hidden">
-  <h2 class="text-2xl mb-5 font-bold text-white-400">Strategy Partners</h2><br>
-  <div class="overflow-x-auto">
-    <table style="border: 1px solid black;" class="w-full">
-      <thead>
-        <tr>
-          <th class="text-left text-white">Syndicate Name</th>
-          <th class="text-left text-white">Action</th>
-        </tr>
-      </thead>
-      <tbody id="strategyPartnerTableBody">
-        <!-- Table rows will be dynamically added here -->
-      </tbody>
-    </table>
-  </div>
-  <div id="errorMessage" class="text-red-500"></div>
-</div>
-
-
+        
+      <div id="content-strategy" class="hidden p-6">
+          <h2 class="text-2xl mb-5 font-bold text-white-800">Strategy Partners</h2>
+      
+          <!-- Card Container -->
+          <div id="strategyPartnerCards" class="flex flex-wrap gap-6 justify-center">
+              <!-- Cards will be dynamically added here by JavaScript -->
+          </div>
+      
+          <!-- Pagination Controls -->
+          <div id="paginationControls" class="flex justify-center items-center mt-6">
+              <!-- Pagination buttons will be dynamically added here by JavaScript -->
+          </div>
+      </div>
+      
+          
 
     <!-- Business proposal content -->
     <div id="content-business-proposal" class="hidden">
@@ -451,155 +446,7 @@
     </footer>
     <script src="./js/session_timeout.js"></script>
     <script src="./js/admin_dashboard.js"></script>
-    
-<script>
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Dummy data for strategy partners
-  const dummyPartnerDetails = [
-    {
-      _id: 'partner1',
-      name: 'John Doe',
-      companyName: 'Tech Innovators',
-      phone: '123-456-7890',
-      email: 'john.doe@techinnovators.com',
-      createdAt: '2023-08-15T12:00:00Z',
-      status: 'qualified',
-      faceImage: 'https://via.placeholder.com/80'
-    },
-    {
-      _id: 'partner2',
-      name: 'Jane Smith',
-      companyName: 'DataX Solutions',
-      phone: '098-765-4321',
-      email: 'jane.smith@dataxsolutions.com',
-      createdAt: '2023-09-05T14:30:00Z',
-      status: 'on-hold',
-      faceImage: 'https://via.placeholder.com/80'
-    },
-    {
-      _id: 'partner3',
-      name: 'Alice Johnson',
-      companyName: 'CyberGuard',
-      phone: '456-789-0123',
-      email: 'alice.johnson@cyberguard.com',
-      createdAt: '2023-07-22T10:15:00Z',
-      status: 'not-relevant',
-      faceImage: 'https://via.placeholder.com/80'
-    }
-  ];
-
-  // Function to render partner details in the table
-  function renderPartnerDetails(partnerDetails) {
-    const tableBody = document.getElementById('strategyPartnerTableBody');
-    tableBody.innerHTML = ''; // Clear existing rows
-
-    partnerDetails.forEach((partner, index) => {
-      const createdAt = new Date(partner.createdAt);
-      const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
-
-      const faceImageUrl = partner.faceImage || 'https://via.placeholder.com/80';
-
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td class="py-2 px-4">
-          <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
-        </td>
-        <td class="p-2">${partner.name}</td>
-        <td class="p-2">${formattedDate}</td>
-        <td class="p-2">${partner.companyName || 'N/A'}</td>
-        <td class="p-2">${partner.phone}</td>
-        <td class="p-2">${partner.email}</td>
-        <td class="p-2">
-          <select id="status-${index}" class="bg-gray-700 p-1 rounded" data-partner-id="${partner._id}">
-            <option value="qualified" ${partner.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-            <option value="on-hold" ${partner.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-            <option value="not-relevant" ${partner.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-          </select>
-        </td>
-        <td class="p-2">
-          <button class="save-button" data-partner-id="${partner._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-        </td>
-      `;
-      tableBody.appendChild(row);
-    });
-
-    // Add event listeners to save buttons
-    document.querySelectorAll('.save-button').forEach(button => {
-      button.addEventListener('click', async (event) => {
-        const partnerId = event.target.dataset.partnerId;
-        const selectElement = document.querySelector(`select[data-partner-id="${partnerId}"]`);
-        const newStatus = selectElement.value;
-        alert(`Status for partner ${partnerId} updated to: ${newStatus}`);
-      });
-    });
-  }
-
-  // Function to fetch partner details based on filter
-  function fetchPartnerDetails(filter) {
-    let filteredData = dummyPartnerDetails;
-
-    // Apply filter if needed
-    if (filter === 'today') {
-      const today = new Date().toDateString();
-      filteredData = dummyPartnerDetails.filter(partner => new Date(partner.createdAt).toDateString() === today);
-    } else if (filter === 'week') {
-      const today = new Date();
-      const oneWeekAgo = new Date(today.setDate(today.getDate() - 7));
-      filteredData = dummyPartnerDetails.filter(partner => new Date(partner.createdAt) >= oneWeekAgo);
-    } else if (filter === 'month') {
-      const today = new Date();
-      const oneMonthAgo = new Date(today.setMonth(today.getMonth() - 1));
-      filteredData = dummyPartnerDetails.filter(partner => new Date(partner.createdAt) >= oneMonthAgo);
-    }
-
-    renderPartnerDetails(filteredData);
-  }
-
-  // Dropdown menu functionality
-  const dropdownButton = document.getElementById('dropdownButton');
-  const dropdownMenu = document.getElementById('dropdownMenu');
-
-  dropdownButton.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('hidden');
-  });
-
-  // Handle dropdown item click
-  dropdownMenu.addEventListener('click', function(event) {
-    const filter = event.target.getAttribute('data-filter');
-    if (filter) {
-      fetchPartnerDetails(filter);
-      dropdownMenu.classList.add('hidden');
-    }
-  });
-
-  // Close dropdown when clicking outside
-  document.addEventListener('click', function(event) {
-    if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-      dropdownMenu.classList.add('hidden');
-    }
-  });
-
-  // Show and hide sections
-  function showSection(sectionId) {
-    // Hide all sections
-    document.querySelectorAll('div[id^="content-"]').forEach(div => div.classList.add('hidden'));
-    // Show the selected section
-    document.getElementById(sectionId).classList.remove('hidden');
-  }
-
-  // Navigation logic
-  document.getElementById('nav-strategy-partner').addEventListener('click', () => {
-    showSection('content-strategy-partner');
-  });
-
-  // Initially load all partner details
-  fetchPartnerDetails('all');
-});
-
-</script>
-    
-        
+            
 </body>
 </html>
 
