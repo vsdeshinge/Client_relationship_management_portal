@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneMessage = document.createElement('div');
     phoneMessage.style.color = 'red';
     phoneInput.parentNode.insertBefore(phoneMessage, phoneInput.nextSibling);
-    const syndicateDropdown = document.getElementById('syndicate_name');
-    let faceImageFile = null;
+    // const syndicateDropdown = document.getElementById('syndicate_name');
+    // let faceImageFile = null;
 
     phoneInput.addEventListener('input', function() {
         const phone = phoneInput.value.trim();
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.style.display = 'none';
         overlayContainer.style.display = 'none';
         thankYouContainer.style.display = 'block';
-
+    
         const formData = new FormData();
         formData.append('name', document.getElementById('name').value.trim());
         formData.append('phone', document.getElementById('phone').value.trim());
@@ -148,42 +148,33 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('companyName', document.getElementById('companyName').value.trim());
         formData.append('personToMeet', document.getElementById('personToMeet').value.trim());
         formData.append('domain', document.getElementById('domain-input').value.trim());
-        formData.append('personreferred', document.getElementById('personReferred').value.trim());
-
+        formData.append('personReferred', document.getElementById('personReferred').value.trim());
+    
         if (faceImageFile) {
             formData.append('faceImage', faceImageFile);
         }
-
+    
         try {
-            const syndicateToken = localStorage.getItem('syndicateToken'); // Get the token from local storage
             const response = await fetch(`/api/syndicateclients/register`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${syndicateToken}` // Send token in Authorization header
-                },
-                body: formData
+                body: formData // Remove Authorization header
             });
-
-            if (response.headers.get('Content-Type')?.includes('application/json')) {
-                const result = await response.json();
-
-                if (response.ok) {
-                    document.getElementById('message').textContent = 'Registration successful! Thank you.';
-                    setTimeout(() => {
-                        location.href = 'syndicate-dashboard.html';
-                    }, 1000);
-                } else {
-                    document.getElementById('message').textContent = `Error: ${result.error}`;
-                }
+    
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('message').textContent = 'Registration successful! Thank you.';
+                setTimeout(() => {
+                    location.href = 'syndicate-dashboard.html';
+                }, 1000);
             } else {
-                console.error('Expected JSON response but received:', await response.text());
-                document.getElementById('message').textContent = 'Unexpected server response. Please try again later.';
+                document.getElementById('message').textContent = `Error: ${result.error}`;
             }
         } catch (error) {
             console.error('Error during registration:', error);
             document.getElementById('message').textContent = 'Error during registration. Please try again later.';
         }
     });
+    
 
     // Fetch syndicate names and populate the personReferred dropdown
     async function fetchSyndicateNames() {
@@ -458,4 +449,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
   });
-  
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrer = urlParams.get('referrer'); // Get the referrer from URL
+
+    if (referrer) {
+        const personReferredField = document.getElementById('personReferred');
+        personReferredField.value = referrer; // Automatically fill with referrer
+        personReferredField.disabled = true;  // Disable editing
+    }
+
+    const form = document.getElementById('connectForm');
+    // Other form-related code remains unchanged
+});
+

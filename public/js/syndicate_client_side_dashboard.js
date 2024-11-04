@@ -55,10 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
             'Authorization': `Bearer ${token}`
           }
         });
-
+    
         if (response.ok) {
           const syndicateClients = await response.json();
           populateTable(syndicateClients);
+          if (syndicateClients.length === 0) {
+            console.log('No clients found.');
+          
+          }
         } else {
           console.error('Error fetching syndicate clients:', await response.text());
         }
@@ -66,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error fetching syndicate clients:', error);
       }
     }
-
+    
     // Populate the client table with data
     function populateTable(clients) {
       const tableBody = document.getElementById('client-table-body');
@@ -118,6 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tableBody.insertAdjacentHTML('beforeend', row);
       });
     }
+
 
  // Toggle the dropdown menu
 window.toggleDropdown = function(clientId, event) {
@@ -401,6 +406,33 @@ document.getElementById('close-btn').addEventListener('click', hideClientDetails
             alert('Error updating priority. Please try again.');
         }
     };
+});
+
+
+document.getElementById('copyInviteLinkButton').addEventListener('click', async () => {
+  const syndicateToken = localStorage.getItem('syndicateToken'); // Fetch the token
+
+  try {
+      // Get the user's syndicate_name or user_id from the backend
+      const response = await fetch('/api/getSyndicateInfo', {
+          method: 'GET',
+          headers: {
+              'Authorization': `Bearer ${syndicateToken}` // Send token in Authorization header
+          }
+      });
+
+      const userData = await response.json();
+      const syndicateName = userData.syndicate_name; // Get the syndicate_name from the response
+
+      const inviteLink = `https://www.posspole.line.pm/syndicate_client_side_visitorform.html?referrer=${syndicateName}`;
+      
+      // Copy to clipboard
+      await navigator.clipboard.writeText(inviteLink);
+      alert("Invite link copied to clipboard!");
+  } catch (error) {
+      console.error("Failed to copy invite link:", error);
+      alert("Failed to copy invite link.");
+  }
 });
 
  
