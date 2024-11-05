@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 messageDiv.style.display = 'none';
                 thankYouContainer.style.display = 'block';
                 setTimeout(() => {
-                    location.href = 'syndicate-dashboard.html';
+                    location.href = 'https://www.posspole.com/';
                 }, 3000);
             } else {
                 thankYouContainer.style.display = 'none';
