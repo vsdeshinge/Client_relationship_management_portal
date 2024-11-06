@@ -332,18 +332,22 @@ async function generateAndSendQRCode(client, isSyndicateClient = false) {
 // syndicate routing 
 
 // Route to fetch syndicate user details
-app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
+app.get('/api/syndicateclients', authenticateToken, async (req, res) => {
   try {
-    const syndicateUser = await Syndicate.findById(req.user.id); // Fetch syndicate user by ID
-    if (!syndicateUser) {
-      return res.status(404).json({ message: 'Syndicate user not found' });
-    }
-    res.json(syndicateUser);
+    const page = parseInt(req.query.page) || 1;
+    const size = parseInt(req.query.size) || 10;
+    const skip = (page - 1) * size;
+
+    const totalCount = await Client.countDocuments(); // Adjust based on your Client schema
+    const clients = await Client.find().skip(skip).limit(size); // Fetch paginated clients
+
+    res.json({ clients, totalCount });
   } catch (error) {
-    console.error('Error fetching syndicate user details:', error);
+    console.error('Error fetching syndicate clients:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Syndicate login route
 
@@ -920,10 +924,11 @@ router.get('/api/clients/status-counts', async (req, res) => {
   }
 });
 
-
-// visitor filter (sortby) option
+// visitor filter (sortby) option with pagination
 app.get('/visitor-details', authenticateToken, async (req, res) => {
-  const { filter } = req.query;
+  const { filter, page = 1, size = 10 } = req.query;
+  const limit = parseInt(size);
+  const skip = (parseInt(page) - 1) * limit;
   let dateFilter = {};
 
   const now = new Date();
@@ -958,9 +963,16 @@ app.get('/visitor-details', authenticateToken, async (req, res) => {
   }
 
   try {
-    // Include 'faceImage' field to fetch image IDs
-    const visitors = await Client.find(dateFilter, 'name companyName phone email status faceImage createdAt');
-    res.status(200).json(visitors);
+    // Count total number of matching documents
+    const totalCount = await Client.countDocuments(dateFilter);
+
+    // Fetch paginated results with 'faceImage' field to include image URLs
+    const visitors = await Client.find(dateFilter, 'name companyName phone email status faceImage createdAt')
+      .skip(skip)
+      .limit(limit);
+
+    // Return paginated data along with total count for pagination
+    res.status(200).json({ visitors, totalCount });
   } catch (error) {
     console.error('Error fetching visitor details:', error);
     res.status(500).json({ error: 'Error fetching visitor details. Please try again later.' });

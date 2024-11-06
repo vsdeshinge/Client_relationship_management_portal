@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const PAGE_SIZE = 10;
+    let currentPage = 1;    
+    let totalPages = 1;
 
     async function fetchAdminDetails() {
         const token = localStorage.getItem('adminToken');
@@ -92,20 +95,22 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCircleCharts(countData);
     }
 
-    
-    async function fetchVisitorDetails(filter) {
+    async function fetchVisitorDetails(filter = 'all', page = 1) {
         const token = localStorage.getItem('adminToken');
         try {
-            const response = await fetch(`/visitor-details?filter=${filter}`, {
+            const response = await fetch(`/visitor-details?filter=${filter}&page=${page}&size=${PAGE_SIZE}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
             if (response.ok) {
-                const visitorDetails = await response.json();
-                console.log('Visitor Details:', visitorDetails); // Log visitor details to verify faceImage
+                const data = await response.json();
+                console.log('Visitor Details:', data); // Log visitor details to verify faceImage
+                const visitorDetails = data.visitors || [];
+                totalPages = Math.ceil((data.totalCount || 0) / PAGE_SIZE);
                 renderVisitorDetails(visitorDetails);
+                renderPagination();
             } else {
                 console.error('Error fetching visitor details');
             }
@@ -113,105 +118,83 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error fetching visitor details:', error);
         }
     }
-   // Function to render visitor details in the table
-function renderVisitorDetails(visitorDetails) {
-    const tableBody = document.getElementById('visitorsTableBody');
-    tableBody.innerHTML = ''; // Clear existing rows
-    visitorDetails.forEach((visitor, index) => {
-        const createdAt = new Date(visitor.createdAt);
-        const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
 
-        // Use visitor's faceImage if available, otherwise use a placeholder image
-        const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
+    function renderVisitorDetails(visitorDetails) {
+        const tableBody = document.getElementById('visitorsTableBody');
+        tableBody.innerHTML = '';
 
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td class="py-2 px-4">
-                <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
-            </td>
-            <td class="p-2">${visitor.name}</td>
-            <td class="p-2">${formattedDate}</td>
-            <td class="p-2">${visitor.companyName || 'N/A'}</td>
-            <td class="p-2">${visitor.phone}</td>
-            <td class="p-2">${visitor.email}</td>
-            <td class="p-2">
-                <select id="status-${index}" class="bg-gray-700 p-1 rounded" data-visitor-id="${visitor._id}">
-                    <option value="qualified" ${visitor.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-                    <option value="on-hold" ${visitor.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-                    <option value="not-relevant" ${visitor.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-                </select>
-            </td>
-            <td class="p-2">
-                <button class="save-button" data-visitor-id="${visitor._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-            </td>
-        `;
-        tableBody.appendChild(row);
-    });
+        if (visitorDetails.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No visitors found.</td></tr>';
+            return;
+        }
 
+        visitorDetails.forEach((visitor, index) => {
+            const createdAt = new Date(visitor.createdAt);
+            const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
+            const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
 
-    // Add event listeners to save buttons
-    document.querySelectorAll('.save-button').forEach(button => {
-        button.addEventListener('click', async (event) => {
-            const visitorId = event.target.dataset.visitorId;
-            const selectElement = document.querySelector(`select[data-visitor-id="${visitorId}"]`);
-            if (!selectElement) {
-                console.error('Select element not found for visitorId:', visitorId);
-                return;
-            }
-            const newStatus = selectElement.value;
-            try {
-                const response = await fetch(`/visitors/${visitorId}/status`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                    },
-                    body: JSON.stringify({ status: newStatus })
-                });
-                if (response.ok) {
-                    alert('Status updated successfully');
-                } else {
-                    console.error('Error updating status');
-                }
-            } catch (error) {
-                console.error('Error updating status:', error);
-            }
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="py-2 px-4"><img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+                <td class="p-2">${visitor.name}</td>
+                <td class="p-2">${formattedDate}</td>
+                <td class="p-2">${visitor.companyName || 'N/A'}</td>
+                <td class="p-2">${visitor.phone}</td>
+                <td class="p-2">${visitor.email}</td>
+                <td class="p-2">
+                    <select id="status-${index}" class="bg-gray-700 p-1 rounded" data-visitor-id="${visitor._id}">
+                        <option value="qualified" ${visitor.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+                        <option value="on-hold" ${visitor.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
+                        <option value="not-relevant" ${visitor.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
+                    </select>
+                </td>
+                <td class="p-2"><button class="save-button" data-visitor-id="${visitor._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button></td>
+            `;
+            tableBody.appendChild(row);
         });
-    });
-}
-
-
-// Dropdown menu functionality
-const dropdownButton = document.getElementById('dropdownButton');
-const dropdownMenu = document.getElementById('dropdownMenu');
-
-dropdownButton.addEventListener('click', function() {
-    dropdownMenu.classList.toggle('hidden');
-});
-
-// Handle dropdown item click
-dropdownMenu.addEventListener('click', function(event) {
-    const filter = event.target.getAttribute('data-filter');
-    if (filter) {
-        fetchVisitorDetails(filter);
-        dropdownMenu.classList.add('hidden');
     }
-});
-
-// Close the dropdown when clicking outside of it
-document.addEventListener('click', function(event) {
-    if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
-        dropdownMenu.classList.add('hidden');
+    function renderPagination() {
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = ''; // Clear previous pagination buttons
+    
+        const prevButton = document.createElement('button');
+        prevButton.innerText = 'Previous';
+        prevButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
+        prevButton.disabled = currentPage === 1;
+        prevButton.onclick = () => {
+            if (currentPage > 1) fetchVisitorDetails('all', --currentPage);
+        };
+        paginationContainer.appendChild(prevButton);
+    
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
+            if (i === currentPage) {
+                pageButton.classList.add('bg-blue-700');
+            }
+            pageButton.innerText = i;
+            pageButton.disabled = i === currentPage;
+            pageButton.onclick = () => {
+                currentPage = i;
+                fetchVisitorDetails('all', currentPage);
+            };
+            paginationContainer.appendChild(pageButton);
+        }
+    
+        const nextButton = document.createElement('button');
+        nextButton.innerText = 'Next';
+        nextButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
+        nextButton.disabled = currentPage === totalPages;
+        nextButton.onclick = () => {
+            if (currentPage < totalPages) fetchVisitorDetails('all', ++currentPage);
+        };
+        paginationContainer.appendChild(nextButton);
     }
-});
+    
 
-fetchAdminDetails(); 
-fetchVisitorDetails('all'); 
     fetchAdminDetails();
     fetchClientCount();
-    // fetchVisitorDetails('total'); 
- 
-    
+    fetchVisitorDetails('all', currentPage);
 });
 
 document.addEventListener('DOMContentLoaded', () => {

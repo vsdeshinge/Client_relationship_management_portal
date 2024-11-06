@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Fetch `syndicateToken` and `syndicateId` from localStorage
   const token = localStorage.getItem('syndicateToken');
   const syndicateId = localStorage.getItem('syndicateId');
 
+  const PAGE_SIZE = 10;
+  let currentPage = 1;
+  let totalPages = 1;
+
   if (token) {
-      // For syndicate access, use only the token to fetch data
       fetchSyndicateDetails(token);
-      fetchSyndicateClients(token);
+      fetchSyndicateClients(token, currentPage);
   } else if (syndicateId) {
-      // For admin access to the syndicate dashboard, use the syndicateId
       fetchSyndicateDetailsForAdmin(syndicateId);
   } else {
       console.error('Syndicate token or ID not found.');
   }
 
-  // Fetch syndicate details using token
   async function fetchSyndicateDetails(token) {
     try {
       const response = await fetch('/api/syndicate-details', {
@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
           'Authorization': `Bearer ${token}`
         }
       });
-
       if (response.ok) {
         const syndicateUser = await response.json();
         displaySyndicateDetails(syndicateUser);
@@ -35,16 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Fetch syndicate details using syndicateId for admin access
   async function fetchSyndicateDetailsForAdmin(syndicateId) {
     try {
       const response = await fetch(`/api/syndicate-details/${syndicateId}`, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminToken')}` // Assumes adminToken is stored
+          'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
         }
       });
-
       if (response.ok) {
         const syndicateUser = await response.json();
         displaySyndicateDetails(syndicateUser);
@@ -73,162 +70,125 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-
-
-    const PAGE_SIZE = 10; // Number of clients per page
-    let currentPage = 1;
-    let totalPages = 1;
-
-    // Fetch syndicate clients
-    async function fetchSyndicateClients(token) {
-      try {
-        const response = await fetch('/api/syndicateclients', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-    
-        if (response.ok) {
-          const syndicateClients = await response.json();
-          populateTable(syndicateClients);
-          if (syndicateClients.length === 0) {
-            console.log('No clients found.');
-          
-          }
-        } else {
-          console.error('Error fetching syndicate clients:', await response.text());
+  // Fetch syndicate clients with pagination
+  async function fetchSyndicateClients(token, page = 1) {
+    try {
+      const response = await fetch(`/api/syndicateclients?page=${page}&size=${PAGE_SIZE}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
-      } catch (error) {
-        console.error('Error fetching syndicate clients:', error);
-      }
-    }
-
-    // Function to render pagination controls
-
-    function renderPagination() {
-      const paginationContainer = document.getElementById('pagination');
-      paginationContainer.innerHTML = ''; // Clear existing controls
-
-      for (let i = 1; i <= totalPages; i++) {
-          const pageButton = document.createElement('button');
-          pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
-          if (i === currentPage) {
-              pageButton.classList.add('bg-blue-700'); // Highlight the current page
-          }
-          pageButton.innerText = i;
-          pageButton.onclick = () => {
-              currentPage = i;
-              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
-          };
-          paginationContainer.appendChild(pageButton);
-      }
-    }
-
-
-    // Populate the client table with data
-    function populateTable(clients) {
-      const tableBody = document.getElementById('client-table-body');
-      tableBody.innerHTML = ''; // Clear existing table rows
-
-      clients.forEach((client) => {
-        const profileImage = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
-
-        const row = `
-        <tr>
-          <td class="py-2 px-4">
-            <img id="profile-img" src="${profileImage}" alt="Profile" class="profile-img cursor-pointer" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${profileImage}')">
-          </td>
-          <td class="py-2 px-4">${client.name || 'N/A'}</td>
-          <td class="py-2 px-4">${client.domain ? client.domain : 'N/A'}</td> <!-- Ensure domain is checked -->
-          <td class="py-2 px-4">${new Date(client.createdAt).toLocaleString()}</td>
-          <td class="py-2 px-4">
-            <div class="relative inline-block text-left">
-              <button onclick="toggleDropdown('${client._id}', event)" class="bg-blue-500 px-2 py-1 rounded">Actions</button>
-              <div id="dropdown-${client._id}" class="dropdown-content hidden bg-white text-black absolute z-10">
-                <a href="#" onclick="handleViewClient('${client._id}')">View</a>
-                <a href="#" onclick="handleEditClient('${client._id}')">Edit</a>
-                <a href="#" onclick="handleDeleteClient('${client._id}')">Delete</a>
-              </div>
-            </div>
-          </td>
-          <td class="py-2 px-4">
-            <button onclick="handleAddDetailsClick(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Add</button>
-          </td>
-          <td class="py-2 px-4">
-            <button href="./mom.html" onclick="handleAddDetailsClick1(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Log</button>
-          </td>
-          <td class="py-2 px-4">
-            <button href="./schedule_meeting.html" onclick="handleAddDetailsClick2(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Schedule</button>
-          </td>
-          <td class="py-2 px-4">
-            <select id="priority-${client._id}" class="priority-select" onchange="updatePriorityColor('${client._id}')">
-              <option value="low" ${client.priority === 'low' ? 'selected' : ''}>Low</option>
-              <option value="medium" ${client.priority === 'medium' ? 'selected' : ''}>Medium</option>
-              <option value="high" ${client.priority === 'high' ? 'selected' : ''}>High</option>
-            </select>
-          </td>
-          <td class="py-2 px-4">
-            <button class="bg-green-500 px-2 py-1 rounded" onclick="handleSavePriority('${client._id}')">Save</button>
-          </td>
-        </tr>
-      `;
-      
-        tableBody.insertAdjacentHTML('beforeend', row);
       });
-    }
-
-    // Render pagination buttons
-    function renderPagination() {
-      const paginationContainer = document.getElementById('pagination');
-      paginationContainer.innerHTML = ''; // Clear existing controls
-
-      // Previous Button
-      const prevButton = document.createElement('button');
-      prevButton.innerText = 'Previous';
-      prevButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
-      prevButton.disabled = currentPage === 1; // Disable if on the first page
-      prevButton.onclick = () => {
-          if (currentPage > 1) {
-              currentPage -= 1;
-              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
-          }
-      };
-      paginationContainer.appendChild(prevButton);
-
-      // Page Buttons
-      for (let i = 1; i <= totalPages; i++) {
-          const pageButton = document.createElement('button');
-          pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
-          if (i === currentPage) {
-              pageButton.classList.add('bg-blue-700'); // Highlight the current page
-          }
-          pageButton.innerText = i;
-          pageButton.onclick = () => {
-              currentPage = i;
-              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
-          };
-          paginationContainer.appendChild(pageButton);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Data received:', data); // Debugging log
+        const syndicateClients = data.clients || []; // Set to empty array if undefined
+        totalPages = Math.ceil((data.totalCount || 0) / PAGE_SIZE);
+        populateTable(syndicateClients);
+        renderPagination();
+      } else {
+        console.error('Error fetching syndicate clients:', await response.text());
       }
+    } catch (error) {
+      console.error('Error fetching syndicate clients:', error);
+    }
+  }
+  
 
-      // Next Button
-      const nextButton = document.createElement('button');
-      nextButton.innerText = 'Next';
-      nextButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
-      nextButton.disabled = currentPage === totalPages; // Disable if on the last page
-      nextButton.onclick = () => {
-          if (currentPage < totalPages) {
-              currentPage += 1;
-              fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
-          }
-      };
-      paginationContainer.appendChild(nextButton);
+  // Populate the client table with data
+  function populateTable(clients) {
+    const tableBody = document.getElementById('client-table-body');
+    tableBody.innerHTML = '';
+
+    // Ensure `clients` is an array before attempting to loop
+    if (!Array.isArray(clients)) {
+      console.error('Expected clients to be an array, but got:', clients);
+      return;
     }
 
-    // Call fetch function when the page loads
-    document.addEventListener('DOMContentLoaded', function () {
-      fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+    clients.forEach((client) => {
+      const profileImage = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
+      const row = `
+      <tr>
+        <td class="py-2 px-4">
+          <img id="profile-img" src="${profileImage}" alt="Profile" class="profile-img cursor-pointer" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${profileImage}')">
+        </td>
+        <td class="py-2 px-4">${client.name || 'N/A'}</td>
+        <td class="py-2 px-4">${client.domain || 'N/A'}</td>
+        <td class="py-2 px-4">${new Date(client.createdAt).toLocaleString()}</td>
+        <td class="py-2 px-4">
+          <div class="relative inline-block text-left">
+            <button onclick="toggleDropdown('${client._id}', event)" class="bg-blue-500 px-2 py-1 rounded">Actions</button>
+            <div id="dropdown-${client._id}" class="dropdown-content hidden bg-white text-black absolute z-10">
+              <a href="#" onclick="handleViewClient('${client._id}')">View</a>
+              <a href="#" onclick="handleEditClient('${client._id}')">Edit</a>
+              <a href="#" onclick="handleDeleteClient('${client._id}')">Delete</a>
+            </div>
+          </div>
+        </td>
+        <td class="py-2 px-4">
+          <button onclick="handleAddDetailsClick(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Add</button>
+        </td>
+        <td class="py-2 px-4">
+          <button href="./mom.html" onclick="handleAddDetailsClick1(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Log</button>
+        </td>
+        <td class="py-2 px-4">
+          <button href="./schedule_meeting.html" onclick="handleAddDetailsClick2(event, '${client._id}')" class="bg-green-500 px-2 py-1 rounded">Schedule</button>
+        </td>
+        <td class="py-2 px-4">
+          <select id="priority-${client._id}" class="priority-select" onchange="updatePriorityColor('${client._id}')">
+            <option value="low" ${client.priority === 'low' ? 'selected' : ''}>Low</option>
+            <option value="medium" ${client.priority === 'medium' ? 'selected' : ''}>Medium</option>
+            <option value="high" ${client.priority === 'high' ? 'selected' : ''}>High</option>
+          </select>
+        </td>
+        <td class="py-2 px-4">
+          <button class="bg-green-500 px-2 py-1 rounded" onclick="handleSavePriority('${client._id}')">Save</button>
+        </td>
+      </tr>
+      `;
+      tableBody.insertAdjacentHTML('beforeend', row);
     });
+  }
+
+  function renderPagination() {
+    const paginationContainer = document.getElementById('pagination');
+    paginationContainer.innerHTML = '';
+
+    const prevButton = document.createElement('button');
+    prevButton.innerText = 'Previous';
+    prevButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
+    prevButton.disabled = currentPage === 1;
+    prevButton.onclick = () => {
+      if (currentPage > 1) fetchSyndicateClients(localStorage.getItem('syndicateToken'), --currentPage);
+    };
+    paginationContainer.appendChild(prevButton);
+
+    for (let i = 1; i <= totalPages; i++) {
+      const pageButton = document.createElement('button');
+      pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
+      if (i === currentPage) {
+        pageButton.classList.add('bg-blue-700');
+      }
+      pageButton.innerText = i;
+      pageButton.disabled = i === currentPage;
+      pageButton.onclick = () => {
+        currentPage = i;
+        fetchSyndicateClients(localStorage.getItem('syndicateToken'), currentPage);
+      };
+      paginationContainer.appendChild(pageButton);
+    }
+
+    const nextButton = document.createElement('button');
+    nextButton.innerText = 'Next';
+    nextButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-gray-500', 'text-white');
+    nextButton.disabled = currentPage === totalPages;
+    nextButton.onclick = () => {
+      if (currentPage < totalPages) fetchSyndicateClients(localStorage.getItem('syndicateToken'), ++currentPage);
+    };
+    paginationContainer.appendChild(nextButton);
+  }
+
 
  // Toggle the dropdown menu
 window.toggleDropdown = function(clientId, event) {
