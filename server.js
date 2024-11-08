@@ -338,8 +338,14 @@ app.get('/api/syndicateclients', authenticateToken, async (req, res) => {
     const size = parseInt(req.query.size) || 10;
     const skip = (page - 1) * size;
 
-    const totalCount = await Client.countDocuments(); // Adjust based on your Client schema
-    const clients = await Client.find().skip(skip).limit(size); // Fetch paginated clients
+    // Get the syndicate_name from the token, assuming it’s stored in req.user
+    const syndicateName = req.user.syndicate_name;
+
+    // Filter clients based on the personReferred field
+    const totalCount = await Client.countDocuments({ personReferred: syndicateName });
+    const clients = await Client.find({ personReferred: syndicateName })
+      .skip(skip)
+      .limit(size);
 
     res.json({ clients, totalCount });
   } catch (error) {
@@ -348,6 +354,21 @@ app.get('/api/syndicateclients', authenticateToken, async (req, res) => {
   }
 });
 
+
+// Syndicate details endpoint
+app.get('/api/syndicate-details', authenticateToken, async (req, res) => {
+  try {
+    // Assuming `req.user.id` contains the ID of the syndicate user from the token
+    const syndicateUser = await Syndicate.findById(req.user.id); // Replace `Syndicate` with the correct model
+    if (!syndicateUser) {
+      return res.status(404).json({ message: 'Syndicate user not found' });
+    }
+    res.status(200).json(syndicateUser);
+  } catch (error) {
+    console.error('Error fetching syndicate user details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Syndicate login route
 
