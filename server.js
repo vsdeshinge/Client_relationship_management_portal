@@ -28,7 +28,7 @@ const { GridFSBucket } = require('mongodb');
 const nodemailer = require('nodemailer');
 const QRCode = require('qrcode');
 const cron = require('node-cron');
-
+const { exec } = require('child_process');
 
 
 const MoM = require('./models/mom.js');
@@ -52,7 +52,7 @@ const BusinessProposal = require('./models/buisnessproposal.js');
 // const SyndicateClient = require('./models/syndicateclient.js');
 const Visit = require('./models/visitor_logs.js');
 const authenticateToken = require('./public/js/authenticateToken.js');
-
+const FormData = require('./models/bng_form.js');
 const ScheduleMeeting = require('./models/schedule_meeting.js'); 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -67,15 +67,6 @@ mongoose.connect(process.env.MONGODB_URI, {
   process.exit(1);
 });
 
-// Init GridFSBucket
-let gridfsBucket;
-
-mongoose.connection.once('open', () => {
-  gridfsBucket = new GridFSBucket(mongoose.connection.db, {
-    bucketName: 'faceImages'
-  });
-  console.log('GridFSBucket initialized');
-});
 
 
 // Middleware
@@ -90,10 +81,29 @@ app.use('/faciliwty', express.static(path.join(__dirname, 'facility')));
 // Temporary workaround to ensure MONGODB_URI is defined
 process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
 
+// Init GridFSBucket
+let gridfsBucket;
+let faceImagesBucket;
+let visitingCardBucket;
+
+
+// Initialize GridFS buckets after MongoDB connection
+mongoose.connection.once('open', () => {
+  faceImagesBucket = new GridFSBucket(mongoose.connection.db, { bucketName: 'faceImages' });
+  visitingCardBucket = new GridFSBucket(mongoose.connection.db, { bucketName: 'visitingCards' });
+  console.log('GridFS buckets initialized for faceImages and visitingCards');
+});
+
 
 
 const faceImageStorage = multer.memoryStorage();
+const visitingCardStorage = multer.memoryStorage();
+
+
+
 const faceImageUpload = multer({ storage: faceImageStorage }).single('faceImage');
+const visitingCardUpload = multer({ storage: visitingCardStorage }).fields([{ name: 'front', maxCount: 1 }, { name: 'back', maxCount: 1 }]);
+
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -1877,13 +1887,132 @@ router.get('/api/visit-history', async (req, res) => {
   }
 });
 
+// bangalore_event
+
+
+
+// Submit form with visiting card upload to GridFS
+app.post('/submit-form', visitingCardUpload, async (req, res) => {
+  try {
+    const formData = {
+      name: req.body.name,
+      companyName: req.body.companyName,
+      phoneNumber: req.body.phoneNumber,
+      email: req.body.email,
+      domain: req.body.domain,
+      notes: req.body.notes,
+      hasVisitingCard: req.body.hasVisitingCard === 'true',
+      strategyPartner: req.body.strategyPartner,
+      visitingCardImages: []
+    };
+
+    const uploadToGridFS = (buffer, filename) => {
+      return new Promise((resolve, reject) => {
+        const stream = visitingCardBucket.openUploadStream(filename, {
+          metadata: { clientName: req.body.name }
+        });
+        stream.end(buffer);
+        stream.on('finish', () => resolve(stream.id));
+        stream.on('error', reject);
+      });
+    };
+
+    if (req.files['front']) {
+      const frontImageBuffer = req.files['front'][0].buffer;
+      const frontImageId = await uploadToGridFS(frontImageBuffer, 'front.png');
+      formData.visitingCardImages.push(frontImageId);
+    }
+
+    if (req.files['back']) {
+      const backImageBuffer = req.files['back'][0].buffer;
+      const backImageId = await uploadToGridFS(backImageBuffer, 'back.png');
+      formData.visitingCardImages.push(backImageId);
+    }
+
+    const newFormEntry = new FormData(formData);
+    await newFormEntry.save();
+    res.status(201).json({ message: "Form data saved successfully", data: newFormEntry });
+  } catch (error) {
+    console.error("Error saving form data:", error);
+    res.status(500).json({ error: "Failed to save form data" });
+  }
+});
+
+
+// Endpoint to retrieve visiting card images from GridFS
+app.get('/visiting-card/:id', async (req, res) => {
+  try {
+    const fileId = new mongoose.Types.ObjectId(req.params.id);
+    const downloadStream = visitingCardBucket.openDownloadStream(fileId);
+
+    res.set('Content-Type', 'image/png'); // Set content type as appropriate
+    downloadStream.pipe(res);
+  } catch (error) {
+    console.error('Error retrieving image:', error);
+    res.status(500).send('Error retrieving image');
+  }
+});
+
+// API to get all clients data
+app.get('/api/clients', async (req, res) => {
+  try {
+      const clients = await FormData.find({}).lean();
+
+      // Modify each client to include GridFS URLs for visiting card images
+      clients.forEach(client => {
+          client.visitingCardImages = client.visitingCardImages.map(id => {
+              console.log(`Generating URL for visiting card image with ID: ${id}`);
+              return `/visiting-card/${id}`;
+          });
+      });
+
+      res.json(clients);
+  } catch (error) {
+      console.error('Error fetching clients:', error);
+      res.status(500).json({ error: 'Failed to fetch clients' });
+  }
+});
+// Delete client and their associated visiting card images
+app.delete('/api/clients/:id', async (req, res) => {
+  try {
+      const clientId = req.params.id;
+
+      // Find the client document to get associated visiting card image IDs
+      const client = await FormData.findById(clientId);
+      if (!client) {
+          return res.status(404).json({ error: 'Client not found' });
+      }
+
+      // Delete the visiting card images from GridFS
+      const deleteImagePromises = client.visitingCardImages.map(imageId => 
+          visitingCardBucket.delete(imageId)
+      );
+      await Promise.all(deleteImagePromises);
+
+      // Delete the client document from MongoDB
+      await FormData.findByIdAndDelete(clientId);
+
+      res.status(200).json({ message: 'Client and associated images deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting client:', error);
+      res.status(500).json({ error: 'Failed to delete client' });
+  }
+});
+
 
 
 app.use('/', router); // Mount the router
 
-
+// Serve the dashboard HTML
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
+});
 
 // Serve index.html as default route
+app.get('/bng_form', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'form.html'));
+});
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
