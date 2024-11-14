@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client Data Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .hidden { display: none; }
+        .input-field {
+            border: 2px solid #4A5568; /* Gray-700 for better visibility */
+            padding: 10px; /* Additional padding */
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-200 flex items-center justify-center min-h-screen">
+
+<div class="w-full max-w-2xl mx-auto bg-white p-12 rounded-xl shadow-lg border border-gray-300">
+    <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Enter Client Details</h2>
+    
+    <!-- Form Fields -->
+    <form id="clientForm" class="space-y-6" enctype="multipart/form-data">
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Name</span>
+            <input type="text" id="name" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
+        </label>
+
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Company Name</span>
+            <input type="text" id="companyName" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
+        </label>
+
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Phone Number</span>
+            <input type="text" id="phoneNumber" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required pattern="^\d{10}$" title="Please enter a 10-digit phone number">
+        </label>
+
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Email</span>
+            <input type="email" id="email" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
+        </label>
+
+        <!-- Strategy Partner Dropdown with Suggestions -->
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Strategy Partner</span>
+            <input type="text" id="strategyPartner" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" placeholder="Type to search partners...">
+            <div id="partnerSuggestions" class="absolute bg-white border border-gray-300 mt-1 w-full rounded-md shadow-lg hidden">
+                <!-- Suggestions will populate here -->
+            </div>
+        </label>
+
+        <!-- Domain Selection Grid -->
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Domain</span>
+            <div class="grid grid-cols-4 gap-4 mt-4">
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="domain" value="Agriculture & Allied Sector" class="mr-2">
+                    <span>Agriculture & Allied Sector</span>
+                </label>
+                <!-- Repeat similar structure for all other domains -->
+                <label class="flex items-center space-x-2">
+                    <input type="radio" name="domain" value="Other" class="mr-2" id="customDomainRadio">
+                    <span>Other</span>
+                </label>
+            </div>
+            <input type="text" id="customDomain" class="input-field mt-2 hidden w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" placeholder="Enter custom domain">
+        </label>
+
+        <label class="block">
+            <span class="text-lg font-semibold text-gray-700">Notes</span>
+            <textarea id="notes" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></textarea>
+        </label>
+
+        <!-- Visiting Card Checkbox -->
+        <div class="flex items-center mb-4">
+            <input type="checkbox" id="hasVisitingCard" class="h-5 w-5 text-green-600 focus:ring focus:ring-green-300">
+            <label for="hasVisitingCard" class="ml-3 text-lg font-semibold text-gray-700">Client has a visiting card</label>
+        </div>
+
+        <div id="visitingCardFields" class="hidden">
+            <label class="block">
+                <span class="text-lg font-semibold text-gray-700">Capture Visiting Card (Front)</span>
+                <video id="cameraFront" autoplay class="mt-2 block w-full rounded-md border-gray-300 shadow-lg"></video>
+                <img id="frontImagePreview" class="mt-2 block w-full rounded-md border-gray-300 shadow-lg hidden" />
+                <button type="button" onclick="capturePhoto('front')" id="captureFrontButton" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg shadow-md">Capture Front</button>
+                <button type="button" onclick="retakePhoto('front')" id="retakeFrontButton" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hidden">Retake Front</button>
+            </label>
+            
+            <label class="block">
+                <span class="text-lg font-semibold text-gray-700">Capture Visiting Card (Back)</span>
+                <video id="cameraBack" autoplay class="mt-2 block w-full rounded-md border-gray-300 shadow-lg"></video>
+                <img id="backImagePreview" class="mt-2 block w-full rounded-md border-gray-300 shadow-lg hidden" />
+                <button type="button" onclick="capturePhoto('back')" id="captureBackButton" class="mt-4 px-4 py-2 bg-green-500 text-white rounded-lg shadow-md">Capture Back</button>
+                <button type="button" onclick="retakePhoto('back')" id="retakeBackButton" class="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg shadow-md hidden">Retake Back</button>
+            </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="w-full py-3 mt-8 text-lg font-semibold text-white bg-green-600 rounded-lg shadow-lg hover:bg-green-700 focus:ring focus:ring-green-300">Submit</button>
+    </form>
+
+    <button type="button" onclick="viewDashboard()" class="w-full py-3 mt-6 text-lg font-semibold text-white bg-blue-500 rounded-lg shadow-lg hover:bg-blue-600 focus:ring focus:ring-blue-300">View Dashboard</button>
+</div>
+
+<script>
+    // Toggle custom domain input
+    document.getElementById('customDomainRadio').addEventListener('change', function () {
+        document.getElementById('customDomain').classList.toggle('hidden', !this.checked);
+    });
+
+    // Partner Suggestions with Typing
+    const strategyPartnerInput = document.getElementById("strategyPartner");
+    const partnerSuggestions = document.getElementById("partnerSuggestions");
+    const partners = ["Partner A", "Partner B", "Partner C"]; // Add partner options
+
+    strategyPartnerInput.addEventListener("input", function () {
+        const input = strategyPartnerInput.value.toLowerCase();
+        partnerSuggestions.innerHTML = "";
+        const filteredPartners = partners.filter(partner => partner.toLowerCase().includes(input));
+        filteredPartners.forEach(partner => {
+            const div = document.createElement("div");
+            div.textContent = partner;
+            div.className = "px-4 py-2 cursor-pointer hover:bg-gray-100";
+            div.onclick = () => {
+                strategyPartnerInput.value = partner;
+                partnerSuggestions.classList.add("hidden");
+            };
+            partnerSuggestions.appendChild(div);
+        });
+        partnerSuggestions.classList.toggle("hidden", !filteredPartners.length);
+    });
+
+    document.addEventListener("click", (e) => {
+        if (e.target !== strategyPartnerInput) partnerSuggestions.classList.add("hidden");
+    });
+</script>
+</body>
+</html>
