@@ -6,8 +6,12 @@
     <title>Client Data Form</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <style>
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+         .fade-in { animation: fadeIn 0.5s ease-in-out; }
         .hidden { display: none; }
+        .input-field {
+            border: 2px solid #4A5568; /* Gray-700 for better visibility */
+            padding: 10px; /* Additional padding */
+        }
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -16,78 +20,215 @@
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-<div class="w-full max-w-md mx-auto bg-white p-8 rounded-xl shadow-lg fade-in">
+<div class="w-full max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg">
     <h2 class="text-2xl font-bold mb-6 text-center">Enter Client Details</h2>
     
     <!-- Form Fields -->
     <form id="clientForm" class="space-y-4" enctype="multipart/form-data">
         <label class="block">
-            <span class="text-gray-700">Name</span>
-            <input type="text" id="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500" required>
+            <span class="text-gray-700 font-bold">Name</span>
+            <input type="text" id="name" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
         </label>
 
         <label class="block">
-            <span class="text-gray-700">Company Name</span>
-            <input type="text" id="companyName" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500" required>
+            <span class="text-gray-700 font-bold">Company Name</span>
+            <input type="text" id="companyName" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
         </label>
 
         <label class="block">
-            <span class="text-gray-700">Phone Number</span>
-            <input type="text" id="phoneNumber" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500" required pattern="^\d{10}$" title="Please enter a 10-digit phone number">
+            <span class="text-gray-700 font-bold">Phone Number</span>
+            <input type="text" id="phoneNumber" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required pattern="^\d{10}$" title="Please enter a 10-digit phone number">
         </label>
         
 
         <label class="block">
-            <span class="text-gray-700">Email</span>
-            <input type="email" id="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500" required>
+            <span class="text-gray-700 font-bold">Email</span>
+            <input type="email" id="email" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
         </label>
 
+        <!-- Strategy Partner Dropdown with Suggestions -->
         <label class="block">
-            <span class="text-gray-700">Strategy Partner</span>
-            <div class="mt-2 space-y-2">
-                <label class="flex items-center">
-                    <input type="radio" name="strategyPartner" value="Partner A" class="mr-2 text-indigo-600">
-                    <span>Partner A</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="strategyPartner" value="Partner B" class="mr-2 text-indigo-600">
-                    <span>Partner B</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="strategyPartner" value="Partner C" class="mr-2 text-indigo-600">
-                    <span>Partner C</span>
-                </label>
+            <span class="text-gray-700 font-bold">Strategy Partner</span>
+            <input type="text" id="strategyPartner" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" placeholder="Type to search partners...">
+            <div id="partnerSuggestions" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg hidden">
+                <!-- Suggestions will populate here -->
             </div>
         </label>
 
+        <!-- Domain Selection Grid -->
         <label class="block">
-            <span class="text-gray-700">Domain</span>
-            <input type="text" id="domain" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500" required>
+            <span class="text-gray-700 font-bold">Domain</span>
+            <div class="grid grid-cols-4 gap-4 mt-2">
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 1" class="mr-2">
+                    <span>Agriculture & Allied Sector </span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 2" class="mr-2">
+                    <span>Auto Components </span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 3" class="mr-2">
+                    <span>Automobile</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 4" class="mr-2">
+                    <span>Aviation</span>
+                </label>
+                <!-- Add other domains here -->
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 5" class="mr-2">
+                    <span>Ayush</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 6" class="mr-2">
+                    <span>BFSI - Fintech , Banking , Insurance </span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 7" class="mr-2">
+                    <span>Biotechnology</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 8" class="mr-2">
+                    <span>Capital Goods</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 9" class="mr-2">
+                    <span>Chemicals</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 10" class="mr-2">
+                    <span>Construction</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 11" class="mr-2">
+                    <span>Defence Manufacturing</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 12" class="mr-2">
+                    <span>Eduction</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 13" class="mr-2">
+                    <span>Electronic Systems</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 14" class="mr-2">
+                    <span>Food & Allied Sectors</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 15" class="mr-2">
+                    <span>Healthcare</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 16" class="mr-2">
+                    <span>IT & BPM</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 17" class="mr-2">
+                    <span>Leather and Footwear</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 18" class="mr-2">
+                    <span>Media</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 19" class="mr-2">
+                    <span>Medical Devices</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Gaming</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 17" class="mr-2">
+                    <span>Ecommerce</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 18" class="mr-2">
+                    <span>Paper and Packaging</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 19" class="mr-2">
+                    <span>Pharmaceuticals</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Ports & Shipping</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Railways</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Renewable Energy</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Retail and Ecommerce</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Roads and Highways</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Space</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Sports</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Sustainability</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Telecom</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Textile and Apparel</span>
+                </label>
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
+                    <span>Tourism & Hospitality</span>
+                </label>
+                <!-- Add other domains here -->
+                <label class="flex items-center">
+                    <input type="radio" name="domain" value="Other" class="mr-2" id="customDomainRadio">
+                    <span>Other</span>
+                </label>
+            </div>
+            <input type="text" id="customDomain" class="mt-2 hidden w-full rounded-md border-gray-300 shadow-sm focus:border-green-500" placeholder="Enter custom domain">
         </label>
 
+
         <label class="block">
-            <span class="text-gray-700">Notes</span>
-            <textarea id="notes" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500"></textarea>
+            <span class="text-gray-700 font-bold">Notes</span>
+            <textarea id="notes" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></textarea>
         </label>
 
         <!-- Visiting Card Checkbox -->
         <div class="flex items-center mb-4">
             <input type="checkbox" id="hasVisitingCard" class="h-4 w-4 text-indigo-600">
-            <label for="hasVisitingCard" class="ml-2 text-gray-700">Client has a visiting card</label>
+            <label for="hasVisitingCard" class="ml-2 text-gray-700 font-bold">Client has a visiting card</label>
         </div>
 
         <div id="visitingCardFields" class="hidden">
             <label class="block">
-                <span class="text-gray-700">Capture Visiting Card (Front)</span>
-                <video id="cameraFront" autoplay class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500"></video>
+                <span class="text-gray-700 font-bold">Capture Visiting Card (Front)</span>
+                <video id="cameraFront" autoplay class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></video>
                 <img id="frontImagePreview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm hidden" />
                 <button type="button" onclick="capturePhoto('front')" id="captureFrontButton" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Capture Front</button>
                 <button type="button" onclick="retakePhoto('front')" id="retakeFrontButton" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hidden">Retake Front</button>
             </label>
             
             <label class="block">
-                <span class="text-gray-700">Capture Visiting Card (Back)</span>
-                <video id="cameraBack" autoplay class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500"></video>
+                <span class="text-gray-700 font-bold">Capture Visiting Card (Back)</span>
+                <video id="cameraBack" autoplay class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></video>
                 <img id="backImagePreview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm hidden" />
                 <button type="button" onclick="capturePhoto('back')" id="captureBackButton" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Capture Back</button>
                 <button type="button" onclick="retakePhoto('back')" id="retakeBackButton" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hidden">Retake Back</button>
@@ -239,6 +380,44 @@
         }
       });
       
+
+      // Display overlay on page load
+    setTimeout(() => {
+        document.getElementById("overlayContainer").classList.add("show");
+    }, 1200);
+
+    // Toggle custom domain input
+    document.getElementById('customDomainRadio').addEventListener('change', function () {
+        document.getElementById('customDomain').classList.toggle('hidden', !this.checked);
+    });
+
+    // Partner Suggestions with Typing
+    const strategyPartnerInput = document.getElementById("strategyPartner");
+    const partnerSuggestions = document.getElementById("partnerSuggestions");
+    const partners = ["Partner A", "Partner B", "Partner C"]; // Add partner options
+
+    strategyPartnerInput.addEventListener("input", function () {
+        const input = strategyPartnerInput.value.toLowerCase();
+        partnerSuggestions.innerHTML = "";
+        const filteredPartners = partners.filter(partner => partner.toLowerCase().includes(input));
+        filteredPartners.forEach(partner => {
+            const div = document.createElement("div");
+            div.textContent = partner;
+            div.className = "px-4 py-2 cursor-pointer hover:bg-gray-100";
+            div.onclick = () => {
+                strategyPartnerInput.value = partner;
+                partnerSuggestions.classList.add("hidden");
+            };
+            partnerSuggestions.appendChild(div);
+        });
+        partnerSuggestions.classList.toggle("hidden", !filteredPartners.length);
+    });
+
+    document.addEventListener("click", (e) => {
+        if (e.target !== strategyPartnerInput) partnerSuggestions.classList.add("hidden");
+    });
+
+    
 </script>
 </body>
 </html>
