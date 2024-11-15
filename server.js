@@ -931,29 +931,31 @@ router.get('/api/clients/counts', async (req, res) => {
 });
 
 
-// buisness proposal count 
-router.get('/api/clients/status-counts', async (req, res) => {
-  try {
-      const counts = await Client.aggregate([
-          { $match: { status: 'qualified' } },
-          {
-              $group: {
-                  _id: "$buisnessproposalstatus",
-                  count: { $sum: 1 }
-              }
-          }
-      ]);
+// // buisness proposal count 
+// router.get('/api/clients/status-counts', async (req, res) => {
+//   try {
+//       const counts = await Client.aggregate([
+//           { $match: { status: 'qualified' } },
+//           {
+//               $group: {
+//                   _id: "$buisnessproposalstatus",
+//                   count: { $sum: 1 }
+//               }
+//           }
+//       ]);
       
-      const countsMap = counts.reduce((acc, count) => {
-          acc[count._id] = count.count;
-          return acc;
-      }, {});
+//       const countsMap = counts.reduce((acc, count) => {
+//           acc[count._id] = count.count;
+//           return acc;
+//       }, {});
 
-      res.status(200).json(countsMap);
-  } catch (error) {
-      res.status(500).send('Server error');
-  }
-});
+//       res.status(200).json(countsMap);
+//   } catch (error) {
+//       res.status(500).send('Server error');
+//   }
+// });
+
+
 
 // visitor filter (sortby) option with pagination
 app.get('/visitor-details', authenticateToken, async (req, res) => {
@@ -1715,33 +1717,22 @@ app.put('/api/syndicateclients/:id/priority', authenticateToken, async (req, res
 // visitor pass apis
 
 
-
-// Fetch and display the client data
-app.get('/api/client/:id', async (req, res) => {
+app.get('/api/client/public/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-
-    // Try to find the client in the Client collection
-    let client = await Client.findById(id);
-    
-    if (client) {
-      return res.json({ success: true, client, collection: 'Client' });
-    }
-
-    // If not found, try to find the client in the SyndicateClient collection
-    client = await SyndicateClient.findById(id);
-    
-    if (client) {
-      return res.json({ success: true, client, collection: 'SyndicateClient' });
-    }
-
-    // If not found in either collection, return a not found message
-    return res.json({ success: false, message: 'Client not found' });
+      const client = await Client.findById(req.params.id, 'name phone email companyName');
+      if (client) {
+          res.status(200).json({ success: true, client });
+      } else {
+          res.status(404).json({ success: false, message: 'Client not found' });
+      }
   } catch (error) {
-    console.error('Error fetching client:', error);
-    res.status(500).json({ success: false, message: 'Server error' });
+      console.error('Error fetching client:', error);
+      res.status(500).json({ success: false, message: 'Server error' });
   }
 });
+
+
+
 
 // Check-in
 app.post('/api/client/:id/checkin', async (req, res) => {

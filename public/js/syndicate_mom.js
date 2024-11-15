@@ -115,8 +115,7 @@ function displayMoMs(moms) {
             <td>${new Date(mom.dateTime).toLocaleString()}</td>
             <td>
                 <button class="view-button bg-blue-500 text-white py-1 px-3 rounded-md mr-2" data-id="${mom._id}">View</button>
-                <button class="edit-button bg-yellow-500 text-white py-1 px-3 rounded-md mr-2" data-id="${mom._id}">Edit</button>
-                <button class="delete-button bg-green-500 text-white py-1 px-3 rounded-md" data-id="${mom._id}">Delete</button>
+                
             </td> 
         `;
         momTable.appendChild(row);

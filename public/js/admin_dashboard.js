@@ -1354,4 +1354,108 @@ async function openSyndicateDashboard(userId) {
     }
 }
 
+// drop down in admin dashboard 
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownButton = document.getElementById('dropdownButton');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+    const tableBody = document.getElementById('visitorsTableBody'); // Assuming you have a table body for client data
+    const PAGE_SIZE = 10;
+    let currentPage = 1;
+
+    // Toggle dropdown menu visibility
+    dropdownButton.addEventListener('click', () => {
+        dropdownMenu.classList.toggle('hidden');
+    });
+
+    // Close dropdown when clicking outside of it
+    document.addEventListener('click', (event) => {
+        if (!dropdownButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            dropdownMenu.classList.add('hidden');
+        }
+    });
+
+    // Handle dropdown item click
+    dropdownMenu.addEventListener('click', (event) => {
+        const filter = event.target.getAttribute('data-filter');
+        if (filter) {
+            fetchClientData(filter, currentPage);
+            dropdownMenu.classList.add('hidden'); // Close the dropdown menu
+        }
+    });
+
+    // Function to fetch client data based on selected filter and page
+    async function fetchClientData(filter, page = 1) {
+        try {
+            const response = await fetch(`/visitor-details?filter=${filter}&page=${page}&size=${PAGE_SIZE}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const clients = data.visitors || [];
+                const totalCount = data.totalCount || 0;
+                populateTable(clients);
+                renderPagination(totalCount, filter);
+            } else {
+                console.error('Error fetching client data:', await response.text());
+            }
+        } catch (error) {
+            console.error('Error fetching client data:', error);
+        }
+    }
+
+    // Populate the client table with fetched data
+    function populateTable(clients) {
+        tableBody.innerHTML = ''; // Clear existing table rows
+
+        if (clients.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No clients found.</td></tr>';
+            return;
+        }
+
+        clients.forEach((client) => {
+            const profileImage = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
+            const row = `
+                <tr>
+                    <td class="py-2 px-4">
+                        <img src="${profileImage}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+                    </td>
+                    <td class="p-2">${client.name}</td>
+                    <td class="p-2">${new Date(client.createdAt).toLocaleDateString()}</td>
+                    <td class="p-2">${client.companyName || 'N/A'}</td>
+                    <td class="p-2">${client.phone}</td>
+                    <td class="p-2">${client.email}</td>
+                    <td class="p-2">${client.status || 'N/A'}</td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', row);
+        });
+    }
+
+    // Render pagination buttons based on total count
+    function renderPagination(totalCount, filter) {
+        const paginationContainer = document.getElementById('pagination');
+        paginationContainer.innerHTML = ''; // Clear previous pagination buttons
+
+        const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.classList.add('px-3', 'py-1', 'rounded', 'border', 'border-gray-500', 'bg-blue-500', 'text-white');
+            pageButton.innerText = i;
+            pageButton.disabled = i === currentPage;
+
+            pageButton.onclick = () => {
+                currentPage = i;
+                fetchClientData(filter, currentPage);
+            };
+
+            paginationContainer.appendChild(pageButton);
+        }
+    }
+});
+
 

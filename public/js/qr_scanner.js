@@ -153,17 +153,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const clientId = urlParams.get('client_id');
     
         if (clientId) {
-            fetch(`/api/client/${clientId}`)
+            fetch(`/api/client/public/${clientId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
+                        console.log('Client found:', data.client); // Debugging line
                         clientDetails.id = clientId;
                         clientDetails.name = data.client.name;
                         clientDetails.phone = data.client.phone;
                         clientDetails.email = data.client.email;
                         clientDetails.company = data.client.companyName;
                         clientDetails.photoId = data.client.faceImage;
-                        clientDetails.collectionType = data.collection; // Track which collection the client is from
     
                         document.getElementById('client-name').textContent = `Name: ${clientDetails.name}`;
                         document.getElementById('client-phone').textContent = `Phone: ${clientDetails.phone}`;
@@ -178,10 +178,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('check-in-btn').style.display = 'block';
                         document.getElementById('check-out-btn').style.display = 'block';
                     } else {
+                        console.warn('Client not found!'); // Debugging line
                         alert('Client not found!');
                     }
+                })
+                .catch(error => {
+                    console.error('Error fetching client data:', error);
+                    alert('Error fetching client data.');
                 });
         } else {
+            console.warn('Invalid QR Code format'); // Debugging line
             alert('Invalid QR Code!');
         }
     }
