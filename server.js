@@ -1881,7 +1881,6 @@ router.get('/api/visit-history', async (req, res) => {
 // bangalore_event
 
 
-
 // Submit form with visiting card upload to GridFS
 app.post('/submit-form', visitingCardUpload, async (req, res) => {
   try {
@@ -1928,6 +1927,7 @@ app.post('/submit-form', visitingCardUpload, async (req, res) => {
     res.status(500).json({ error: "Failed to save form data" });
   }
 });
+
 
 
 // Endpoint to retrieve visiting card images from GridFS
@@ -1989,7 +1989,44 @@ app.delete('/api/clients/:id', async (req, res) => {
       res.status(500).json({ error: 'Failed to delete client' });
   }
 });
+// API to get all clients data with sorting and filtering by strategy partner
+app.get('/api/clients', async (req, res) => {
+    try {
+        const sortBy = req.query.sortBy;
+        const partnerName = req.query.partnerName; // Get the partner name from query params
+        let sortOptions = {};
+        let filterOptions = {};
 
+        if (sortBy === 'date') {
+            // Sort by the latest date (assuming `createdAt` is the date field)
+            sortOptions = { createdAt: -1 };
+        } else if (sortBy === 'strategyPartner') {
+            // Sort by strategy partner name alphabetically
+            sortOptions = { strategyPartner: 1 };
+        }
+
+        if (partnerName) {
+            // Filter by strategy partner name if provided
+            filterOptions.strategyPartner = partnerName;
+        }
+
+        const clients = await FormData.find(filterOptions)
+            .sort(sortOptions)
+            .lean();
+
+        // Modify each client to include GridFS URLs for visiting card images
+        clients.forEach(client => {
+            client.visitingCardImages = client.visitingCardImages.map(id => {
+                return `/visiting-card/${id}`;
+            });
+        });
+
+        res.json(clients);
+    } catch (error) {
+        console.error('Error fetching clients:', error);
+        res.status(500).json({ error: 'Failed to fetch clients' });
+    }
+});
 
 
 app.use('/', router); // Mount the router

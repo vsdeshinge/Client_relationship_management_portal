@@ -39,3 +39,14 @@ docker rm $(docker ps -aq)
 docker rmi $(docker images -q)
 
 sed -i 's/\r$//' workflow.sh
+
+
+
+
+
+// export code 
+mongoexport --uri="mongodb+srv://doadmin:0w5Bh26oH43E7cX1@db-mongodb-blr1-64234-171b1e0b.mongo.ondigitalocean.com/admin" \
+--collection="clients" \
+--out="/home/crmadmin/posspole/json_backup-1/clients.json" \
+--jsonArray \
+--fields="name,companyName,email"

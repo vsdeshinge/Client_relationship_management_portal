@@ -9,56 +9,144 @@
 <body class="bg-gray-100">
     <div class="container mx-auto p-6">
         <h2 class="text-3xl font-bold mb-6 text-center">Client Dashboard</h2>
+        
+        <!-- Sort By Dropdown -->
+        <div class="flex justify-center mb-4">
+            <label for="sortOptions" class="mr-2 text-lg font-semibold">Sort By:</label>
+            <select id="sortOptions" class="border border-gray-300 rounded p-2">
+                <option value="date">Latest by Date</option>
+                <option value="strategyPartner">Strategy Partner Name</option>
+            </select>
+        </div>
+        
+        <!-- Strategy Partner Dropdown (Hidden by default) -->
+        <div id="partnerDropdown" class="flex justify-center mb-4 hidden">
+            <label for="partnerOptions" class="mr-2 text-lg font-semibold">Select Partner:</label>
+            <select id="partnerOptions" class="border border-gray-300 rounded p-2">
+                <option value="">-- Select Partner --</option>
+                <option value="Prashanth Kumar C">Prashanth Kumar C</option>
+                <option value="Shashidhara Poojary">Shashidhara Poojary</option>
+                <option value="Kiran C">Kiran C</option>
+                <option value="Charan S Reddy">Charan S Reddy</option>
+                <option value="Shakthi Sriharan">Shakthi Sriharan</option>
+                <option value="Shreya Prabhu">Shreya Prabhu</option>
+                <option value="Krishnamurthy M Gokarnkar">Krishnamurthy M Gokarnkar</option>
+                <option value="Ramapuram Nayaki Varshini">Ramapuram Nayaki Varshini</option>
+                <option value="Varun Upadhyaya">Varun Upadhyaya</option>
+                <option value="Jayasimha Kulkarni">Jayasimha Kulkarni</option>
+                <option value="Anand Kannan">Anand Kannan</option>
+                <option value="Prathita Gowri A K Rao">Prathita Gowri A K Rao</option>
+                <option value="Nithyashree J">Nithyashree J</option>
+                <option value="Hannah Lisbeth Thomas">Hannah Lisbeth Thomas</option>
+                <option value="Bhavana">Bhavana</option>
+                <option value="Kaveramma">Kaveramma</option>
+                <option value="Kiran Rudrappa">Kiran Rudrappa</option>
+                <option value="Sashidhar M R">Sashidhar M R</option>
+            </select>
+        </div>
+
         <div id="clientGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Client cards will be inserted here by JavaScript -->
         </div>
+        <div id="noDataMessage" class="text-center text-gray-500 mt-6 hidden">No client data available for this partner.</div>
     </div>
 
     <script>
-        async function fetchClientData() {
+        async function fetchClientData(sortBy = 'date', partnerName = '') {
             try {
-                const response = await fetch('/api/clients');
+                console.log("Fetching data for:", { sortBy, partnerName }); // Debug log
+        
+                // Build URL with query parameters
+                const url = new URL(`/api/clients`, window.location.origin);
+                url.searchParams.append('sortBy', sortBy);
+                if (partnerName) {
+                    url.searchParams.append('partnerName', partnerName);
+                }
+        
+                // Fetch client data
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch client data: ${response.statusText}`);
+                }
+        
                 const clients = await response.json();
-                
+                console.log("Fetched clients:", clients); // Debug log
+        
                 const clientGrid = document.getElementById('clientGrid');
-                clients.forEach(client => {
-                    const clientCard = document.createElement('div');
-                    clientCard.className = 'bg-white p-4 rounded shadow-lg';
-
-                    clientCard.innerHTML = `
-                        <h3 class="text-xl font-bold">${client.name}</h3>
-                        <p><strong>Company:</strong> ${client.companyName}</p>
-                        <p><strong>Email:</strong> ${client.email}</p>
-                        <p><strong>Phone:</strong> ${client.phoneNumber}</p>
-                        <p><strong>Domain:</strong> ${client.domain}</p>
-                        <p><strong>Notes:</strong> ${client.notes}</p>
-
-                         <p><strong>Strategy Partner:</strong> ${client.strategyPartner || 'N/A'}</p>
-                         
-                        <div class="mt-4">
-                       
-                            ${client.visitingCardImages.map(url => `
-                                <img src="${url}" alt="Visiting Card Image" class="w-full h-auto rounded-md mb-2"/>
-                            `).join('')}
-                        </div>
-                          <button onclick="deleteClient('${client._id}')" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Delete</button>
-                    `;
-
-                    clientGrid.appendChild(clientCard);
-                });
+                const noDataMessage = document.getElementById('noDataMessage');
+                clientGrid.innerHTML = ''; // Clear existing clients
+        
+                if (clients.length === 0) {
+                    // Show no data message if no clients found
+                    noDataMessage.classList.remove('hidden');
+                } else {
+                    noDataMessage.classList.add('hidden'); // Hide no data message if clients are found
+        
+                    // Display only the filtered clients
+                    clients.forEach(client => {
+                        const clientCard = document.createElement('div');
+                        clientCard.className = 'bg-white p-4 rounded shadow-lg';
+        
+                        clientCard.innerHTML = `
+                            <h3 class="text-xl font-bold">${client.name}</h3>
+                            <p><strong>Company:</strong> ${client.companyName}</p>
+                            <p><strong>Email:</strong> ${client.email}</p>
+                            <p><strong>Phone:</strong> ${client.phoneNumber}</p>
+                            <p><strong>Domain:</strong> ${client.domain}</p>
+                            <p><strong>Notes:</strong> ${client.notes || 'N/A'}</p>
+                            <p><strong>Strategy Partner:</strong> ${client.strategyPartner || 'N/A'}</p>
+                            <div class="mt-4">
+                                ${client.visitingCardImages.map(url => `
+                                    <img src="${url}" alt="Visiting Card Image" class="w-full h-auto rounded-md mb-2"/>
+                                `).join('')}
+                            </div>
+                            <button onclick="deleteClient('${client._id}')" class="mt-4 px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+                        `;
+                        clientGrid.appendChild(clientCard);
+                    });
+                }
             } catch (error) {
                 console.error('Error fetching client data:', error);
             }
         }
+        
+        
+        // Handle sort option change
+        document.getElementById('sortOptions').addEventListener('change', (e) => {
+            const sortBy = e.target.value;
+            const partnerDropdown = document.getElementById('partnerDropdown');
+        
+            if (sortBy === 'strategyPartner') {
+                partnerDropdown.classList.remove('hidden');
+            } else {
+                partnerDropdown.classList.add('hidden');
+                fetchClientData(sortBy); // Fetch data by date if date sorting is selected
+            }
+        });
+        
+        // Handle partner name selection
+        document.getElementById('partnerOptions').addEventListener('change', (e) => {
+            const partnerName = e.target.value;
+            console.log("Selected partner:", partnerName); // Debug log
+            const sortBy = document.getElementById('sortOptions').value; // Get the current sort option
+        
+            if (partnerName) {
+                fetchClientData(sortBy, partnerName); // Fetch data filtered by partner name
+            } else {
+                document.getElementById('clientGrid').innerHTML = ''; // Clear client grid
+                document.getElementById('noDataMessage').classList.add('hidden'); // Hide no data message
+            }
+        });
+
         async function deleteClient(clientId) {
             if (confirm('Are you sure you want to delete this client?')) {
                 try {
                     const response = await fetch(`/api/clients/${clientId}`, {
-                        method: 'DELETE'
+                        method: 'DELETE',
                     });
                     if (response.ok) {
                         alert('Client deleted successfully.');
-                        location.reload(); // Refresh the page to update the client list
+                        fetchClientData(document.getElementById('sortOptions').value); // Refresh the sorted list
                     } else {
                         console.error('Error deleting client:', response.statusText);
                         alert('Failed to delete the client.');
@@ -69,8 +157,12 @@
                 }
             }
         }
-        // Fetch and display client data on page load
-        window.onload = fetchClientData;
-    </script>
+
+        // Fetch and display client data on page load (default sort by date)
+        window.onload = () => fetchClientData();
+        
+        </script>
+
+        
 </body>
 </html>

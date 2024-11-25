@@ -16,6 +16,69 @@
             from { opacity: 0; }
             to { opacity: 1; }
         }
+
+          /* General Styling */
+    .domain-selection-container {
+        max-height: 15rem; /* Restrict height to fit within viewport on smaller screens */
+        overflow-y: auto; /* Enable scrolling when content exceeds the height */
+        padding: 1rem; /* Add padding around the items */
+        border: 1px solid #E5E7EB; /* Light gray border */
+        border-radius: 0.5rem; /* Rounded corners */
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow effect */
+    }
+
+    /* Grid Layout */
+    .domain-grid {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr); /* Default to 1 column */
+        gap: 0.5rem; /* Space between items */
+    }
+
+    /* Responsive Grid Columns */
+    @media (min-width: 640px) { /* On small screens and up */
+        .domain-grid {
+            grid-template-columns: repeat(2, 1fr); /* 2 columns */
+        }
+    }
+    @media (min-width: 768px) { /* On medium screens and up */
+        .domain-grid {
+            grid-template-columns: repeat(3, 1fr); /* 3 columns */
+        }
+    }
+    @media (min-width: 1024px) { /* On large screens and up */
+        .domain-grid {
+            grid-template-columns: repeat(4, 1fr); /* 4 columns */
+        }
+    }
+
+    /* Individual Item Styling */
+    .domain-option {
+        display: flex;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: #F9FAFB; /* Light gray background */
+        border-radius: 0.375rem; /* Rounded corners */
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        cursor: pointer;
+    }
+
+    /* Hover Effect */
+    .domain-option:hover {
+        background-color: #ECFDF5; /* Light green hover background */
+        box-shadow: 0 4px 6px rgba(0, 128, 0, 0.1); /* Slightly stronger shadow on hover */
+    }
+
+    /* Radio Button Styling */
+    .domain-option input[type="radio"] {
+        accent-color: #10B981; /* Green accent for radio buttons */
+        margin-right: 0.5rem; /* Space between radio and label */
+    }
+
+    /* Custom Domain Input */
+    #customDomain {
+        margin-top: 0.5rem;
+    }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
@@ -27,243 +90,246 @@
     <form id="clientForm" class="space-y-4" enctype="multipart/form-data">
         <label class="block">
             <span class="text-gray-700 font-bold">Name</span>
-            <input type="text" id="name" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
+            <input type="text" id="name" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" >
         </label>
 
         <label class="block">
             <span class="text-gray-700 font-bold">Company Name</span>
-            <input type="text" id="companyName" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
+            <input type="text" id="companyName" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" >
         </label>
 
         <label class="block">
             <span class="text-gray-700 font-bold">Phone Number</span>
-            <input type="text" id="phoneNumber" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required pattern="^\d{10}$" title="Please enter a 10-digit phone number">
+            <input type="text" id="phoneNumber" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"   title="Please enter a 10-digit phone number">
         </label>
         
 
         <label class="block">
             <span class="text-gray-700 font-bold">Email</span>
-            <input type="email" id="email" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" required>
+            <input type="email" id="email" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" >
         </label>
 
         <!-- Strategy Partner Dropdown with Suggestions -->
         <label class="block">
             <span class="text-gray-700 font-bold">Strategy Partner</span>
             <input type="text" id="strategyPartner" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg" placeholder="Type to search partners...">
-            <div id="partnerSuggestions" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg hidden">
+            <div id="partnerSuggestions" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg hidden" required>
                 <!-- Suggestions will populate here -->
             </div>
         </label>
 
-        <!-- Domain Selection Grid -->
-        <label class="block">
-            <span class="text-gray-700 font-bold">Domain</span>
-            <div class="grid grid-cols-4 gap-4 mt-2">
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 1" class="mr-2">
-                    <span>Agriculture & Allied Sector </span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 2" class="mr-2">
-                    <span>Auto Components </span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 3" class="mr-2">
-                    <span>Automobile</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 4" class="mr-2">
-                    <span>Aviation</span>
-                </label>
-                <!-- Add other domains here -->
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 5" class="mr-2">
-                    <span>Ayush</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 6" class="mr-2">
-                    <span>BFSI - Fintech , Banking , Insurance </span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 7" class="mr-2">
-                    <span>Biotechnology</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 8" class="mr-2">
-                    <span>Capital Goods</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 9" class="mr-2">
-                    <span>Chemicals</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 10" class="mr-2">
-                    <span>Construction</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 11" class="mr-2">
-                    <span>Defence Manufacturing</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 12" class="mr-2">
-                    <span>Eduction</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 13" class="mr-2">
-                    <span>Electronic Systems</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 14" class="mr-2">
-                    <span>Food & Allied Sectors</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 15" class="mr-2">
-                    <span>Healthcare</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 16" class="mr-2">
-                    <span>IT & BPM</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 17" class="mr-2">
-                    <span>Leather and Footwear</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 18" class="mr-2">
-                    <span>Media</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 19" class="mr-2">
-                    <span>Medical Devices</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Gaming</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 17" class="mr-2">
-                    <span>Ecommerce</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 18" class="mr-2">
-                    <span>Paper and Packaging</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 19" class="mr-2">
-                    <span>Pharmaceuticals</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Ports & Shipping</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Railways</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Renewable Energy</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Retail and Ecommerce</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Roads and Highways</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Space</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Sports</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Sustainability</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Telecom</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Textile and Apparel</span>
-                </label>
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Domain 20" class="mr-2">
-                    <span>Tourism & Hospitality</span>
-                </label>
-                <!-- Add other domains here -->
-                <label class="flex items-center">
-                    <input type="radio" name="domain" value="Other" class="mr-2" id="customDomainRadio">
-                    <span>Other</span>
-                </label>
-            </div>
-            <input type="text" id="customDomain" class="mt-2 hidden w-full rounded-md border-gray-300 shadow-sm focus:border-green-500" placeholder="Enter custom domain">
+      <!-- Domain Selection Grid -->
+<label class="block">
+    <span class="text-gray-700 font-bold">Domain</span>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Agriculture & Allied Sector" class="mr-2">
+            <span>Agriculture & Allied Sector</span>
         </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Auto Components" class="mr-2">
+            <span>Auto Components</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Automobile" class="mr-2">
+            <span>Automobile</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Aviation" class="mr-2">
+            <span>Aviation</span>
+        </label>
+        <!-- Add other domains here -->
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Ayush" class="mr-2">
+            <span>Ayush</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="BFSI - Fintech , Banking , Insurance " class="mr-2">
+            <span>BFSI - Fintech , Banking , Insurance</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Biotechnology" class="mr-2">
+            <span>Biotechnology</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Capital Goods" class="mr-2">
+            <span>Capital Goods</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Chemicals" class="mr-2">
+            <span>Chemicals</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Construction" class="mr-2">
+            <span>Construction</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Defence Manufacturing" class="mr-2">
+            <span>Defence Manufacturing</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Education" class="mr-2">
+            <span>Education</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Electronic Systems" class="mr-2">
+            <span>Electronic Systems</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Food & Allied Sectors" class="mr-2">
+            <span>Food & Allied Sectors</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Healthcare" class="mr-2">
+            <span>Healthcare</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="IT & BPM" class="mr-2">
+            <span>IT & BPM</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Leather and Footwear" class="mr-2">
+            <span>Leather and Footwear</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Media" class="mr-2">
+            <span>Media</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Medical Devices" class="mr-2">
+            <span>Medical Devices</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Gaming" class="mr-2">
+            <span>Gaming</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Ecommerce" class="mr-2">
+            <span>Ecommerce</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Paper and Packaging" class="mr-2">
+            <span>Paper and Packaging</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Pharmaceuticals" class="mr-2">
+            <span>Pharmaceuticals</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Ports & Shipping" class="mr-2">
+            <span>Ports & Shipping</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Railways" class="mr-2">
+            <span>Railways</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Renewable Energy" class="mr-2">
+            <span>Renewable Energy</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Retail and Ecommerce" class="mr-2">
+            <span>Retail and Ecommerce</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Roads and Highways" class="mr-2">
+            <span>Roads and Highways</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Space" class="mr-2">
+            <span>Space</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Sports" class="mr-2">
+            <span>Sports</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Sustainability" class="mr-2">
+            <span>Sustainability</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Telecom" class="mr-2">
+            <span>Telecom</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Textile and Apparel" class="mr-2">
+            <span>Textile and Apparel</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Tourism & Hospitality" class="mr-2">
+            <span>Tourism & Hospitality</span>
+        </label>
+        <label class="flex items-center space-x-2">
+            <input type="radio" name="domain" value="Other" class="mr-2" id="customDomainRadio">
+            <span>Other</span>
+        </label>
+    </div>
+    <input type="text" id="customDomain" class="mt-2 hidden w-full rounded-md border-gray-300 shadow-sm focus:border-green-500" placeholder="Enter custom domain">
+</label>
 
 
         <label class="block">
             <span class="text-gray-700 font-bold">Notes</span>
             <textarea id="notes" class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></textarea>
         </label>
+<!-- Visiting Card Checkbox -->
+<div class="flex items-center mb-4">
+    <input type="checkbox" id="hasVisitingCard" class="h-4 w-4 text-indigo-600">
+    <label for="hasVisitingCard" class="ml-2 text-gray-700 font-bold">Client has a visiting card</label>
+</div>
 
-        <!-- Visiting Card Checkbox -->
-        <div class="flex items-center mb-4">
-            <input type="checkbox" id="hasVisitingCard" class="h-4 w-4 text-indigo-600">
-            <label for="hasVisitingCard" class="ml-2 text-gray-700 font-bold">Client has a visiting card</label>
-        </div>
+<div id="visitingCardFields" class="hidden">
+    <div class="flex justify-between mb-4">
+        <button type="button" onclick="toggleCamera()" class="bg-gray-500 text-white px-4 py-2 rounded">Toggle Camera</button>
+    </div>
 
-        <div id="visitingCardFields" class="hidden">
-            <label class="block">
-                <span class="text-gray-700 font-bold">Capture Visiting Card (Front)</span>
-                <video id="cameraFront" autoplay class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></video>
-                <img id="frontImagePreview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm hidden" />
-                <button type="button" onclick="capturePhoto('front')" id="captureFrontButton" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Capture Front</button>
-                <button type="button" onclick="retakePhoto('front')" id="retakeFrontButton" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hidden">Retake Front</button>
-            </label>
-            
-            <label class="block">
-                <span class="text-gray-700 font-bold">Capture Visiting Card (Back)</span>
-                <video id="cameraBack" autoplay class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg"></video>
-                <img id="backImagePreview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm hidden" />
-                <button type="button" onclick="capturePhoto('back')" id="captureBackButton" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Capture Back</button>
-                <button type="button" onclick="retakePhoto('back')" id="retakeBackButton" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hidden">Retake Back</button>
-            </label>
-        </div>
-
+    <label class="block">
+        <span class="text-gray-700 font-bold">Capture Visiting Card (Front)</span>
+        <video id="cameraFront" autoplay class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg hidden"></video>
+        <img id="frontImagePreview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm hidden" />
+        <button type="button" onclick="capturePhoto('front')" id="captureFrontButton" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Capture Front</button>
+        <button type="button" onclick="retakePhoto('front')" id="retakeFrontButton" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hidden">Retake Front</button>
+    </label>
+    
+    <label class="block">
+        <span class="text-gray-700 font-bold">Capture Visiting Card (Back)</span>
+        <video id="cameraBack" autoplay class="input-field mt-2 block w-full rounded-md focus:ring focus:ring-green-300 shadow-lg hidden"></video>
+        <img id="backImagePreview" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm hidden" />
+        <button type="button" onclick="capturePhoto('back')" id="captureBackButton" class="mt-2 px-4 py-2 bg-green-500 text-white rounded">Capture Back</button>
+        <button type="button" onclick="retakePhoto('back')" id="retakeBackButton" class="mt-2 px-4 py-2 bg-red-500 text-white rounded hidden">Retake Back</button>
+    </label>
+</div>
         <!-- Submit Button -->
         <button type="submit" class="w-full py-2 mt-4 text-white bg-green-500 rounded-md hover:bg-green-600">Submit</button>
     </form>
 
     <button type="button" onclick="viewDashboard()" class="w-full py-2 mt-4 text-white bg-blue-500 rounded-md hover:bg-blue-600">View Dashboard</button>
 </div>
-
 <script>
-
-
     function viewDashboard() {
         window.location.href = '/bng_dashboard.html';
     }
-
 
     let frontImageBlob = null;
     let backImageBlob = null;
     let frontCameraStream = null;
     let backCameraStream = null;
+    let useFrontCamera = true;
 
-    // Function to access the camera and display the live video
-    function startCamera(videoElement) {
-        navigator.mediaDevices.getUserMedia({ video: true })
+    function startCamera(videoElement, facingMode = "user") {
+        const constraints = {
+            video: {
+                facingMode: facingMode
+            }
+        };
+        navigator.mediaDevices.getUserMedia(constraints)
             .then((stream) => {
                 videoElement.srcObject = stream;
+                videoElement.classList.remove('hidden'); // Ensure video is visible
                 if (videoElement.id === "cameraFront") {
-                    frontCameraStream = stream; // Save stream to stop it later
+                    frontCameraStream = stream;
                 } else {
-                    backCameraStream = stream; // Save stream to stop it later
+                    backCameraStream = stream;
                 }
             })
             .catch((err) => {
@@ -272,13 +338,19 @@
             });
     }
 
-    // Show video elements when the checkbox is checked
+    function toggleCamera() {
+        useFrontCamera = !useFrontCamera;
+        stopCameraStreams();
+        startCamera(document.getElementById("cameraFront"), useFrontCamera ? "user" : "environment");
+        startCamera(document.getElementById("cameraBack"), useFrontCamera ? "user" : "environment");
+    }
+
     document.getElementById('hasVisitingCard').addEventListener('change', function () {
         const visitingCardFields = document.getElementById('visitingCardFields');
         if (this.checked) {
             visitingCardFields.classList.remove('hidden');
-            startCamera(document.getElementById('cameraFront'));
-            startCamera(document.getElementById('cameraBack'));
+            startCamera(document.getElementById('cameraFront'), useFrontCamera ? "user" : "environment");
+            startCamera(document.getElementById('cameraBack'), useFrontCamera ? "user" : "environment");
         } else {
             visitingCardFields.classList.add('hidden');
             stopCameraStreams();
@@ -290,17 +362,14 @@
         if (backCameraStream) backCameraStream.getTracks().forEach(track => track.stop());
     }
 
-    // Capture photo function for front and back
     function capturePhoto(side) {
         const video = document.getElementById(`camera${side.charAt(0).toUpperCase() + side.slice(1)}`);
         const canvas = document.createElement("canvas");
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         
-        // Draw the video frame on the canvas
         canvas.getContext("2d").drawImage(video, 0, 0);
 
-        // Convert the canvas to a blob and store it
         canvas.toBlob((blob) => {
             const imagePreview = document.getElementById(`${side}ImagePreview`);
             const captureButton = document.getElementById(`capture${side.charAt(0).toUpperCase() + side.slice(1)}Button`);
@@ -312,7 +381,6 @@
                 backImageBlob = blob;
             }
 
-            // Display the captured image and hide the video
             imagePreview.src = URL.createObjectURL(blob);
             imagePreview.classList.remove('hidden');
             video.classList.add('hidden');
@@ -321,21 +389,18 @@
         }, 'image/jpeg');
     }
 
-    // Retake photo function
     function retakePhoto(side) {
         const video = document.getElementById(`camera${side.charAt(0).toUpperCase() + side.slice(1)}`);
         const imagePreview = document.getElementById(`${side}ImagePreview`);
         const captureButton = document.getElementById(`capture${side.charAt(0).toUpperCase() + side.slice(1)}Button`);
         const retakeButton = document.getElementById(`retake${side.charAt(0).toUpperCase() + side.slice(1)}Button`);
 
-        // Hide the image preview and show the video again
         imagePreview.classList.add('hidden');
         video.classList.remove('hidden');
         captureButton.classList.remove('hidden');
         retakeButton.classList.add('hidden');
 
-        // Restart the camera for retaking the photo
-        startCamera(video);
+        startCamera(video, useFrontCamera ? "user" : "environment");
     }
 
     document.getElementById('clientForm').addEventListener('submit', async function (e) {
@@ -346,74 +411,66 @@
         formData.append("companyName", document.getElementById("companyName").value);
         formData.append("phoneNumber", document.getElementById("phoneNumber").value);
         formData.append("email", document.getElementById("email").value);
-        formData.append("domain", document.getElementById("domain").value);
         formData.append("notes", document.getElementById("notes").value);
         formData.append("hasVisitingCard", document.getElementById("hasVisitingCard").checked);
 
+        const selectedDomain = document.querySelector('input[name="domain"]:checked');
+        if (selectedDomain) {
+            formData.append("domain", selectedDomain.value === "Other" ? document.getElementById("customDomain").value : selectedDomain.value);
+        }
 
-         // Get the selected strategy partner
-         const strategyPartner = document.querySelector('input[name="strategyPartner"]:checked');
-         if (strategyPartner) {
-             formData.append("strategyPartner", strategyPartner.value);
-         }
-      
-        // Append captured images with field names matching multer config
+        const strategyPartner = document.getElementById("strategyPartner").value;
+        if (strategyPartner) {
+            formData.append("strategyPartner", strategyPartner);
+        }
+
         if (frontImageBlob) formData.append("front", frontImageBlob, "front.jpg");
         if (backImageBlob) formData.append("back", backImageBlob, "back.jpg");
-      
+
         try {
-          const response = await fetch('/submit-form', {
-            method: 'POST',
-            body: formData
-          });
-          const result = await response.json();
-      
-          if (response.ok) {
-            alert(result.message);
-          } else {
-            console.error(result.error);
-            alert("Error: " + result.error);
-          }
+            const response = await fetch('/submit-form', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                alert(result.message);
+            } else {
+                console.error(result.error);
+                alert("Error: " + result.error);
+            }
         } catch (error) {
-          console.error("Error submitting the form:", error);
-          alert("Failed to submit the form.");
+            console.error("Error submitting the form:", error);
+            alert("Failed to submit the form.");
         }
-      });
-      
+    });
 
-      // Display overlay on page load
-    setTimeout(() => {
-        document.getElementById("overlayContainer").classList.add("show");
-    }, 1200);
-
-    // Toggle custom domain input
     document.getElementById('customDomainRadio').addEventListener('change', function () {
         document.getElementById('customDomain').classList.toggle('hidden', !this.checked);
     });
 
-    // Partner Suggestions with Typing
     const strategyPartnerInput = document.getElementById("strategyPartner");
     const partnerSuggestions = document.getElementById("partnerSuggestions");
     const partners = [
-        "Prashanth Kumar C",
-        "Shashidhara Poojary",
-        "Kiran C",
-        "Charan S Reddy",
-        "Shakthi Sriharan",
-        "Shreya Prabhu",
-        "Krishnamurthy M Gokarnkar",
-        "Ramapuram Nayaki Varshini",
-        "Varun Upadhyaya",
-        "Jayasimha Kulkarni",
-        "Anand Kannan",
-        "Prathita Gowri A K Rao",
-        "Nithyashree J",
-        "Hannah Lisbeth Thomas",
-        "Bhavana",
-        "Kaveramma",
-        "Kiran Rudrappa",
-        "Sashidhar M R"
-        ];
+    "Prashanth Kumar C",
+    "Shashidhara Poojary",
+    "Kiran C",
+    "Charan S Reddy",
+    "Shakthi Sriharan",
+    "Shreya Prabhu",
+    "Krishnamurthy M Gokarnkar",
+    "Ramapuram Nayaki Varshini",
+    "Varun Upadhyaya",
+    "Jayasimha Kulkarni",
+    "Anand Kannan",
+    "Prathita Gowri A K Rao",
+    "Nithyashree J",
+    "Hannah Lisbeth Thomas",
+    "Bhavana",
+    "Kaveramma",
+    "Kiran Rudrappa",
+    "Sashidhar M R"];
 
     strategyPartnerInput.addEventListener("input", function () {
         const input = strategyPartnerInput.value.toLowerCase();
@@ -435,8 +492,7 @@
     document.addEventListener("click", (e) => {
         if (e.target !== strategyPartnerInput) partnerSuggestions.classList.add("hidden");
     });
-
-    
 </script>
+
 </body>
 </html>
