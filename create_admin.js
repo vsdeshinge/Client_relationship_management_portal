@@ -2,6 +2,11 @@ const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const Admin = require('./models/admin.js'); // Adjust path as necessary
 
+
+
+
+
+// dev 
 async function main() {
   try {
     // Connect to MongoDB
