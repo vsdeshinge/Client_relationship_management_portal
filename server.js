@@ -1005,7 +1005,7 @@ app.get('/visitor-details', authenticateToken, async (req, res) => {
     const totalCount = await Client.countDocuments(dateFilter);
 
     // Fetch paginated results with 'faceImage' field to include image URLs
-    const visitors = await Client.find(dateFilter, 'name companyName phone email status faceImage createdAt')
+    const visitors = await Client.find(dateFilter, 'name companyName phone email  faceImage createdAt')
       .skip(skip)
       .limit(limit);
 
@@ -2031,6 +2031,25 @@ app.get('/api/clients', async (req, res) => {
         console.error('Error fetching clients:', error);
         res.status(500).json({ error: 'Failed to fetch clients' });
     }
+});
+
+// api for delete the visitors in admin
+app.delete('/delete-client/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      // Find and delete the client by ID
+      const client = await Client.findByIdAndDelete(id);
+      
+      if (!client) {
+          return res.status(404).json({ success: false, message: 'Client not found' });
+      }
+
+      res.status(200).json({ success: true, message: 'Client deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting client:', error);
+      res.status(500).json({ success: false, message: 'Error deleting client. Please try again later.' });
+  }
 });
 
 

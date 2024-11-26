@@ -122,39 +122,38 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderVisitorDetails(visitorDetails) {
         const tableBody = document.getElementById('visitorsTableBody');
         tableBody.innerHTML = '';
-
+    
+        // Handle case when no visitors are found
         if (visitorDetails.length === 0) {
             tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4">No visitors found.</td></tr>';
             return;
         }
-
+    
+        // Populate the table with visitor data
         visitorDetails.forEach((visitor, index) => {
             const createdAt = new Date(visitor.createdAt);
             const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
             const faceImageUrl = visitor.faceImage ? `/images/${visitor.faceImage}` : 'https://via.placeholder.com/80';
-
+        
             const row = document.createElement('tr');
             row.innerHTML = `
-               <td class="py-2 px-4">
-        <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${faceImageUrl}')">
-    </td>
+                <td class="p-2 text-center">${index + 1}</td> <!-- Serial Number -->
+                <td class="py-2 px-4">
+                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${faceImageUrl}')">
+                </td>
                 <td class="p-2">${visitor.name}</td>
                 <td class="p-2">${formattedDate}</td>
                 <td class="p-2">${visitor.companyName || 'N/A'}</td>
                 <td class="p-2">${visitor.phone}</td>
                 <td class="p-2">${visitor.email}</td>
-                <td class="p-2">
-                    <select id="status-${index}" class="bg-gray-700 p-1 rounded" data-visitor-id="${visitor._id}">
-                        <option value="qualified" ${visitor.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-                        <option value="on-hold" ${visitor.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-                        <option value="not-relevant" ${visitor.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-                    </select>
+                <td class="p-2 text-center">
+                    <button class="btn-delete" onclick="deleteClient('${visitor._id}')">Delete</button>
                 </td>
-                <td class="p-2"><button class="save-button" data-visitor-id="${visitor._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button></td>
             `;
             tableBody.appendChild(row);
         });
     }
+    
     function renderPagination() {
         const paginationContainer = document.getElementById('pagination');
         paginationContainer.innerHTML = ''; // Clear previous pagination buttons
@@ -201,20 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchVisitorDetails('all', currentPage);
 });
 
- // Function to open the image popup with the clicked image
- function openImagePopup(imageUrl) {
-    const imagePopup = document.getElementById('imagePopup');
-    const popupImage = document.getElementById('popupImage');
-
-    popupImage.src = imageUrl;
-    imagePopup.classList.remove('hidden');
-  }
-
-  window.openImagePopup = openImagePopup;
-
-  document.getElementById('closePopup').addEventListener('click', () => {
-    document.getElementById('imagePopup').classList.add('hidden');
-  });
+ 
 
 document.addEventListener('DOMContentLoaded', () => {
     async function fetchClientCounts() {
@@ -256,172 +242,172 @@ document.addEventListener('DOMContentLoaded', () => {
     
     
     
-    // Initialize qualified lead page
-    function initQualifiedLeadPage(status) {
-        showContent('content-qualified-lead');
-        populateQualifiedLeadTable(status);
-    }
+//     // Initialize qualified lead page
+//     function initQualifiedLeadPage(status) {
+//         showContent('content-qualified-lead');
+//         populateQualifiedLeadTable(status);
+//     }
 
-    // Function to render qualified leads in the table
-    async function populateQualifiedLeadTable(status) {
-        const tableBody = document.getElementById('qualifiedLeadTableBody');
-        if (!tableBody) {
-            console.error('Table body with ID "qualifiedLeadTableBody" not found.');
-            return;
-        }
+//     // Function to render qualified leads in the table
+//     async function populateQualifiedLeadTable(status) {
+//         const tableBody = document.getElementById('qualifiedLeadTableBody');
+//         if (!tableBody) {
+//             console.error('Table body with ID "qualifiedLeadTableBody" not found.');
+//             return;
+//         }
 
-        const token = localStorage.getItem('adminToken');
-        try {
-            console.log('Fetching qualified leads with status:', status);
-            const response = await fetch(`/api/clients?status=${status}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
+//         const token = localStorage.getItem('adminToken');
+//         try {
+//             console.log('Fetching qualified leads with status:', status);
+//             const response = await fetch(`/api/clients?status=${status}`, {
+//                 method: 'GET',
+//                 headers: {
+//                     'Authorization': `Bearer ${token}`
+//                 }
+//             });
 
-            if (response.ok) {
-                const qualifiedLeads = await response.json();
-                renderQualifiedLeads(qualifiedLeads);
-            } else {
-                console.error('Error fetching qualified leads');
-            }
-        } catch (error) {
-            console.error('Error fetching qualified leads:', error);
-        }
-    }
+//             if (response.ok) {
+//                 const qualifiedLeads = await response.json();
+//                 renderQualifiedLeads(qualifiedLeads);
+//             } else {
+//                 console.error('Error fetching qualified leads');
+//             }
+//         } catch (error) {
+//             console.error('Error fetching qualified leads:', error);
+//         }
+//     }
 
-    function renderQualifiedLeads(qualifiedLeads) {
-        const tableBody = document.getElementById('qualifiedLeadTableBody');
-        tableBody.innerHTML = ''; // Clear existing rows
-        qualifiedLeads.forEach((lead, index) => {
-            const createdAt = new Date(lead.createdAt);
-            const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
+//     function renderQualifiedLeads(qualifiedLeads) {
+//         const tableBody = document.getElementById('qualifiedLeadTableBody');
+//         tableBody.innerHTML = ''; // Clear existing rows
+//         qualifiedLeads.forEach((lead, index) => {
+//             const createdAt = new Date(lead.createdAt);
+//             const formattedDate = `${String(createdAt.getDate()).padStart(2, '0')}/${String(createdAt.getMonth() + 1).padStart(2, '0')}/${createdAt.getFullYear()}`;
     
-            // Use lead's faceImage if available, otherwise use a placeholder image
-            const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
+//             // Use lead's faceImage if available, otherwise use a placeholder image
+//             const faceImageUrl = lead.faceImage ? `/images/${lead.faceImage}` : 'https://via.placeholder.com/80';
             
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td class="py-2 px-4">
-                    <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
-                </td>
-                <td class="p-2">${lead.name}</td>
-                <td class="p-2">${formattedDate}</td>
-                <td class="p-2">${lead.companyName || 'N/A'}</td>
-                <td class="p-2">${lead.phone}</td>
-                <td class="p-2">${lead.email}</td>
-                <td class="p-2">
-                    <select id="lead-status-${index}" class="bg-gray-700 p-1 rounded" data-lead-id="${lead._id}">
-                        <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
-                        <option value="on-hold" ${lead.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
-                        <option value="not-relevant" ${lead.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
-                    </select>
-                </td>
-                <td class="p-2">
-                    ${lead.status === 'qualified' ? `
-                        <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
-                    ` : ''}
-                    <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
-                    <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
+//             const row = document.createElement('tr');
+//             row.innerHTML = `
+//                 <td class="py-2 px-4">
+//                     <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+//                 </td>
+//                 <td class="p-2">${lead.name}</td>
+//                 <td class="p-2">${formattedDate}</td>
+//                 <td class="p-2">${lead.companyName || 'N/A'}</td>
+//                 <td class="p-2">${lead.phone}</td>
+//                 <td class="p-2">${lead.email}</td>
+//                 <td class="p-2">
+//                     <select id="lead-status-${index}" class="bg-gray-700 p-1 rounded" data-lead-id="${lead._id}">
+//                         <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+//                         <option value="on-hold" ${lead.status === 'on-hold' ? 'selected' : ''}>On Hold</option>
+//                         <option value="not-relevant" ${lead.status === 'not-relevant' ? 'selected' : ''}>Not Relevant</option>
+//                     </select>
+//                 </td>
+//                 <td class="p-2">
+//                     ${lead.status === 'qualified' ? `
+//                         <button class="add-fields-button" data-lead-id="${lead._id}" style="margin-right: 10px; padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Fields</button>
+//                     ` : ''}
+//                     <button class="lead-save-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #2196F3; color: white; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+//                     <button class="go-to-mom-button" data-lead-id="${lead._id}" style="padding: 5px 10px; background-color: #FF9800; color: white; border: none; border-radius: 4px; cursor: pointer;">LOG_MOM</button>
+//                 </td>
+//             `;
+//             tableBody.appendChild(row);
+//         });
     
     
-        // Add event listeners to "Add Fields" buttons
-        document.querySelectorAll('.add-fields-button').forEach(button => {
-            button.addEventListener('click', function(event) {
-                const leadId = event.target.dataset.leadId;
-                localStorage.setItem('leadId', leadId);
-                window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
-            });
-        });
+//         // Add event listeners to "Add Fields" buttons
+//         document.querySelectorAll('.add-fields-button').forEach(button => {
+//             button.addEventListener('click', function(event) {
+//                 const leadId = event.target.dataset.leadId;
+//                 localStorage.setItem('leadId', leadId);
+//                 window.location.href = `/profile_data_entry.html?leadId=${leadId}`;
+//             });
+//         });
     
-        // Add event listeners to "Go to MoM" buttons
-document.querySelectorAll('.go-to-mom-button').forEach(button => {
-    button.addEventListener('click', function(event) {
-        const leadId = event.target.dataset.leadId;
-        localStorage.setItem('leadId', leadId);
-        window.location.href = `/mom.html?leadId=${leadId}`;
-    });
-});
+//         // Add event listeners to "Go to MoM" buttons
+// document.querySelectorAll('.go-to-mom-button').forEach(button => {
+//     button.addEventListener('click', function(event) {
+//         const leadId = event.target.dataset.leadId;
+//         localStorage.setItem('leadId', leadId);
+//         window.location.href = `/mom.html?leadId=${leadId}`;
+//     });
+// });
 
     
 
-        // Add event listeners to save buttons
-        document.querySelectorAll('.lead-save-button').forEach(button => {
-            button.addEventListener('click', async (event) => {
-                const leadId = event.target.dataset.leadId;
-                // Find the select element by its unique ID
-                const selectElement = document.querySelector(`select[data-lead-id="${leadId}"]`);
-                if (!selectElement) {
-                    console.error('Select element not found for leadId:', leadId);
-                    return;
-                }
-                const newStatus = selectElement.value;
-                try {
-                    const response = await fetch(`/clients/${leadId}/status`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
-                        },
-                        body: JSON.stringify({ status: newStatus })
-                    });
-                    if (response.ok) {
-                        alert('Status updated successfully');
-                    } else {
-                        console.error('Error updating status');
-                    }
-                } catch (error) {
-                    console.error('Error updating status:', error);
-                }
-            });
-        });
-    }
+//         // Add event listeners to save buttons
+//         document.querySelectorAll('.lead-save-button').forEach(button => {
+//             button.addEventListener('click', async (event) => {
+//                 const leadId = event.target.dataset.leadId;
+//                 // Find the select element by its unique ID
+//                 const selectElement = document.querySelector(`select[data-lead-id="${leadId}"]`);
+//                 if (!selectElement) {
+//                     console.error('Select element not found for leadId:', leadId);
+//                     return;
+//                 }
+//                 const newStatus = selectElement.value;
+//                 try {
+//                     const response = await fetch(`/clients/${leadId}/status`, {
+//                         method: 'PUT',
+//                         headers: {
+//                             'Content-Type': 'application/json',
+//                             'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
+//                         },
+//                         body: JSON.stringify({ status: newStatus })
+//                     });
+//                     if (response.ok) {
+//                         alert('Status updated successfully');
+//                     } else {
+//                         console.error('Error updating status');
+//                     }
+//                 } catch (error) {
+//                     console.error('Error updating status:', error);
+//                 }
+//             });
+//         });
+//     }
 
 
-    // Set up sidebar dropdown for Qualified Leads
-    function setupQualifiedLeadsDropdown() {
-        const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
-        if (!qualifiedLeadItem) {
-            console.error('Element with ID "nav-qualified-lead" not found.');
-            return;
-        }
-        qualifiedLeadItem.classList.add('has-submenu');
+//     // Set up sidebar dropdown for Qualified Leads
+//     function setupQualifiedLeadsDropdown() {
+//         const qualifiedLeadItem = document.getElementById('nav-qualified-lead');
+//         if (!qualifiedLeadItem) {
+//             console.error('Element with ID "nav-qualified-lead" not found.');
+//             return;
+//         }
+//         qualifiedLeadItem.classList.add('has-submenu');
 
-        const submenu = document.createElement('ul');
-        submenu.className = 'pl-4 mt-2 space-y-2 hidden';
-        submenu.innerHTML = `
-            <li id="nav-qualified-lead-qualified" class="cursor-pointer">Qualified</li>
-            <li id="nav-qualified-lead-on-hold" class="cursor-pointer">On Hold</li>
-            <li id="nav-qualified-lead-not-relevant" class="cursor-pointer">Not Relevant</li>
-        `;
+//         const submenu = document.createElement('ul');
+//         submenu.className = 'pl-4 mt-2 space-y-2 hidden';
+//         submenu.innerHTML = `
+//             <li id="nav-qualified-lead-qualified" class="cursor-pointer">Qualified</li>
+//             <li id="nav-qualified-lead-on-hold" class="cursor-pointer">On Hold</li>
+//             <li id="nav-qualified-lead-not-relevant" class="cursor-pointer">Not Relevant</li>
+//         `;
 
-        qualifiedLeadItem.appendChild(submenu);
+//         qualifiedLeadItem.appendChild(submenu);
 
-        qualifiedLeadItem.addEventListener('click', function(e) {
-            e.stopPropagation();
-            submenu.classList.toggle('hidden');
-        });
+//         qualifiedLeadItem.addEventListener('click', function(e) {
+//             e.stopPropagation();
+//             submenu.classList.toggle('hidden');
+//         });
 
-        ['qualified', 'on-hold', 'not-relevant'].forEach(status => {
-            const element = document.getElementById(`nav-qualified-lead-${status}`);
-            if (element) {
-                element.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    initQualifiedLeadPage(status);
-                });
-            } else {
-                console.error(`Element with ID "nav-qualified-lead-${status}" not found.`);
-            }
-        });
-    }
+//         ['qualified', 'on-hold', 'not-relevant'].forEach(status => {
+//             const element = document.getElementById(`nav-qualified-lead-${status}`);
+//             if (element) {
+//                 element.addEventListener('click', function(e) {
+//                     e.stopPropagation();
+//                     initQualifiedLeadPage(status);
+//                 });
+//             } else {
+//                 console.error(`Element with ID "nav-qualified-lead-${status}" not found.`);
+//             }
+//         });
+//     }
 
-    setupQualifiedLeadsDropdown();
-});
+//     setupQualifiedLeadsDropdown();
+  });
 
 
 // Navigation functionality
@@ -1118,7 +1104,8 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             data.forEach(item => {
                 const row = document.createElement('tr');
-                row.innerHTML = `
+                row.innerHTML =
+                     `
                     <td class="p-2">${item.name || ''}</td>
                     <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
                     <td class="p-2">${item.companyName || ''}</td>
@@ -1436,23 +1423,27 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        clients.forEach((client) => {
+        clients.forEach((client, index) => {
             const profileImage = client.faceImage ? `/images/${client.faceImage}` : 'https://via.placeholder.com/80';
             const row = `
                 <tr>
+                    <td class="py-2 px-4 text-center">${index + 1}</td>
                     <td class="py-2 px-4">
-                        <img src="${profileImage}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;">
+                        <img src="${profileImage}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${profileImage}')">
                     </td>
                     <td class="p-2">${client.name}</td>
                     <td class="p-2">${new Date(client.createdAt).toLocaleDateString()}</td>
                     <td class="p-2">${client.companyName || 'N/A'}</td>
                     <td class="p-2">${client.phone}</td>
                     <td class="p-2">${client.email}</td>
-                    <td class="p-2">${client.status || 'N/A'}</td>
+                    <td class="p-2">
+                        <button class="btn-delete" onclick="deleteClient('${client._id}')">Delete</button>
+                    </td>
                 </tr>
             `;
             tableBody.insertAdjacentHTML('beforeend', row);
         });
+        
     }
 
     // Render pagination buttons based on total count
@@ -1478,3 +1469,41 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
+// Function to open the image popup with the clicked image
+function openImagePopup(imageUrl) {
+    const imagePopup = document.getElementById('imagePopup');
+    const popupImage = document.getElementById('popupImage');
+
+    popupImage.src = imageUrl;
+    imagePopup.classList.remove('hidden');
+  }
+
+  window.openImagePopup = openImagePopup;
+
+  document.getElementById('closePopup').addEventListener('click', () => {
+    document.getElementById('imagePopup').classList.add('hidden');
+  });
+
+  function deleteClient(clientId) {
+    if (confirm('Are you sure you want to delete this client?')) {
+        fetch(`/delete-client/${clientId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Client deleted successfully.');
+                location.reload();  // Refresh the page or re-fetch the data
+            } else {
+                alert('Error deleting client.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the client.');
+        });
+    }
+}
