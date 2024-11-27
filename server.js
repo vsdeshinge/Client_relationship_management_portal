@@ -128,16 +128,14 @@ function generateToken(user, role) {
   return token;
 }
 
-
 app.get('/images/:id', async (req, res) => {
   try {
 
-    
     const fileId = new mongoose.Types.ObjectId(req.params.id);
-    const downloadStream = gridfsBucket.openDownloadStream(fileId);
+    const downloadStream = faceImagesBucket.openDownloadStream(fileId);
 
-    // Set the content type to image (assuming the image is a JPEG or PNG)
-    res.set('Content-Type', 'image/jpeg'); // Change this based on the type of images you store
+    // Set the content type based on the image type (e.g., PNG, JPEG)
+    res.set('Content-Type', 'image/jpeg'); // Adjust this if you are storing other types
 
     downloadStream.on('data', (chunk) => {
       res.write(chunk);
@@ -156,6 +154,7 @@ app.get('/images/:id', async (req, res) => {
     res.status(500).send('Error retrieving image');
   }
 });
+
 
 
 // Add your Nodemailer transporter setup here
@@ -180,7 +179,7 @@ app.post('/register', faceImageUpload, async (req, res) => {
   }
 
   try {
-    // Check if a client with the same email or phone exists in the Client collection (no SyndicateClient)
+    // Check if a client with the same email or phone exists in the Client collection
     const existingClientByEmail = await Client.findOne({ email });
     const existingClientByPhone = await Client.findOne({ phone });
 
@@ -205,7 +204,7 @@ app.post('/register', faceImageUpload, async (req, res) => {
 
     if (req.file) {
       const filename = `${crypto.randomBytes(16).toString('hex')}${path.extname(req.file.originalname)}`;
-      const uploadStream = gridfsBucket.openUploadStream(filename);
+      const uploadStream = faceImagesBucket.openUploadStream(filename); // Use faceImagesBucket for storing face images
 
       uploadStream.end(req.file.buffer);
 
@@ -239,6 +238,7 @@ app.post('/register', faceImageUpload, async (req, res) => {
     res.status(500).json({ error: 'Error during registration. Please try again later.' });
   }
 });
+
 
 
 

@@ -135,7 +135,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td class="py-2 px-4"><img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;"></td>
+               <td class="py-2 px-4">
+        <img src="${faceImageUrl}" alt="Profile" class="profile-img" style="width: 50px; height: 50px; border-radius: 50%;" onclick="openImagePopup('${faceImageUrl}')">
+    </td>
                 <td class="p-2">${visitor.name}</td>
                 <td class="p-2">${formattedDate}</td>
                 <td class="p-2">${visitor.companyName || 'N/A'}</td>
@@ -191,11 +193,28 @@ document.addEventListener('DOMContentLoaded', () => {
         paginationContainer.appendChild(nextButton);
     }
     
+    //image popup
+    
 
     fetchAdminDetails();
     fetchClientCount();
     fetchVisitorDetails('all', currentPage);
 });
+
+ // Function to open the image popup with the clicked image
+ function openImagePopup(imageUrl) {
+    const imagePopup = document.getElementById('imagePopup');
+    const popupImage = document.getElementById('popupImage');
+
+    popupImage.src = imageUrl;
+    imagePopup.classList.remove('hidden');
+  }
+
+  window.openImagePopup = openImagePopup;
+
+  document.getElementById('closePopup').addEventListener('click', () => {
+    document.getElementById('imagePopup').classList.add('hidden');
+  });
 
 document.addEventListener('DOMContentLoaded', () => {
     async function fetchClientCounts() {
@@ -1034,120 +1053,120 @@ document.getElementById('nav-customer').addEventListener('click', function() {
 
 
 
-// // advanced search filter 
-// document.addEventListener('DOMContentLoaded', () => {
-//     const advancedSearchButton = document.getElementById('advancedSearchButton');
-//     const searchModal = document.getElementById('searchModal');
-//     const closeModalButton = document.getElementById('closeModalButton');
-//     const advancedSearchForm = document.getElementById('advancedSearchForm');
+// advanced search filter 
+document.addEventListener('DOMContentLoaded', () => {
+    const advancedSearchButton = document.getElementById('advancedSearchButton');
+    const searchModal = document.getElementById('searchModal');
+    const closeModalButton = document.getElementById('closeModalButton');
+    const advancedSearchForm = document.getElementById('advancedSearchForm');
 
-//     advancedSearchButton.addEventListener('click', () => {
-//         searchModal.classList.remove('hidden');
-//     });
+    advancedSearchButton.addEventListener('click', () => {
+        searchModal.classList.remove('hidden');
+    });
 
-//     closeModalButton.addEventListener('click', () => {
-//         searchModal.classList.add('hidden');
-//     });
+    closeModalButton.addEventListener('click', () => {
+        searchModal.classList.add('hidden');
+    });
 
-//     advancedSearchForm.addEventListener('submit', async (event) => {
-//         event.preventDefault();
-//         const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
-//             .filter(input => input.checked)
-//             .map(input => input.value);
+    advancedSearchForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const searchFields = Array.from(advancedSearchForm.elements['searchFields'])
+            .filter(input => input.checked)
+            .map(input => input.value);
         
-//         if (searchFields.length === 0) {
-//             alert('Please select at least one search criteria.');
-//             return;
-//         }
+        if (searchFields.length === 0) {
+            alert('Please select at least one search criteria.');
+            return;
+        }
 
-//         await performAdvancedSearch(searchFields);
-//         searchModal.classList.add('hidden'); // Close modal after search
-//     });
+        await performAdvancedSearch(searchFields);
+        searchModal.classList.add('hidden'); // Close modal after search
+    });
 
-//     async function performAdvancedSearch(searchFields) {
-//         const token = localStorage.getItem('adminToken');
-//         try {
-//             const response = await fetch(`/advanced-search`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     'Authorization': `Bearer ${token}`
-//                 },
-//                 body: JSON.stringify({ searchFields })
-//             });
-//             const result = await response.json();
-//             if (response.ok) {
-//                 updateTableWithSearchResults(result);
-//             } else {
-//                 console.error('Error performing advanced search:', result.error);
-//             }
-//         } catch (error) {
-//             console.error('Error performing advanced search:', error);
-//         }
-//     }
+    async function performAdvancedSearch(searchFields) {
+        const token = localStorage.getItem('adminToken');
+        try {
+            const response = await fetch(`/advanced-search`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ searchFields })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                updateTableWithSearchResults(result);
+            } else {
+                console.error('Error performing advanced search:', result.error);
+            }
+        } catch (error) {
+            console.error('Error performing advanced search:', error);
+        }
+    }
 
-//     function updateTableWithSearchResults(data) {
-//         const visitorsTableBody = document.getElementById('visitorsTableBody');
-//         visitorsTableBody.innerHTML = ''; // Clear existing table rows
+    function updateTableWithSearchResults(data) {
+        const visitorsTableBody = document.getElementById('visitorsTableBody');
+        visitorsTableBody.innerHTML = ''; // Clear existing table rows
 
-//         if (data.length === 0) {
-//             const row = document.createElement('tr');
-//             row.innerHTML = `
-//                 <td colspan="7" class="p-2 text-center">No clients available</td>
-//             `;
-//             visitorsTableBody.appendChild(row);
-//         } else {
-//             data.forEach(item => {
-//                 const row = document.createElement('tr');
-//                 row.innerHTML = `
-//                     <td class="p-2">${item.name || ''}</td>
-//                     <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
-//                     <td class="p-2">${item.companyName || ''}</td>
-//                     <td class="p-2">${item.phone || ''}</td>
-//                     <td class="p-2">${item.email || ''}</td>
-//                     <td class="p-2">${item.action || ''}</td>
-//                     <td class="p-2">${item.status || ''}</td>
-//                 `;
-//                 visitorsTableBody.appendChild(row);
-//             });
-//         }
-//     }   
-// });
+        if (data.length === 0) {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td colspan="7" class="p-2 text-center">No clients available</td>
+            `;
+            visitorsTableBody.appendChild(row);
+        } else {
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="p-2">${item.name || ''}</td>
+                    <td class="p-2">${new Date(item.createdAt).toLocaleDateString() || ''}</td>
+                    <td class="p-2">${item.companyName || ''}</td>
+                    <td class="p-2">${item.phone || ''}</td>
+                    <td class="p-2">${item.email || ''}</td>
+                    <td class="p-2">${item.action || ''}</td>
+                    <td class="p-2">${item.status || ''}</td>
+                `;
+                visitorsTableBody.appendChild(row);
+            });
+        }
+    }   
+});
 
 
 
-// document.querySelectorAll('nav li').forEach(el => {
-//     el.addEventListener('click', function() {
-//         console.log('Navigation item clicked:', this.id); // Log the tab click
+document.querySelectorAll('nav li').forEach(el => {
+    el.addEventListener('click', function() {
+        console.log('Navigation item clicked:', this.id); // Log the tab click
         
-//         // Check if this item has no submenu
-//         if (!this.classList.contains('has-submenu')) {
-//             document.querySelectorAll('nav li').forEach(item => item.classList.remove('bg-gray-700'));
-//             this.classList.add('bg-gray-700');
+        // Check if this item has no submenu
+        if (!this.classList.contains('has-submenu')) {
+            document.querySelectorAll('nav li').forEach(item => item.classList.remove('bg-gray-700'));
+            this.classList.add('bg-gray-700');
             
-//             const contentId = 'content-' + this.id.split('-')[1];
-//             showContent(contentId); // Show the relevant content section
+            const contentId = 'content-' + this.id.split('-')[1];
+            showContent(contentId); // Show the relevant content section
 
-//             // Initialize sections based on content ID
-//             if (contentId === 'content-business-proposal') {
-//                 initBusinessProposalPage();
-//             } else if (contentId === 'content-strategy') {
-//                 populateStrategyPartnerTable(); // Call function to populate Strategy Partner table
-//             }
-//         }
-//     });
-// });
+            // Initialize sections based on content ID
+            if (contentId === 'content-business-proposal') {
+                initBusinessProposalPage();
+            } else if (contentId === 'content-strategy') {
+                populateStrategyPartnerTable(); // Call function to populate Strategy Partner table
+            }
+        }
+    });
+});
 
-// // Function to show only the specified content section
-// function showContent(contentId) {
-//     document.querySelectorAll('[id^="content-"]').forEach(el => el.classList.add('hidden'));
-//     const contentElement = document.getElementById(contentId);
-//     if (contentElement) {
-//         contentElement.classList.remove('hidden');
-//     } else {
-//         console.error(`Element with ID ${contentId} not found.`);
-//     }
-// }
+// Function to show only the specified content section
+function showContent(contentId) {
+    document.querySelectorAll('[id^="content-"]').forEach(el => el.classList.add('hidden'));
+    const contentElement = document.getElementById(contentId);
+    if (contentElement) {
+        contentElement.classList.remove('hidden');
+    } else {
+        console.error(`Element with ID ${contentId} not found.`);
+    }
+}
 
 // // Populate Strategy Partner table (example function if you haven't defined it yet)
 // function populateStrategyPartnerTable() {
