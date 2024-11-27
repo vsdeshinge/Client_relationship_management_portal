@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha",
     "start": "node server.js"
   },
   "keywords": [],
@@ -31,11 +31,17 @@
     "node-cron": "^3.0.3",
     "nodemailer": "^6.9.15",
     "qrcode": "^1.5.4",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "supertest": "^7.0.0",
+    "tsc": "^2.0.4",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
+    "@types/chai": "^5.0.1",
+    "@types/mocha": "^10.0.10",
     "chai": "^5.1.2",
     "chai-http": "^5.1.1",
-    "mocha": "^10.8.2"
+    "mocha": "^10.8.2",
+    "ts-node": "^10.9.2"
   }
 }

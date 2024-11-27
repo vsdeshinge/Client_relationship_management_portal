@@ -131,6 +131,8 @@ function generateToken(user, role) {
 
 app.get('/images/:id', async (req, res) => {
   try {
+
+    
     const fileId = new mongoose.Types.ObjectId(req.params.id);
     const downloadStream = gridfsBucket.openDownloadStream(fileId);
 

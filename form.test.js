@@ -1,25 +1,31 @@
-import { JSDOM } from 'jsdom';
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
-import assert from 'assert';
-import { app } from '../../../server'; // Import your server (Node.js app)
-import request from 'supertest'; // For making HTTP requests to the server
+const { JSDOM } = require('jsdom');
+const mongoose = require('mongoose');
+const assert = require('assert');
+const request = require('supertest'); // For making HTTP requests to the server
+const { app } = require('./server');
+require('dotenv').config();
+
 
 describe('Connect Form', function () {
   let document;
   let mongoServer;
-
+  process.env.MONGODB_URI = 'mongodb+srv://shakthi:shakthi@shakthi.xuq11g4.mongodb.net/?retryWrites=true&w=majority';
   // Start the MongoDB in-memory server before the tests
   before(async () => {
-    mongoServer = await MongoMemoryServer.create();
-    const mongoUri = mongoServer.getUri();
-    await mongoose.connect(mongoUri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
 
-    // Load the HTML page with JSDOM
-    const dom = await JSDOM.fromFile('./index.html', {
+    mongoose.connect(process.env.MONGODB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }).then(() => {
+        console.log('Connected to MongoDB');
+      }).catch((err) => {
+        console.error('Error connecting to MongoDB', err);
+        process.exit(1);
+      });
+  
+
+    // Load the HTML page with JSDgOM
+    const dom = await JSDOM.fromFile('./public/index.html', {
       resources: 'usable',
       runScripts: 'dangerously',
     });
